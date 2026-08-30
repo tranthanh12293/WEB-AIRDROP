@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIRDROP & CRYPTO SCRIPTS HUB</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #0b0e14; color: #e2e8f0; min-height: 100vh; padding-bottom: 50px; }
+        header { background: #151922; border-bottom: 1px solid #1f2430; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .logo { font-size: 18px; font-weight: bold; color: #38bdf8; display: flex; align-items: center; gap: 10px; }
+        .search-box { background: #0e121b; border: 1px solid #1f2430; padding: 8px 15px; border-radius: 8px; color: #fff; width: 280px; outline: none; }
+        .search-box:focus { border-color: #38bdf8; }
+        main { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
+        .tab-btn { background: #151922; border: 1px solid #1f2430; color: #94a3b8; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.2s; }
+        .tab-btn.active, .tab-btn:hover { background: #38bdf8; color: #0b0e14; border-color: #38bdf8; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .card { background: #151922; border: 1px solid #1f2430; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .badge { background: #0e121b; border: 1px solid #1f2430; padding: 3px 10px; border-radius: 20px; font-size: 11px; color: #94a3b8; }
+        .status-hot { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        .status-new { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
+        .card-title { font-size: 18px; font-weight: bold; color: #fff; margin-top: 6px; }
+        .card-desc { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 20px; }
+        .btn-ref { display: block; width: 100%; background: #0284c7; color: #fff; text-align: center; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; margin-bottom: 10px; transition: 0.2s; }
+        .btn-ref:hover { background: #0369a1; }
+        .btn-sub-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .btn-sub { background: #1b202e; border: 1px solid #1f2430; color: #cbd5e1; text-align: center; padding: 8px; border-radius: 8px; text-decoration: none; font-size: 12px; transition: 0.2s; }
+        .btn-sub:hover { background: #23293b; color: #fff; }
+        #loader { text-align: center; padding: 60px 0; color: #94a3b8; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">⚡ AIRDROP & SCRIPTS HUB</div>
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Tìm tên kèo, danh mục...">
+    </header>
+
+    <main>
+        <div class="tabs" id="categoryTabs"></div>
+        <div id="loader">⏳ Đang tải dữ liệu từ Google Sheet...</div>
+        <div class="grid" id="projectGrid"></div>
+    </main>
+
+    <script>
+        const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
+        let allProjects = [];
+        let activeCategory = 'all';
+
+        // Hàm xử lý dữ liệu callback từ JSONP của Google
+        function handleGoogleData(response) {
+            try {
+                if (response.status === 'error') {
+                    throw new Error(response.errors[0].message);
+                }
+
+                const rows = response.table.rows;
+                allProjects = rows.map(r => {
+                    const c = r.c;
+                    return {
+                        id: c[0] ? (c[0].v ?? '') : '',
+                        title: c[1] ? (c[1].v ?? '') : '',
+                        category: c[2] ? (c[2].v ?? 'General') : 'General',
+                        status: c[3] ? (c[3].v ?? 'NEW') : 'NEW',
+                        description: c[4] ? (c[4].v ?? '') : '',
+                        ref_link: c[5] ? (c[5].v ?? '') : '',
+                        script_link: c[6] ? (c[6].v ?? '') : '',
+                        guide_link: c[7] ? (c[7].v ?? '') : ''
+                    };
+                }).filter(p => p.title && p.title.toString().toLowerCase() !== 'title');
+
+                document.getElementById('loader').style.display = 'none';
+                buildTabs();
+                render();
+            } catch (err) {
+                console.error("Lỗi:", err);
+                document.getElementById('loader').innerHTML = `
+                    <div style="color: #f87171;">
+                        <p style="font-weight: bold; font-size: 16px;">⚠️ Lỗi nạp dữ liệu từ Google Sheet!</p>
+                        <p style="font-size: 12px; margin-top: 5px;">Kiểm tra xem dòng tiêu đề bảng tính đã có đúng thứ tự cột chưa.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function loadJSONP() {
+            // Tự động load tab đầu tiên (gid=0) qua JSONP không bị chặn CORS
+            const script = document.createElement('script');
+            script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
+            script.onerror = function() {
+                document.getElementById('loader').innerHTML = `
+                    <div style="color: #f87171;">
+                        <p style="font-weight: bold; font-size: 16px;">⚠️ Không thể kết nối đến Google Sheet!</p>
+                        <p style="font-size: 12px; margin-top: 5px;">Hãy kiểm tra kết nối mạng Internet của máy tính.</p>
+                    </div>
+                `;
+            };
+            document.body.appendChild(script);
+        }
+
+        function buildTabs() {
+            const categories = ['all', ...new Set(allProjects.map(p => p.category).filter(Boolean))];
+            const container = document.getElementById('categoryTabs');
+            container.innerHTML = categories.map(cat => `
+                <button class="tab-btn ${cat === activeCategory ? 'active' : ''}" onclick="setCat('${cat}')">
+                    ${cat === 'all' ? 'Tất cả' : cat}
+                </button>
+            `).join('');
+        }
+
+        function setCat(cat) {
+            activeCategory = cat;
+            buildTabs();
+            render();
+        }
+
+        function render() {
+            const q = document.getElementById('searchInput').value.toLowerCase().trim();
+            const grid = document.getElementById('projectGrid');
+            const filtered = allProjects.filter(p => {
+                const matchCat = activeCategory === 'all' || p.category === activeCategory;
+                const matchSearch = p.title.toString().toLowerCase().includes(q) || p.description.toString().toLowerCase().includes(q);
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">Không có dự án nào phù hợp.</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => {
+                const isHot = p.status.toString().toUpperCase() === 'HOT';
+                return `
+                    <div class="card">
+                        <div>
+                            <div class="card-top">
+                                <span class="badge">${p.category}</span>
+                                <span class="${isHot ? 'status-hot' : 'status-new'}">${p.status}</span>
+                            </div>
+                            <div class="card-title">${p.title}</div>
+                            <div class="card-desc">${p.description || 'Chưa có mô tả.'}</div>
+                        </div>
+                        <div>
+                            ${p.ref_link ? `<a href="${p.ref_link}" target="_blank" class="btn-ref">🔗 Tham gia (Link Ref)</a>` : ''}
+                            <div class="btn-sub-group">
+                                ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="btn-sub">💻 Tải Script</a>` : `<span class="btn-sub" style="opacity:0.35">No Script</span>`}
+                                ${p.guide_link ? `<a href="${p.guide_link}" target="_blank" class="btn-sub">📖 Hướng dẫn</a>` : `<span class="btn-sub" style="opacity:0.35">No Guide</span>`}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        document.getElementById('searchInput').addEventListener('input', render);
+        window.onload = loadJSONP;
+    </script>
+</body>
+</html>
