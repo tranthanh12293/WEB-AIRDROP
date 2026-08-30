@@ -149,7 +149,7 @@
         </div>
 
         <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">
-            © 2026 Trần Thành MMO Hub.ltd Dữ liệu tự động đồng bộ từ Trần Thành MMO Hub.ltd
+            © 2026 Trần Thành MMO Hub. Dữ liệu tự động đồng bộ từ Google Sheet.
         </footer>
     </div>
 
@@ -354,14 +354,12 @@
     <!-- ==================== LOGIC JAVASCRIPT ==================== -->
     <script>
         const SHEET_ID = '1Lcj1GV718hze8yzZUET0yg0e70ZRPmt8fALKKHASm5A';
-        // THAY LINK APPS SCRIPT CỦA BẠN VÀO ĐÂY:
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
 
         let allProjects = [];
         let currentTab = 'airdrop';
         let activeCategory = 'all';
 
-        // Tạm lưu thông tin đăng ký / đăng nhập
         let tempLoginEmail = '';
         let tempRegData = null;
         let tempRegOtp = '';
@@ -584,7 +582,6 @@
                 if (data.status === 'success') {
                     alert("Đăng ký thành công! Vui lòng đăng nhập.");
                     closeModal('modalRegister');
-                    // Reset form
                     document.getElementById('regStep1').classList.remove('hidden');
                     document.getElementById('regStep2').classList.add('hidden');
                     openModal('modalLogin');
