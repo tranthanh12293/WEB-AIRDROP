@@ -38,7 +38,7 @@
                 <button onclick="openModal('modalLogin')" class="py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-blue-500/25 transition active:scale-95 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-right-to-bracket text-base"></i> ĐĂNG NHẬP
                 </button>
-                <button onclick="openModal('modalRegister')" class="py-4 px-6 rounded-2xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-sm uppercase tracking-wider shadow-lg shadow-slate-900/20 transition active:scale-95 flex items-center justify-center gap-2">
+                <button onclick="openRegisterModal()" class="py-4 px-6 rounded-2xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-sm uppercase tracking-wider shadow-lg shadow-slate-900/20 transition active:scale-95 flex items-center justify-center gap-2">
                     <i class="fa-solid fa-user-plus text-base"></i> ĐĂNG KÝ
                 </button>
             </div>
@@ -200,18 +200,21 @@
         </div>
     </div>
 
-    <!-- 4. MODAL ĐĂNG KÝ -->
+    <!-- 4. MODAL ĐĂNG KÝ (CÓ MÀN HÌNH CHỜ DUYỆT TRỰC TIẾP) -->
     <div id="modalRegister" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modalRegister')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
                 <i class="fa-solid fa-xmark text-sm"></i>
             </button>
-            <div class="text-center mb-6">
+            
+            <div id="regHeader" class="text-center mb-6">
                 <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-xl mx-auto mb-2">
                     <i class="fa-solid fa-user-plus"></i>
                 </div>
                 <h3 class="text-xl font-black text-slate-900 uppercase">ĐĂNG KÝ TÀI KHOẢN</h3>
             </div>
+
+            <!-- Bước 1: Điền thông tin -->
             <div id="regStep1" class="space-y-3.5">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản đăng nhập *</label>
@@ -263,6 +266,8 @@
                 </div>
                 <button onclick="submitRegisterStep1()" id="btnRegSubmit" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">ĐĂNG KÝ VÀ NHẬN OTP</button>
             </div>
+
+            <!-- Bước 2: Nhập OTP -->
             <div id="regStep2" class="space-y-4 hidden">
                 <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center">
                     <p class="text-xs text-slate-600">Mã OTP đăng ký đã được gửi đến Gmail:</p>
@@ -274,6 +279,34 @@
                 </div>
                 <button onclick="submitRegisterStep2()" id="btnRegVerify" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">HOÀN TẤT ĐĂNG KÝ</button>
             </div>
+
+            <!-- Bước 3: Màn hình chờ kích hoạt -->
+            <div id="regStepPending" class="space-y-5 text-center hidden py-4">
+                <div class="w-16 h-16 rounded-3xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-hourglass-half fa-bounce"></i>
+                </div>
+                <div>
+                    <h4 class="text-lg font-black text-slate-900 uppercase">ĐĂNG KÝ THÀNH CÔNG!</h4>
+                    <p class="text-xs text-slate-600 mt-2 leading-relaxed max-w-sm mx-auto">
+                        Tài khoản của bạn đã được ghi nhận vào hệ thống và đang trong trạng thái 
+                        <span class="text-amber-600 font-bold uppercase">Chờ Admin kích hoạt</span>.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center">
+                    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">LIÊN HỆ DUYỆT NHANH QUA TELEGRAM</p>
+                    <a href="https://t.me/tranthanh1202" target="_blank" class="inline-flex items-center gap-2 text-sm font-black text-sky-600 hover:text-sky-700 mt-1.5 transition">
+                        <i class="fa-brands fa-telegram text-lg"></i> @tranthanh1202
+                    </a>
+                </div>
+
+                <div class="pt-2">
+                    <button onclick="switchToLoginFromPending()" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition active:scale-95">
+                        <i class="fa-solid fa-right-to-bracket"></i> ĐĂNG NHẬP NGAY (LẤY OTP)
+                    </button>
+                </div>
+            </div>
+
             <div id="regMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
         </div>
     </div>
@@ -487,6 +520,20 @@
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
+        function openRegisterModal() {
+            document.getElementById('regHeader').classList.remove('hidden');
+            document.getElementById('regStep1').classList.remove('hidden');
+            document.getElementById('regStep2').classList.add('hidden');
+            document.getElementById('regStepPending').classList.add('hidden');
+            document.getElementById('regMsg').classList.add('hidden');
+            openModal('modalRegister');
+        }
+
+        function switchToLoginFromPending() {
+            closeModal('modalRegister');
+            openModal('modalLogin');
+        }
+
         function openProfileModal() {
             openModal('modalProfile');
             document.getElementById('profMsg').classList.add('hidden');
@@ -496,7 +543,6 @@
             document.getElementById('profTele').value = '';
         }
 
-        // ================= HÀM GỌI API CHUẨN ĐÃ FIX HOÀN TOÀN =================
         async function callGAS(payload) {
             const res = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
@@ -506,7 +552,6 @@
             try {
                 return JSON.parse(text);
             } catch (e) {
-                // Nếu bị Google chuyển tiếp chuỗi text
                 const match = text.match(/\{[\s\S]*\}/);
                 if (match) return JSON.parse(match[0]);
                 throw new Error(text);
@@ -590,8 +635,14 @@
                 const data = await callGAS({ action: 'LOGIN_REQUEST_OTP', userOrMail: userOrMail, password: pass });
 
                 if (data.status === 'pending_approval') {
-                    msgEl.className = "mt-4 p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-bold text-center block leading-relaxed";
-                    msgEl.innerHTML = '<i class="fa-solid fa-clock text-amber-600 mb-1 block text-base"></i> ' + data.message;
+                    msgEl.className = "mt-4 p-3.5 bg-amber-50 border border-amber-200 text-amber-900 rounded-2xl text-xs font-bold text-center block leading-relaxed";
+                    msgEl.innerHTML = `
+                        <i class="fa-solid fa-clock text-amber-600 mb-1.5 block text-lg"></i>
+                        <span>${data.message}</span>
+                        <div class="mt-2 pt-2 border-t border-amber-200/60 flex items-center justify-center gap-1.5 text-[11px] font-black text-sky-600">
+                            <i class="fa-brands fa-telegram text-sm"></i> Telegram: @tranthanh1202
+                        </div>
+                    `;
                     return;
                 }
 
@@ -748,11 +799,11 @@
                 const data = await callGAS({ action: 'REGISTER_SAVE_USER', ...tempRegData });
 
                 if (data.status === 'success') {
-                    alert("🎉 Đăng ký thành công!\n\nTài khoản của bạn đang được đưa vào danh sách chờ kích hoạt. Vui lòng liên hệ Admin để được duyệt sớm!");
-                    closeModal('modalRegister');
-                    document.getElementById('regStep1').classList.remove('hidden');
+                    // Chuyển trực tiếp sang màn hình chờ kích hoạt trên giao diện web
+                    document.getElementById('regHeader').classList.add('hidden');
                     document.getElementById('regStep2').classList.add('hidden');
-                    openModal('modalLogin');
+                    document.getElementById('regStepPending').classList.remove('hidden');
+                    msgEl.classList.add('hidden');
                 } else {
                     msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
                     msgEl.innerText = data.message;
