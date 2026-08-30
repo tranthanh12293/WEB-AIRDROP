@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ AIRDROP & CRYPTO SCRIPTS HUB</title>
+    <title>⚡ TRẦN THÀNH - CRYPTO & MMO HUB</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,69 +25,191 @@
         }
     </script>
 </head>
-<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased">
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased flex flex-col justify-between">
 
-    <!-- Header / Navbar -->
-    <header class="border-b border-borderLight bg-white/90 backdrop-blur sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-blue-500/20">
-                    ⚡
+    <div>
+        <!-- Header / Navbar -->
+        <header class="border-b border-borderLight bg-white/95 backdrop-blur sticky top-0 z-40 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+                
+                <!-- Logo & Brand -->
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-blue-500/20">
+                        ⚡
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900 tracking-wide">TRẦN THÀNH HUB</h1>
+                        <p class="text-xs text-textMuted font-medium">Airdrop, Scripts & Dịch vụ MMO</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="text-lg font-bold text-slate-900 tracking-wide">AIRDROP HUB & SCRIPTS</h1>
-                    <p class="text-xs text-textMuted font-medium">Cập nhật kèo Airdrop & Tool chạy tự động</p>
+
+                <!-- Main Menu Tabs -->
+                <nav class="flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                    <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white text-blue-600 shadow-sm">
+                        <i class="fa-solid fa-parachute-box"></i> AIRDROP
+                    </button>
+                    <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+                        <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
+                    </button>
+                    <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
+                        <i class="fa-solid fa-network-wired"></i> PROXY
+                    </button>
+                </nav>
+
+                <!-- Search Bar (chỉ hiện khi ở tab AIRDROP) -->
+                <div id="searchContainer" class="relative w-full md:w-72">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" placeholder="Tìm tên kèo, hệ sinh thái..." 
+                        class="w-full bg-slate-50 border border-borderLight rounded-xl pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
                 </div>
             </div>
+        </header>
 
-            <!-- Thanh tìm kiếm -->
-            <div class="relative w-full sm:w-80">
-                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="text" id="searchInput" placeholder="Tìm tên kèo, danh mục..." 
-                    class="w-full bg-slate-50 border border-borderLight rounded-lg pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
+        <!-- Section 1: Trang Danh Sách Airdrop -->
+        <main id="section-airdrop" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <!-- Filter Categories -->
+            <div class="flex flex-wrap items-center gap-2 mb-8" id="categoryTabs">
+                <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold bg-primaryBlue text-white shadow-sm transition" data-cat="all">Tất cả</button>
+            </div>
+
+            <!-- Loader -->
+            <div id="loader" class="text-center py-20">
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
+                <p class="text-textMuted text-sm font-medium">Đang đồng bộ dữ liệu từ Google Sheet...</p>
+            </div>
+
+            <!-- Grid Cards -->
+            <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+
+            <!-- Không có kết quả -->
+            <div id="noData" class="text-center py-16 hidden">
+                <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
+                <p class="text-textMuted text-sm">Không tìm thấy dự án nào phù hợp.</p>
+            </div>
+        </main>
+
+        <!-- Section 2: Khung thông báo TÀI NGUYÊN / PROXY -->
+        <main id="section-contact" class="max-w-3xl mx-auto px-4 sm:px-6 py-16 hidden">
+            <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-xl">
+                <div id="contactIcon" class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
+                    <i class="fa-solid fa-network-wired"></i>
+                </div>
+                
+                <h2 id="contactTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
+                <p id="contactDesc" class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">
+                    Cung cấp Proxy Residential, Datacenter, VPS và các giải pháp nuôi tài khoản tự động tốc độ cao.
+                </p>
+
+                <!-- Box Liên hệ Tele -->
+                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-sm">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Kênh hỗ trợ trực tiếp</div>
+                    <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
+                        <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
+                        <i class="fa-solid fa-paper-plane"></i> Nhắn tin Telegram ngay
+                    </a>
+                    <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center gap-2 transition">
+                        <i class="fa-regular fa-copy"></i> Copy Username
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Xem Hướng Dẫn Trực Tiếp (Popup) -->
+    <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden transform transition-all">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 id="modalProjectTitle" class="text-base sm:text-lg font-bold text-slate-900">Hướng dẫn chi tiết</h3>
+                </div>
+                <button onclick="closeGuideModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Hiển thị text từ sheet) -->
+            <div class="p-6 overflow-y-auto">
+                <div id="modalGuideBody" class="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-200/80 font-normal"></div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="closeGuideModal()" class="px-5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold transition">
+                    Đóng lại
+                </button>
             </div>
         </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-        
-        <!-- Filter Tabs -->
-        <div class="flex flex-wrap items-center gap-2 mb-8" id="categoryTabs">
-            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold bg-primaryBlue text-white shadow-sm transition" data-cat="all">Tất cả</button>
-        </div>
-
-        <!-- Trạng thái Loading -->
-        <div id="loader" class="text-center py-20">
-            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
-            <p class="text-textMuted text-sm font-medium">Đang đồng bộ dữ liệu từ Google Sheet...</p>
-        </div>
-
-        <!-- Grid Cards -->
-        <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
-
-        <!-- Không có kết quả -->
-        <div id="noData" class="text-center py-16 hidden">
-            <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
-            <p class="text-textMuted text-sm">Không tìm thấy dự án nào phù hợp.</p>
-        </div>
-    </main>
+    </div>
 
     <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white">
-        © 2026 Airdrop & Scripts Portal. Dữ liệu tự động cập nhật từ Google Sheet.
+        © 2026 Trần Thành MMO Hub. Dữ liệu tự động đồng bộ từ Google Sheet.
     </footer>
 
-    <!-- Logic JS (JSONP chống chặn CORS) -->
+    <!-- Logic JS -->
     <script>
         const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
         let allProjects = [];
         let activeCategory = 'all';
 
+        // 1. Chuyển đổi giữa các tab lớn trên Menu
+        function switchMainTab(tab) {
+            const secAirdrop = document.getElementById('section-airdrop');
+            const secContact = document.getElementById('section-contact');
+            const searchContainer = document.getElementById('searchContainer');
+
+            const navAirdrop = document.getElementById('nav-airdrop');
+            const navResource = document.getElementById('nav-resource');
+            const navProxy = document.getElementById('nav-proxy');
+
+            // Reset style tất cả các nút
+            [navAirdrop, navResource, navProxy].forEach(btn => {
+                btn.className = "nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-2";
+            });
+
+            const activeClass = "nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white text-blue-600 shadow-sm";
+
+            if (tab === 'airdrop') {
+                secAirdrop.classList.remove('hidden');
+                secContact.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+                navAirdrop.className = activeClass;
+            } else {
+                secAirdrop.classList.add('hidden');
+                secContact.classList.remove('hidden');
+                searchContainer.classList.add('hidden');
+
+                const title = document.getElementById('contactTitle');
+                const desc = document.getElementById('contactDesc');
+                const icon = document.getElementById('contactIcon');
+
+                if (tab === 'resource') {
+                    navResource.className = activeClass;
+                    icon.innerHTML = '<i class="fa-solid fa-box-archive text-amber-500"></i>';
+                    title.innerText = "KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG";
+                    desc.innerText = "Cung cấp các tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.";
+                } else if (tab === 'proxy') {
+                    navProxy.className = activeClass;
+                    icon.innerHTML = '<i class="fa-solid fa-network-wired text-blue-600"></i>';
+                    title.innerText = "DỊCH VỤ PROXY CHẤT LƯỢNG CAO";
+                    desc.innerText = "Cung cấp Proxy Residential, Datacenter, IPv4/IPv6 sạch, tốc độ cao, hỗ trợ nuôi tài khoản không lo checkpoint.";
+                }
+            }
+        }
+
+        // 2. Nạp dữ liệu từ Google Sheet bằng JSONP
         function handleGoogleData(response) {
             try {
-                if (response.status === 'error') {
-                    throw new Error(response.errors[0].message);
-                }
+                if (response.status === 'error') throw new Error(response.errors[0].message);
 
                 const rows = response.table.rows;
                 allProjects = rows.map(r => {
@@ -100,7 +222,7 @@
                         description: c[4] ? (c[4].v ?? '') : '',
                         ref_link: c[5] ? (c[5].v ?? '') : '',
                         script_link: c[6] ? (c[6].v ?? '') : '',
-                        guide_link: c[7] ? (c[7].v ?? '') : ''
+                        guide_text: c[7] ? (c[7].v ?? '') : '' // Text hướng dẫn tự điền
                     };
                 }).filter(p => p.title && p.title.toString().toLowerCase() !== 'title');
 
@@ -115,7 +237,6 @@
                     <div class="text-red-500">
                         <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
                         <p class="font-bold">Lỗi nạp dữ liệu từ Google Sheet!</p>
-                        <p class="text-xs text-slate-500 mt-1">Kiểm tra lại quyền công khai trên Google Sheet.</p>
                     </div>
                 `;
             }
@@ -124,14 +245,6 @@
         function loadJSONP() {
             const script = document.createElement('script');
             script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
-            script.onerror = function() {
-                document.getElementById('loader').innerHTML = `
-                    <div class="text-red-500">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
-                        <p class="font-bold">Không thể kết nối đến Google Sheet!</p>
-                    </div>
-                `;
-            };
             document.body.appendChild(script);
         }
 
@@ -174,7 +287,7 @@
             }
 
             noData.classList.add('hidden');
-            grid.innerHTML = filtered.map(p => {
+            grid.innerHTML = filtered.map((p, index) => {
                 const isHot = p.status.toString().toUpperCase() === 'HOT';
                 const statusBadge = isHot 
                     ? 'bg-rose-50 text-rose-600 border-rose-200' 
@@ -215,10 +328,10 @@
                                 </a>
                             ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-medium">No Script</div>'}
 
-                            ${p.guide_link ? `
-                                <a href="${p.guide_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 text-xs font-bold flex items-center justify-center gap-1.5 transition">
-                                    <i class="fa-solid fa-book-open"></i> Hướng dẫn
-                                </a>
+                            ${p.guide_text ? `
+                                <button onclick="openGuideModal(${index})" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                                    <i class="fa-solid fa-book-open"></i> Xem Hướng dẫn
+                                </button>
                             ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-medium">No Guide</div>'}
                         </div>
                     </div>
@@ -226,6 +339,31 @@
                 `;
             }).join('');
         }
+
+        // 3. Xử lý Popup Modal Hướng Dẫn
+        function openGuideModal(index) {
+            const project = allProjects[index];
+            if (!project) return;
+
+            document.getElementById('modalProjectTitle').innerText = `Hướng dẫn: ${project.title}`;
+            document.getElementById('modalGuideBody').innerText = project.guide_text;
+            document.getElementById('guideModal').classList.remove('hidden');
+        }
+
+        function closeGuideModal() {
+            document.getElementById('guideModal').classList.add('hidden');
+        }
+
+        // 4. Copy Telegram
+        function copyTelegram() {
+            navigator.clipboard.writeText("@tranthanh1202");
+            alert("Đã sao chép Telegram: @tranthanh1202");
+        }
+
+        // Đóng modal khi click ra ngoài vùng xám
+        document.getElementById('guideModal').addEventListener('click', (e) => {
+            if (e.target.id === 'guideModal') closeGuideModal();
+        });
 
         document.getElementById('searchInput').addEventListener('input', renderProjects);
         window.addEventListener('DOMContentLoaded', loadJSONP);
