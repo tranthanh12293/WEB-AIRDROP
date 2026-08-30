@@ -25,7 +25,7 @@
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none relative">
 
-    <!-- 1. LOCKSCREEN -->
+    <!-- 1. LOCKSCREEN (MÀN HÌNH CHÍNH KHI CHƯA ĐĂNG NHẬP) -->
     <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
         <div></div>
         <div class="max-w-lg mx-auto w-full text-center">
@@ -69,7 +69,7 @@
                                 <button onclick="openProfileModal()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition flex items-center gap-2.5">
                                     <i class="fa-solid fa-user-gear text-slate-400"></i> Đổi thông tin & Mật khẩu
                                 </button>
-                                <button onclick="logout()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-2.5">
+                                <button onclick="triggerLogoutModal()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-2.5">
                                     <i class="fa-solid fa-right-from-bracket text-rose-500"></i> Đăng xuất
                                 </button>
                             </div>
@@ -200,7 +200,7 @@
         </div>
     </div>
 
-    <!-- 4. MODAL ĐĂNG KÝ (CÓ MÀN HÌNH CHỜ DUYỆT TRỰC TIẾP) -->
+    <!-- 4. MODAL ĐĂNG KÝ (CÓ MÀN HÌNH CHỜ KÍCH HOẠT TRỰC TIẾP) -->
     <div id="modalRegister" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modalRegister')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -406,7 +406,56 @@
         </div>
     </div>
 
-    <!-- 7. MODAL HƯỚNG DẪN -->
+    <!-- 7. MODAL XÁC NHẬN ĐĂNG XUẤT (LOGOUT CONFIRM MODAL) -->
+    <div id="modalLogout" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative text-center">
+            
+            <!-- Trạng thái 1: Hỏi xác nhận đăng xuất -->
+            <div id="logoutConfirmStep" class="space-y-4">
+                <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center text-2xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-slate-900 uppercase">ĐĂNG XUẤT HỆ THỐNG</h3>
+                    <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                        Bạn có chắc chắn muốn thoát khỏi phiên đăng nhập hiện tại không?
+                    </p>
+                </div>
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="closeModal('modalLogout')" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider transition active:scale-95">
+                        HỦY BỎ
+                    </button>
+                    <button onclick="confirmLogoutAction()" class="py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-rose-500/25 transition active:scale-95">
+                        ĐĂNG XUẤT
+                    </button>
+                </div>
+            </div>
+
+            <!-- Trạng thái 2: Hẹn gặp lại & Điều hướng -->
+            <div id="logoutSuccessStep" class="space-y-5 hidden py-2">
+                <div class="w-16 h-16 rounded-3xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-hand-wave fa-bounce"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-slate-900 uppercase">HẸN GẶP LẠI BẠN!</h3>
+                    <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+                        Bạn đã đăng xuất an toàn khỏi <strong>TRẦN THÀNH HUB</strong>. Chúc bạn có một ngày làm việc hiệu quả và săn được nhiều kèo khủng!
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <button onclick="redirectToAuth('login')" class="py-3.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider shadow-md shadow-blue-500/20 transition active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-right-to-bracket"></i> ĐĂNG NHẬP
+                    </button>
+                    <button onclick="redirectToAuth('register')" class="py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-black text-emerald-400 text-xs font-black uppercase tracking-wider shadow-md transition active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> ĐĂNG KÝ
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 8. MODAL HƯỚNG DẪN -->
     <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden transform transition-all">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
@@ -509,11 +558,34 @@
             }
         }
 
-        function logout() {
-            if (confirm("Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?")) {
-                localStorage.removeItem('hub_logged_username');
-                localStorage.removeItem('hub_logged_email');
-                window.location.reload();
+        // ================= XỬ LÝ LOGOUT CHUYÊN NGHIỆP =================
+        function triggerLogoutModal() {
+            document.getElementById('userDropdown').classList.add('hidden');
+            document.getElementById('logoutConfirmStep').classList.remove('hidden');
+            document.getElementById('logoutSuccessStep').classList.add('hidden');
+            openModal('modalLogout');
+        }
+
+        function confirmLogoutAction() {
+            // Xóa toàn bộ session
+            localStorage.removeItem('hub_logged_username');
+            localStorage.removeItem('hub_logged_email');
+            
+            // Ẩn ứng dụng chính, chuyển về màn hình lockscreen ở nền
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('lockScreen').classList.remove('hidden');
+
+            // Chuyển nội dung modal sang màn hình "Hẹn gặp lại"
+            document.getElementById('logoutConfirmStep').classList.add('hidden');
+            document.getElementById('logoutSuccessStep').classList.remove('hidden');
+        }
+
+        function redirectToAuth(target) {
+            closeModal('modalLogout');
+            if (target === 'login') {
+                openModal('modalLogin');
+            } else if (target === 'register') {
+                openRegisterModal();
             }
         }
 
@@ -799,7 +871,6 @@
                 const data = await callGAS({ action: 'REGISTER_SAVE_USER', ...tempRegData });
 
                 if (data.status === 'success') {
-                    // Chuyển trực tiếp sang màn hình chờ kích hoạt trên giao diện web
                     document.getElementById('regHeader').classList.add('hidden');
                     document.getElementById('regStep2').classList.add('hidden');
                     document.getElementById('regStepPending').classList.remove('hidden');
