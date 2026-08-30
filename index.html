@@ -25,7 +25,7 @@
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none relative">
 
-    <!-- 1. MÀN HÌNH KHÓA CHƯA ĐĂNG NHẬP (LOCKSCREEN) -->
+    <!-- 1. LOCKSCREEN -->
     <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
         <div></div>
         <div class="max-w-lg mx-auto w-full text-center">
@@ -49,7 +49,7 @@
         <footer class="text-center text-xs text-slate-400 font-medium py-4">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
     </div>
 
-    <!-- 2. NỘI DUNG CHÍNH (MAIN APPLICATION) -->
+    <!-- 2. MAIN APPLICATION -->
     <div id="mainApp" class="hidden min-h-screen flex flex-col justify-between">
         <div>
             <header class="border-b border-borderLight bg-white shadow-sm">
@@ -496,18 +496,21 @@
             document.getElementById('profTele').value = '';
         }
 
-        // ================= HÀM GỌI API CHUẨN (CORS-SAFE) =================
+        // ================= HÀM GỌI API CHUẨN ĐÃ FIX HOÀN TOÀN =================
         async function callGAS(payload) {
             const res = await fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                redirect: 'follow',
-                headers: {
-                    'Content-Type': 'text/plain;charset=utf-8'
-                },
                 body: JSON.stringify(payload)
             });
             const text = await res.text();
-            return JSON.parse(text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                // Nếu bị Google chuyển tiếp chuỗi text
+                const match = text.match(/\{[\s\S]*\}/);
+                if (match) return JSON.parse(match[0]);
+                throw new Error(text);
+            }
         }
 
         // ================= PROFILE: ĐỔI THÔNG TIN & MẬT KHẨU =================
