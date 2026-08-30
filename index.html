@@ -29,7 +29,7 @@
     <div>
         <!-- Header / Navbar -->
         <header class="border-b border-borderLight bg-white/95 backdrop-blur sticky top-0 z-40 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col xl:flex-row justify-between items-center gap-4">
                 
                 <!-- Logo & Brand -->
                 <div class="flex items-center gap-3">
@@ -43,29 +43,32 @@
                 </div>
 
                 <!-- Main Menu Tabs -->
-                <nav class="flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                    <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-5 py-2 rounded-lg text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
+                <nav class="flex flex-wrap items-center justify-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                    <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
                         <i class="fa-solid fa-parachute-box"></i> AIRDROP
                     </button>
-                    <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab px-5 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                    <button id="nav-tools" onclick="switchMainTab('tools')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                        <i class="fa-solid fa-puzzle-piece"></i> APP + EXTENSION + SCR HỖ TRỢ
+                    </button>
+                    <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
                         <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
                     </button>
-                    <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab px-5 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                    <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
                         <i class="fa-solid fa-network-wired"></i> PROXY
                     </button>
                 </nav>
 
                 <!-- Search Bar -->
-                <div id="searchContainer" class="relative w-full md:w-72">
+                <div id="searchContainer" class="relative w-full xl:w-64">
                     <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" id="searchInput" placeholder="Tìm tên kèo, hệ sinh thái..." 
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm nhanh..." 
                         class="w-full bg-slate-50 border border-borderLight rounded-xl pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
                 </div>
             </div>
         </header>
 
-        <!-- Section 1: Trang Danh Sách Airdrop -->
-        <main id="section-airdrop" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <!-- Section 1: Hiển thị Danh Sách Card (Dùng chung cho cả AIRDROP và TOOLS) -->
+        <main id="section-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
             <!-- Filter Categories -->
             <div class="flex flex-wrap items-center gap-2 mb-8" id="categoryTabs">
                 <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
@@ -83,7 +86,7 @@
             <!-- Không có kết quả -->
             <div id="noData" class="text-center py-16 hidden">
                 <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
-                <p class="text-textMuted text-sm">Không tìm thấy dự án nào phù hợp.</p>
+                <p class="text-textMuted text-sm">Không tìm thấy mục nào phù hợp.</p>
             </div>
         </main>
 
@@ -151,37 +154,53 @@
     </div>
 
     <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">
-        © 2026 Trần Thành MMO Hub.
+        © 2026 Trần Thành MMO Hub. Dữ liệu tự động đồng bộ từ Google Sheet.
     </footer>
 
     <!-- Logic JS -->
     <script>
         const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
         let allProjects = [];
+        let currentTab = 'airdrop'; // 'airdrop' hoặc 'tools'
         let activeCategory = 'all';
 
+        const TOOL_CATEGORIES = ['APP', 'EXTENSION', 'SCR', 'TOOL', 'SCR HỖ TRỢ', 'EXTENSION HỖ TRỢ'];
+
+        function isToolCategory(cat) {
+            return TOOL_CATEGORIES.some(t => cat.toUpperCase().includes(t));
+        }
+
         function switchMainTab(tab) {
-            const secAirdrop = document.getElementById('section-airdrop');
+            currentTab = tab;
+            activeCategory = 'all';
+
+            const secContent = document.getElementById('section-content');
             const secContact = document.getElementById('section-contact');
             const searchContainer = document.getElementById('searchContainer');
 
             const navAirdrop = document.getElementById('nav-airdrop');
+            const navTools = document.getElementById('nav-tools');
             const navResource = document.getElementById('nav-resource');
             const navProxy = document.getElementById('nav-proxy');
 
-            [navAirdrop, navResource, navProxy].forEach(btn => {
-                btn.className = "nav-tab px-5 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider";
+            [navAirdrop, navTools, navResource, navProxy].forEach(btn => {
+                btn.className = "nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider";
             });
 
-            const activeClass = "nav-tab px-5 py-2 rounded-lg text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider";
+            const activeClass = "nav-tab px-4 py-2 rounded-lg text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider";
 
-            if (tab === 'airdrop') {
-                secAirdrop.classList.remove('hidden');
+            if (tab === 'airdrop' || tab === 'tools') {
+                secContent.classList.remove('hidden');
                 secContact.classList.add('hidden');
                 searchContainer.classList.remove('hidden');
-                navAirdrop.className = activeClass;
+
+                if (tab === 'airdrop') navAirdrop.className = activeClass;
+                if (tab === 'tools') navTools.className = activeClass;
+
+                buildCategoryTabs();
+                renderProjects();
             } else {
-                secAirdrop.classList.add('hidden');
+                secContent.classList.add('hidden');
                 secContact.classList.remove('hidden');
                 searchContainer.classList.add('hidden');
 
@@ -245,9 +264,19 @@
             document.body.appendChild(script);
         }
 
+        function getCurrentList() {
+            if (currentTab === 'tools') {
+                return allProjects.filter(p => isToolCategory(p.category));
+            } else {
+                return allProjects.filter(p => !isToolCategory(p.category));
+            }
+        }
+
         function buildCategoryTabs() {
-            const categories = ['all', ...new Set(allProjects.map(p => p.category).filter(Boolean))];
+            const currentList = getCurrentList();
+            const categories = ['all', ...new Set(currentList.map(p => p.category).filter(Boolean))];
             const container = document.getElementById('categoryTabs');
+            
             container.innerHTML = categories.map(cat => `
                 <button class="filter-btn px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider border transition shadow-sm ${cat === activeCategory ? 'bg-primaryBlue text-white border-primaryBlue shadow-blue-500/20' : 'bg-white text-slate-600 border-borderLight hover:bg-slate-50 hover:text-slate-900'}" 
                     data-cat="${cat}">
@@ -282,8 +311,9 @@
             const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const grid = document.getElementById('projectGrid');
             const noData = document.getElementById('noData');
+            const currentList = getCurrentList();
 
-            const filtered = allProjects.filter(p => {
+            const filtered = currentList.filter(p => {
                 const matchCat = activeCategory === 'all' || p.category === activeCategory;
                 const matchSearch = p.title.toString().toLowerCase().includes(query) || 
                                     p.description.toString().toLowerCase().includes(query) ||
@@ -298,19 +328,68 @@
             }
 
             noData.classList.add('hidden');
-            grid.innerHTML = filtered.map((p, index) => {
+            grid.innerHTML = filtered.map((p) => {
+                const originalIndex = allProjects.indexOf(p);
                 const isHot = p.status.toString().toUpperCase() === 'HOT';
                 const statusBadge = isHot 
                     ? 'bg-rose-50 text-rose-600 border-rose-200' 
                     : 'bg-emerald-50 text-emerald-600 border-emerald-200';
 
-                const descText = p.description || 'Chưa có mô tả dự án.';
+                const descText = p.description || 'Chưa có mô tả chi tiết.';
                 const isLongDesc = descText.length > 110;
+
+                // Nút bấm cho tab APP/EXTENSION (Chỉ có 2 nút: Tải & HD Sử dụng)
+                let buttonsHTML = '';
+                if (currentTab === 'tools') {
+                    buttonsHTML = `
+                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
+                        ${p.script_link ? `
+                            <a href="${p.script_link}" target="_blank" class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
+                                <i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI VỀ
+                            </a>
+                        ` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
+
+                        ${(p.guide_project || p.guide_script) ? `
+                            <button onclick="openGuideModal(${originalIndex}, 'tool_guide')" class="py-3 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
+                                <i class="fa-solid fa-book-open text-sm text-amber-600"></i> HƯỚNG DẪN
+                            </button>
+                        ` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+                    </div>
+                    `;
+                } else {
+                    // Nút bấm 4 ô chuẩn cho tab AIRDROP
+                    buttonsHTML = `
+                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
+                        ${p.ref_link ? `
+                            <a href="${p.ref_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-blue-500/20 active:scale-95">
+                                <i class="fa-solid fa-link text-sm text-blue-200"></i> ĐĂNG KÝ
+                            </a>
+                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
+
+                        ${p.script_link ? `
+                            <a href="${p.script_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
+                                <i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI SCRIPT
+                            </a>
+                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ TOOL</div>'}
+
+                        ${p.guide_project ? `
+                            <button onclick="openGuideModal(${originalIndex}, 'project')" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
+                                <i class="fa-solid fa-book-open text-sm text-amber-600"></i> HD DỰ ÁN
+                            </button>
+                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+
+                        ${p.guide_script ? `
+                            <button onclick="openGuideModal(${originalIndex}, 'script')" class="py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-300/80 text-purple-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
+                                <i class="fa-solid fa-book text-sm text-purple-600"></i> HD CHẠY TOOL
+                            </button>
+                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD TOOL</div>'}
+                    </div>
+                    `;
+                }
 
                 return `
                 <div class="bg-white border border-slate-200/90 rounded-2xl p-5 hover:border-blue-400 hover:shadow-xl transition-all duration-200 flex flex-col justify-between shadow-sm">
                     <div>
-                        <!-- Header Card -->
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div>
                                 <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold border border-slate-200 uppercase tracking-wide">${p.category}</span>
@@ -321,51 +400,19 @@
                             </span>
                         </div>
 
-                        <!-- Description + Xem Thêm -->
                         <div class="mb-5">
-                            <p id="desc-${index}" class="text-slate-600 text-xs ${isLongDesc ? 'line-clamp-3' : ''} leading-relaxed transition-all duration-300">
+                            <p id="desc-${originalIndex}" class="text-slate-600 text-xs ${isLongDesc ? 'line-clamp-3' : ''} leading-relaxed transition-all duration-300">
                                 ${descText}
                             </p>
                             ${isLongDesc ? `
-                                <button id="btn-toggle-${index}" onclick="toggleDesc(${index})" class="text-[11px] font-black text-blue-600 hover:text-blue-800 mt-1 cursor-pointer uppercase tracking-wider">
+                                <button id="btn-toggle-${originalIndex}" onclick="toggleDesc(${originalIndex})" class="text-[11px] font-black text-blue-600 hover:text-blue-800 mt-1 cursor-pointer uppercase tracking-wider">
                                     XEM THÊM ▼
                                 </button>
                             ` : ''}
                         </div>
                     </div>
 
-                    <!-- Action Buttons 4 Ô Đẳng Cấp -->
-                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
-                        
-                        <!-- 1. ĐĂNG KÝ -->
-                        ${p.ref_link ? `
-                            <a href="${p.ref_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-blue-500/20 active:scale-95">
-                                <i class="fa-solid fa-link text-sm text-blue-200"></i> ĐĂNG KÝ
-                            </a>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
-
-                        <!-- 2. TẢI SCRIPT -->
-                        ${p.script_link ? `
-                            <a href="${p.script_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
-                                <i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI SCRIPT
-                            </a>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ TOOL</div>'}
-
-                        <!-- 3. HD DỰ ÁN -->
-                        ${p.guide_project ? `
-                            <button onclick="openGuideModal(${index}, 'project')" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
-                                <i class="fa-solid fa-book-open text-sm text-amber-600"></i> HD DỰ ÁN
-                            </button>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
-
-                        <!-- 4. HD CHẠY TOOL -->
-                        ${p.guide_script ? `
-                            <button onclick="openGuideModal(${index}, 'script')" class="py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-300/80 text-purple-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
-                                <i class="fa-solid fa-book text-sm text-purple-600"></i> HD CHẠY TOOL
-                            </button>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD TOOL</div>'}
-
-                    </div>
+                    ${buttonsHTML}
                 </div>
                 `;
             }).join('');
@@ -385,11 +432,17 @@
                 headerIcon.className = "fa-solid fa-book-open";
                 title.innerText = `HƯỚNG DẪN DỰ ÁN: ${project.title}`;
                 body.innerText = project.guide_project;
-            } else {
+            } else if (type === 'script') {
                 iconBox.className = "w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center font-bold";
                 headerIcon.className = "fa-solid fa-book";
                 title.innerText = `HƯỚNG DẪN CHẠY TOOL: ${project.title}`;
                 body.innerText = project.guide_script;
+            } else {
+                // Hướng dẫn chung cho App/Tool
+                iconBox.className = "w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold";
+                headerIcon.className = "fa-solid fa-book-open";
+                title.innerText = `HƯỚNG DẪN SỬ DỤNG: ${project.title}`;
+                body.innerText = project.guide_project || project.guide_script;
             }
 
             document.getElementById('guideModal').classList.remove('hidden');
