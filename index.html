@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚡ TRẦN THÀNH - CRYPTO & MMO HUB</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
@@ -25,7 +26,7 @@
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none relative">
 
-    <!-- 1. LOCKSCREEN -->
+    <!-- ==================== 1. MÀN HÌNH KHÓA CHƯA ĐĂNG NHẬP (LOCKSCREEN) ==================== -->
     <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
         <div></div>
         <div class="max-w-lg mx-auto w-full text-center">
@@ -49,10 +50,10 @@
         <footer class="text-center text-xs text-slate-400 font-medium py-4">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
     </div>
 
-    <!-- 2. MAIN APPLICATION -->
+    <!-- ==================== 2. NỘI DUNG CHÍNH (MAIN APPLICATION) ==================== -->
     <div id="mainApp" class="hidden min-h-screen flex flex-col justify-between">
         <div>
-            <!-- Header cuộn tự nhiên cùng toàn bộ trang web -->
+            <!-- Header chuẩn căn giữa -->
             <header class="border-b border-borderLight bg-white shadow-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative flex flex-col items-center">
                     
@@ -103,7 +104,7 @@
                         </nav>
                     </div>
 
-                    <!-- Thanh tìm kiếm -->
+                    <!-- Thanh tìm kiếm (Anti-Autofill) -->
                     <div id="searchContainer" class="relative w-full max-w-md">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="search" id="searchInput" name="app_search_keyword_no_autofill" autocomplete="new-password" placeholder="Tìm kiếm nhanh kèo, công cụ..." class="w-full bg-slate-50 border border-borderLight rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
@@ -156,12 +157,12 @@
         <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
     </div>
 
-    <!-- Nút Cuộn Về Đầu Trang (Back to Top Floating Button) -->
+    <!-- Nút Về Đầu Trang (Floating Button) -->
     <button id="btnBackToTop" onclick="scrollToTop()" class="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-xl shadow-blue-500/30 transition-all duration-300 opacity-0 pointer-events-none translate-y-4 active:scale-90" title="Về đầu trang">
         <i class="fa-solid fa-arrow-up text-base"></i>
     </button>
 
-    <!-- 3. MODAL ĐĂNG NHẬP -->
+    <!-- ==================== 3. MODAL ĐĂNG NHẬP ==================== -->
     <div id="modalLogin" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
             <button onclick="closeModal('modalLogin')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -207,7 +208,7 @@
         </div>
     </div>
 
-    <!-- 4. MODAL ĐĂNG KÝ -->
+    <!-- ==================== 4. MODAL ĐĂNG KÝ ==================== -->
     <div id="modalRegister" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modalRegister')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -285,7 +286,7 @@
         </div>
     </div>
 
-    <!-- 5. MODAL QUÊN MẬT KHẨU -->
+    <!-- ==================== 5. MODAL QUÊN MẬT KHẨU ==================== -->
     <div id="modalForgot" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
             <button onclick="closeModal('modalForgot')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -333,7 +334,7 @@
         </div>
     </div>
 
-    <!-- 6. MODAL PROFILE -->
+    <!-- ==================== 6. MODAL ĐỔI THÔNG TIN / PROFILE ==================== -->
     <div id="modalProfile" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
             <button onclick="closeModal('modalProfile')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -365,11 +366,11 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Số điện thoại</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Số điện thoại (Bỏ trống nếu giữ nguyên)</label>
                     <input type="text" id="profPhone" placeholder="0987654321" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username Telegram</label>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username Telegram (Bỏ trống nếu giữ nguyên)</label>
                     <input type="text" id="profTele" placeholder="@username" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
                 </div>
                 <button onclick="submitUpdateProfile()" id="btnProfSubmit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
@@ -380,7 +381,7 @@
         </div>
     </div>
 
-    <!-- 7. MODAL HƯỚNG DẪN -->
+    <!-- ==================== 7. MODAL HƯỚNG DẪN ==================== -->
     <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden transform transition-all">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
@@ -403,7 +404,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
     <script>
         const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
@@ -423,7 +424,17 @@
             return TOOL_CATEGORIES.some(t => cat.toUpperCase().includes(t));
         }
 
-        // ================= XỬ LÝ NÚT VỀ ĐẦU TRANG =================
+        // Kiểm tra độ mạnh Mật khẩu (>= 8 ký tự, có in HOA, có ký tự đặc biệt)
+        function checkPasswordStrength(p) {
+            return p.length >= 8 && /[A-Z]/.test(p) && /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p);
+        }
+
+        // Kiểm tra Số điện thoại (Bắt đầu bằng 0, đúng 10 số)
+        function checkPhoneFormat(p) {
+            return /^0[0-9]{9}$/.test(p);
+        }
+
+        // Xử lý nút cuộn Về đầu trang
         window.addEventListener('scroll', () => {
             const btn = document.getElementById('btnBackToTop');
             if (window.scrollY > 300) {
@@ -492,8 +503,11 @@
             document.getElementById('profMsg').classList.add('hidden');
             document.getElementById('profOldPass').value = '';
             document.getElementById('profNewPass').value = '';
+            document.getElementById('profPhone').value = '';
+            document.getElementById('profTele').value = '';
         }
 
+        // ================= PROFILE: ĐỔI THÔNG TIN & MẬT KHẨU =================
         async function submitUpdateProfile() {
             const currentUsername = localStorage.getItem('hub_logged_username');
             const oldPass = document.getElementById('profOldPass').value.trim();
@@ -505,7 +519,17 @@
 
             if (!oldPass) {
                 msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
-                msgEl.innerText = "Vui lòng nhập mật khẩu hiện tại!";
+                msgEl.innerText = "Vui lòng nhập mật khẩu hiện tại để xác thực!";
+                return;
+            }
+            if (newPass && !checkPasswordStrength(newPass)) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Mật khẩu mới phải từ 8 ký tự, có ít nhất 1 chữ in HOA và 1 ký tự đặc biệt!";
+                return;
+            }
+            if (phone && !checkPhoneFormat(phone)) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Số điện thoại mới phải bắt đầu bằng số 0 và đủ 10 số!";
                 return;
             }
 
@@ -543,6 +567,7 @@
             }
         }
 
+        // ================= AUTH 1: ĐĂNG NHẬP =================
         async function submitLoginStep1() {
             const userOrMail = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
@@ -565,6 +590,12 @@
                     body: JSON.stringify({ action: 'LOGIN_REQUEST_OTP', userOrMail: userOrMail, password: pass })
                 });
                 const data = await res.json();
+
+                if (data.status === 'pending_approval') {
+                    msgEl.className = "mt-4 p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-bold text-center block leading-relaxed";
+                    msgEl.innerHTML = '<i class="fa-solid fa-clock text-amber-600 mb-1 block text-base"></i> ' + data.message;
+                    return;
+                }
 
                 if (data.status === 'success') {
                     tempLoginEmail = data.fullEmail;
@@ -629,6 +660,7 @@
             }
         }
 
+        // ================= AUTH 2: ĐĂNG KÝ =================
         async function submitRegisterStep1() {
             const user = document.getElementById('regUser').value.trim();
             const pass = document.getElementById('regPass').value.trim();
@@ -649,6 +681,16 @@
             if (pass !== passC) {
                 msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
                 msgEl.innerText = "Hai mật khẩu không trùng khớp!";
+                return;
+            }
+            if (!checkPasswordStrength(pass)) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Mật khẩu phải từ 8 ký tự, gồm ít nhất 1 chữ in HOA và 1 ký tự đặc biệt!";
+                return;
+            }
+            if (!checkPhoneFormat(phone)) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số!";
                 return;
             }
             if (!mail.endsWith("@gmail.com") || !mailC.endsWith("@gmail.com")) {
@@ -676,7 +718,7 @@
             try {
                 const res = await fetch(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ action: 'REGISTER_SEND_OTP', username: user, email: mail })
+                    body: JSON.stringify({ action: 'REGISTER_SEND_OTP', username: user, email: mail, password: pass, phone: phone })
                 });
                 const data = await res.json();
 
@@ -720,7 +762,7 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
-                    alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                    alert("🎉 Đăng ký thành công!\n\nTài khoản của bạn đang được đưa vào danh sách chờ kích hoạt. Vui lòng liên hệ Admin để được duyệt sớm!");
                     closeModal('modalRegister');
                     document.getElementById('regStep1').classList.remove('hidden');
                     document.getElementById('regStep2').classList.add('hidden');
@@ -738,6 +780,7 @@
             }
         }
 
+        // ================= AUTH 3: QUÊN MẬT KHẨU =================
         async function submitForgotStep1() {
             const mail = document.getElementById('forgotEmail').value.trim().toLowerCase();
             const msgEl = document.getElementById('forgotMsg');
@@ -794,6 +837,11 @@
                 msgEl.innerText = "Mật khẩu xác nhận không khớp!";
                 return;
             }
+            if (!checkPasswordStrength(pass)) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Mật khẩu mới phải từ 8 ký tự, gồm ít nhất 1 chữ in HOA và 1 ký tự đặc biệt!";
+                return;
+            }
 
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang cập nhật...';
@@ -822,6 +870,7 @@
             }
         }
 
+        // ================= NẠP DỮ LIỆU TỪ MÁY CHỦ =================
         function handleGoogleData(response) {
             try {
                 if (response.status === 'error') throw new Error(response.errors[0].message);
