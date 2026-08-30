@@ -24,107 +24,313 @@
         }
     </script>
 </head>
-<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased flex flex-col justify-between">
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased">
 
-    <div>
-        <!-- Header / Navbar -->
-        <header class="border-b border-borderLight bg-white/95 backdrop-blur sticky top-0 z-40 shadow-sm">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col xl:flex-row justify-between items-center gap-4">
-                
-                <!-- Logo & Brand -->
-                <div class="flex items-center gap-3">
-                    <img src="logo.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover shadow-md border border-slate-200">
-                    <div>
-                        <h1 class="text-lg font-black text-slate-900 tracking-wide">TRẦN THÀNH HUB</h1>
-                        <p class="text-xs text-textMuted font-medium">Airdrop, Scripts Auto & MMO Solution</p>
-                    </div>
-                </div>
-
-                <!-- Main Menu Tabs -->
-                <nav class="flex flex-wrap items-center justify-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                    <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
-                        <i class="fa-solid fa-parachute-box"></i> AIRDROP
-                    </button>
-                    <button id="nav-tools" onclick="switchMainTab('tools')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
-                        <i class="fa-solid fa-puzzle-piece"></i> APP + EXTENSION + SCR HỖ TRỢ
-                    </button>
-                    <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
-                        <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
-                    </button>
-                    <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
-                        <i class="fa-solid fa-network-wired"></i> PROXY
-                    </button>
-                </nav>
-
-                <!-- Search Bar -->
-                <div id="searchContainer" class="relative w-full xl:w-64">
-                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm nhanh..." 
-                        class="w-full bg-slate-50 border border-borderLight rounded-xl pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
-                </div>
+    <!-- ==================== 1. MÀN HÌNH KHÓA CỬA CHƯA ĐĂNG NHẬP (LOCKSCREEN) ==================== -->
+    <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
+        <div></div>
+        <div class="max-w-lg mx-auto w-full text-center">
+            <div class="relative w-28 h-28 mx-auto mb-6">
+                <img src="logo.png" alt="Logo" class="w-28 h-28 rounded-3xl object-cover shadow-2xl border-2 border-white ring-8 ring-blue-500/10">
             </div>
-        </header>
+            
+            <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">TRẦN THÀNH HUB</h1>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-10">Airdrop, Scripts Auto & MMO Solution</p>
 
-        <!-- Section 1: Hiển thị Danh Sách Card (Dùng chung cho cả AIRDROP và TOOLS) -->
-        <main id="section-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
-            <!-- Filter Categories -->
-            <div class="flex flex-wrap items-center gap-2 mb-8" id="categoryTabs">
-                <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+                <button onclick="openModal('modalLogin')" class="py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-blue-500/25 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket text-base"></i> ĐĂNG NHẬP
+                </button>
+                <button onclick="openModal('modalRegister')" class="py-4 px-6 rounded-2xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-sm uppercase tracking-wider shadow-lg shadow-slate-900/20 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-plus text-base"></i> ĐĂNG KÝ
+                </button>
             </div>
-
-            <!-- Loader -->
-            <div id="loader" class="text-center py-20">
-                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
-                <p class="text-textMuted text-sm font-medium">Đang đồng bộ dữ liệu...</p>
+            
+            <div class="mt-6">
+                <button onclick="openModal('modalForgot')" class="text-xs font-bold text-slate-500 hover:text-blue-600 transition">
+                    Quên mật khẩu?
+                </button>
             </div>
+        </div>
 
-            <!-- Grid Cards -->
-            <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
-
-            <!-- Không có kết quả -->
-            <div id="noData" class="text-center py-16 hidden">
-                <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
-                <p class="text-textMuted text-sm">Không tìm thấy mục nào phù hợp.</p>
-            </div>
-        </main>
-
-        <!-- Section 2: Khung thông báo TÀI NGUYÊN / PROXY -->
-        <main id="section-contact" class="max-w-3xl mx-auto px-4 sm:px-6 py-16 hidden">
-            <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-xl">
-                <div id="contactIcon" class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
-                    <i class="fa-solid fa-network-wired"></i>
-                </div>
-                
-                <h2 id="contactTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
-                <p id="contactDesc" class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">
-                    Cung cấp Proxy Residential, Datacenter, VPS và các giải pháp nuôi tài khoản tự động tốc độ cao.
-                </p>
-
-                <!-- Box Liên hệ Tele -->
-                <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-sm">
-                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
-                    <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
-                        <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
-                        <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
-                    </a>
-                    <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition">
-                        <i class="fa-regular fa-copy"></i> COPY USERNAME
-                    </button>
-                </div>
-            </div>
-        </main>
+        <footer class="text-center text-xs text-slate-400 font-medium py-4">
+            © 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.
+        </footer>
     </div>
 
-    <!-- Modal Popup Hiển Thị Hướng Dẫn -->
+    <!-- ==================== 2. NỘI DUNG CHÍNH (CHỈ HIỆN KHI ĐÃ ĐĂNG NHẬP) ==================== -->
+    <div id="mainApp" class="hidden min-h-screen flex flex-col justify-between">
+        <div>
+            <!-- Header / Navbar -->
+            <header class="border-b border-borderLight bg-white/95 backdrop-blur sticky top-0 z-40 shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col xl:flex-row justify-between items-center gap-4">
+                    
+                    <div class="flex items-center gap-3">
+                        <img src="logo.png" alt="Logo" class="w-10 h-10 rounded-xl object-cover shadow-md border border-slate-200">
+                        <div>
+                            <h1 class="text-lg font-black text-slate-900 tracking-wide">TRẦN THÀNH HUB</h1>
+                            <p class="text-xs text-textMuted font-medium">Airdrop, Scripts Auto & MMO Solution</p>
+                        </div>
+                    </div>
+
+                    <nav class="flex flex-wrap items-center justify-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                        <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
+                            <i class="fa-solid fa-parachute-box"></i> AIRDROP
+                        </button>
+                        <button id="nav-tools" onclick="switchMainTab('tools')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-puzzle-piece"></i> APP + EXTENSION + SCR HỖ TRỢ
+                        </button>
+                        <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
+                        </button>
+                        <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab px-4 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-network-wired"></i> PROXY
+                        </button>
+                    </nav>
+
+                    <div class="flex items-center gap-3 w-full xl:w-auto">
+                        <div id="searchContainer" class="relative w-full xl:w-56">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                            <input type="text" id="searchInput" placeholder="Tìm kiếm nhanh..." class="w-full bg-slate-50 border border-borderLight rounded-xl pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
+                        </div>
+
+                        <!-- User Profile Info -->
+                        <div class="flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl shrink-0">
+                            <i class="fa-solid fa-circle-user text-blue-600 text-base"></i>
+                            <span id="headerUsername" class="text-xs font-bold text-slate-800 max-w-[100px] truncate"></span>
+                            <button onclick="logout()" class="text-slate-400 hover:text-rose-600 transition ml-1" title="Đăng xuất">
+                                <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Cards / Grid Area -->
+            <main id="section-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                <div class="flex flex-wrap items-center gap-2 mb-8" id="categoryTabs">
+                    <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
+                </div>
+                <div id="loader" class="text-center py-20">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
+                    <p class="text-textMuted text-sm font-medium">Đang nạp dữ liệu...</p>
+                </div>
+                <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+                <div id="noData" class="text-center py-16 hidden">
+                    <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
+                    <p class="text-textMuted text-sm">Không tìm thấy mục nào phù hợp.</p>
+                </div>
+            </main>
+
+            <!-- Contact Section -->
+            <main id="section-contact" class="max-w-3xl mx-auto px-4 sm:px-6 py-16 hidden">
+                <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-xl">
+                    <div id="contactIcon" class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <h2 id="contactTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
+                    <p id="contactDesc" class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp Proxy Residential, Datacenter, VPS và các giải pháp nuôi tài khoản tự động tốc độ cao.</p>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-sm">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
+                        <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
+                            <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
+                        </a>
+                        <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition">
+                            <i class="fa-regular fa-copy"></i> COPY USERNAME
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">
+            © 2026 Trần Thành MMO Hub. Dữ liệu tự động đồng bộ từ Google Sheet.
+        </footer>
+    </div>
+
+    <!-- ==================== 3. MODAL HỘP THOẠI XÁC THỰC ==================== -->
+
+    <!-- MODAL ĐĂNG NHẬP -->
+    <div id="modalLogin" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+            <button onclick="closeModal('modalLogin')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 uppercase">ĐĂNG NHẬP HỆ THỐNG</h3>
+            </div>
+
+            <!-- Bước 1: Username/Email & Pass -->
+            <div id="loginStep1" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản hoặc Gmail</label>
+                    <input type="text" id="loginUser" placeholder="Nhập username hoặc Gmail" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu</label>
+                    <input type="password" id="loginPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <button onclick="submitLoginStep1()" id="btnLoginNext" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
+                    TIẾP TỤC (LẤY OTP)
+                </button>
+            </div>
+
+            <!-- Bước 2: Nhập OTP Đăng Nhập -->
+            <div id="loginStep2" class="space-y-4 hidden">
+                <div class="bg-blue-50 border border-blue-100 rounded-2xl p-3.5 text-center">
+                    <p class="text-xs text-slate-600">Mã OTP đã được gửi đến Gmail:</p>
+                    <p id="loginMaskedEmail" class="text-sm font-black text-blue-700 mt-0.5 tracking-wide"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã xác thực OTP (6 số)</label>
+                    <input type="text" id="loginOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <button onclick="submitLoginStep2()" id="btnLoginVerify" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
+                    XÁC NHẬN VÀO TRANG CHỦ
+                </button>
+                <div class="text-center">
+                    <button onclick="backLoginStep1()" class="text-xs font-bold text-blue-600 hover:underline">← Quay lại đăng nhập</button>
+                </div>
+            </div>
+            <div id="loginMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- MODAL ĐĂNG KÝ -->
+    <div id="modalRegister" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modalRegister')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 uppercase">ĐĂNG KÝ TÀI KHOẢN</h3>
+            </div>
+
+            <!-- Form đăng ký -->
+            <div id="regStep1" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản đăng nhập *</label>
+                    <input type="text" id="regUser" placeholder="Tên tài khoản (viết liền không dấu)" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu *</label>
+                        <input type="password" id="regPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu *</label>
+                        <input type="password" id="regPassConfirm" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Gmail cá nhân *</label>
+                        <input type="email" id="regEmail" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận lại Gmail *</label>
+                        <input type="email" id="regEmailConfirm" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Số điện thoại *</label>
+                        <input type="text" id="regPhone" placeholder="0987654321" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username Telegram *</label>
+                        <input type="text" id="regTele" placeholder="@username" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 pt-2">
+                    <input type="checkbox" id="regAgree" class="w-4 h-4 text-blue-600 rounded border-slate-300">
+                    <label for="regAgree" class="text-xs text-slate-600 font-medium cursor-pointer">Tôi đồng ý với các điều khoản & chính sách thành viên</label>
+                </div>
+
+                <button onclick="submitRegisterStep1()" id="btnRegSubmit" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
+                    ĐĂNG KÝ VÀ NHẬN OTP
+                </button>
+            </div>
+
+            <!-- OTP Đăng ký -->
+            <div id="regStep2" class="space-y-4 hidden">
+                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center">
+                    <p class="text-xs text-slate-600">Mã OTP đăng ký đã được gửi đến Gmail:</p>
+                    <p id="regTargetEmailDisplay" class="text-sm font-black text-emerald-700 mt-1"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã xác thực OTP (6 số)</label>
+                    <input type="text" id="regOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-emerald-600 focus:bg-white transition">
+                </div>
+                <button onclick="submitRegisterStep2()" id="btnRegVerify" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
+                    HOÀN TẤT ĐĂNG KÝ
+                </button>
+            </div>
+            <div id="regMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- MODAL QUÊN MẬT KHẨU -->
+    <div id="modalForgot" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+            <button onclick="closeModal('modalForgot')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 uppercase">KHÔI PHỤC MẬT KHẨU</h3>
+            </div>
+
+            <!-- Bước 1: Nhập Gmail -->
+            <div id="forgotStep1" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Gmail đăng ký của bạn</label>
+                    <input type="email" id="forgotEmail" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <button onclick="submitForgotStep1()" id="btnForgotNext" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
+                    GỬI MÃ KHÔI PHỤC
+                </button>
+            </div>
+
+            <!-- Bước 2: OTP & Đổi Mật Khẩu Mới -->
+            <div id="forgotStep2" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã OTP xác thực (6 số)</label>
+                    <input type="text" id="forgotOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới</label>
+                    <input type="password" id="forgotNewPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới</label>
+                    <input type="password" id="forgotConfirmPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <button onclick="submitForgotStep2()" id="btnForgotReset" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
+                    CẬP NHẬT MẬT KHẨU MỚI
+                </button>
+            </div>
+            <div id="forgotMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- MODAL POPUP HƯỚNG DẪN -->
     <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden transform transition-all">
-            <!-- Modal Header -->
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                 <div class="flex items-center gap-2.5">
                     <div id="modalIconBox" class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center font-bold">
@@ -132,40 +338,526 @@
                     </div>
                     <h3 id="modalProjectTitle" class="text-base sm:text-lg font-black text-slate-900 uppercase">CHI TIẾT HƯỚNG DẪN</h3>
                 </div>
-                <button onclick="closeGuideModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
+                <button onclick="closeModal('guideModal')" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
-
-            <!-- Modal Content -->
             <div class="p-6 overflow-y-auto">
                 <div id="modalGuideBody" class="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-200/80 font-mono"></div>
             </div>
-
-            <!-- Modal Footer -->
             <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
-                <button onclick="closeGuideModal()" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-black uppercase tracking-wider transition">
-                    ĐÓNG LẠI
-                </button>
+                <button onclick="closeModal('guideModal')" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-black uppercase tracking-wider transition">ĐÓNG LẠI</button>
             </div>
         </div>
     </div>
 
-    <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">
-        © 2026 Trần Thành MMO Hub.ltd Dữ liệu tự động đồng bộ từ máy chủ của Trần Thành MMO Hub.ltd
-    </footer>
-
-    <!-- Logic JS -->
+    <!-- ==================== LOGIC JAVASCRIPT ==================== -->
     <script>
         const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
+        // THAY LINK APPS SCRIPT CỦA BẠN VÀO ĐÂY:
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz_SAMPLE_YOUR_SCRIPT_ID/exec';
+
         let allProjects = [];
-        let currentTab = 'airdrop'; // 'airdrop' hoặc 'tools'
+        let currentTab = 'airdrop';
         let activeCategory = 'all';
+
+        // Tạm lưu thông tin đăng ký / đăng nhập
+        let tempLoginEmail = '';
+        let tempRegData = null;
+        let tempRegOtp = '';
+        let tempForgotEmail = '';
 
         const TOOL_CATEGORIES = ['APP', 'EXTENSION', 'SCR', 'TOOL', 'SCR HỖ TRỢ', 'EXTENSION HỖ TRỢ'];
 
         function isToolCategory(cat) {
             return TOOL_CATEGORIES.some(t => cat.toUpperCase().includes(t));
+        }
+
+        // ================= XỬ LÝ KHÓA TRANG / SESSION =================
+        function initAppSession() {
+            const loggedUser = localStorage.getItem('hub_logged_username');
+            if (loggedUser) {
+                document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('headerUsername').innerText = loggedUser;
+                loadJSONP();
+            } else {
+                document.getElementById('lockScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
+        }
+
+        function logout() {
+            if (confirm("Bạn có chắc chắn muốn đăng xuất?")) {
+                localStorage.removeItem('hub_logged_username');
+                localStorage.removeItem('hub_logged_email');
+                window.location.reload();
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        // ================= AUTH 1: ĐĂNG NHẬP =================
+        async function submitLoginStep1() {
+            const userOrMail = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            const msgEl = document.getElementById('loginMsg');
+            const btn = document.getElementById('btnLoginNext');
+
+            if (!userOrMail || !pass) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng điền đầy đủ tài khoản và mật khẩu!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang xác thực...';
+            msgEl.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'LOGIN_REQUEST_OTP', userOrMail: userOrMail, password: pass })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    tempLoginEmail = data.fullEmail;
+                    document.getElementById('loginMaskedEmail').innerText = data.maskedEmail;
+                    document.getElementById('loginStep1').classList.add('hidden');
+                    document.getElementById('loginStep2').classList.remove('hidden');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi kết nối máy chủ!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'TIẾP TỤC (LẤY OTP)';
+            }
+        }
+
+        function backLoginStep1() {
+            document.getElementById('loginStep1').classList.remove('hidden');
+            document.getElementById('loginStep2').classList.add('hidden');
+            document.getElementById('loginMsg').classList.add('hidden');
+        }
+
+        async function submitLoginStep2() {
+            const otp = document.getElementById('loginOtp').value.trim();
+            const msgEl = document.getElementById('loginMsg');
+            const btn = document.getElementById('btnLoginVerify');
+
+            if (!otp || otp.length < 6) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng nhập đúng 6 chữ số OTP!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang kiểm tra OTP...';
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'LOGIN_VERIFY_OTP', email: tempLoginEmail, otp: otp })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    localStorage.setItem('hub_logged_username', data.username);
+                    localStorage.setItem('hub_logged_email', data.email);
+                    closeModal('modalLogin');
+                    initAppSession();
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi xác thực!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'XÁC NHẬN VÀO TRANG CHỦ';
+            }
+        }
+
+        // ================= AUTH 2: ĐĂNG KÝ =================
+        async function submitRegisterStep1() {
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+            const passC = document.getElementById('regPassConfirm').value.trim();
+            const mail = document.getElementById('regEmail').value.trim().toLowerCase();
+            const mailC = document.getElementById('regEmailConfirm').value.trim().toLowerCase();
+            const phone = document.getElementById('regPhone').value.trim();
+            const tele = document.getElementById('regTele').value.trim();
+            const agree = document.getElementById('regAgree').checked;
+            const msgEl = document.getElementById('regMsg');
+            const btn = document.getElementById('btnRegSubmit');
+
+            if (!user || !pass || !passC || !mail || !mailC || !phone || !tele) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng điền đầy đủ tất cả các trường!";
+                return;
+            }
+            if (pass !== passC) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Hai mật khẩu không trùng khớp!";
+                return;
+            }
+            if (!mail.endsWith("@gmail.com") || !mailC.endsWith("@gmail.com")) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Chỉ chấp nhận địa chỉ @gmail.com!";
+                return;
+            }
+            if (mail !== mailC) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Hai địa chỉ Gmail không trùng khớp!";
+                return;
+            }
+            if (!agree) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Bạn cần đồng ý với điều khoản & chính sách!";
+                return;
+            }
+
+            tempRegData = { username: user, password: pass, email: mail, phone: phone, telegram: tele };
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang gửi mã OTP...';
+            msgEl.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'REGISTER_SEND_OTP', username: user, email: mail })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    tempRegOtp = data.otpToken;
+                    document.getElementById('regTargetEmailDisplay').innerText = mail;
+                    document.getElementById('regStep1').classList.add('hidden');
+                    document.getElementById('regStep2').classList.remove('hidden');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi kết nối máy chủ!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'ĐĂNG KÝ VÀ NHẬN OTP';
+            }
+        }
+
+        async function submitRegisterStep2() {
+            const inputOtp = document.getElementById('regOtp').value.trim();
+            const msgEl = document.getElementById('regMsg');
+            const btn = document.getElementById('btnRegVerify');
+
+            if (!inputOtp || inputOtp !== tempRegOtp) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Mã OTP không chính xác!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang tạo tài khoản...';
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'REGISTER_SAVE_USER', ...tempRegData })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                    closeModal('modalRegister');
+                    // Reset form
+                    document.getElementById('regStep1').classList.remove('hidden');
+                    document.getElementById('regStep2').classList.add('hidden');
+                    openModal('modalLogin');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi lưu tài khoản!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'HOÀN TẤT ĐĂNG KÝ';
+            }
+        }
+
+        // ================= AUTH 3: QUÊN MẬT KHẨU =================
+        async function submitForgotStep1() {
+            const mail = document.getElementById('forgotEmail').value.trim().toLowerCase();
+            const msgEl = document.getElementById('forgotMsg');
+            const btn = document.getElementById('btnForgotNext');
+
+            if (!mail || !mail.endsWith('@gmail.com')) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng nhập đúng Gmail hợp lệ!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang kiểm tra...';
+            msgEl.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'FORGOT_SEND_OTP', email: mail })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    tempForgotEmail = mail;
+                    document.getElementById('forgotStep1').classList.add('hidden');
+                    document.getElementById('forgotStep2').classList.remove('hidden');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi kết nối máy chủ!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'GỬI MÃ KHÔI PHỤC';
+            }
+        }
+
+        async function submitForgotStep2() {
+            const otp = document.getElementById('forgotOtp').value.trim();
+            const pass = document.getElementById('forgotNewPass').value.trim();
+            const passC = document.getElementById('forgotConfirmPass').value.trim();
+            const msgEl = document.getElementById('forgotMsg');
+            const btn = document.getElementById('btnForgotReset');
+
+            if (!otp || !pass || !passC) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng nhập đầy đủ OTP và mật khẩu mới!";
+                return;
+            }
+            if (pass !== passC) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Mật khẩu xác nhận không khớp!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang cập nhật...';
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'FORGOT_RESET_PASSWORD', email: tempForgotEmail, otp: otp, newPassword: pass })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    alert("Cập nhật mật khẩu thành công! Vui lòng đăng nhập lại.");
+                    closeModal('modalForgot');
+                    openModal('modalLogin');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi cập nhật mật khẩu!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'CẬP NHẬT MẬT KHẨU MỚI';
+            }
+        }
+
+        // ================= NẠP DỮ LIỆU AIRDROP & SCRIPT =================
+        function handleGoogleData(response) {
+            try {
+                if (response.status === 'error') throw new Error(response.errors[0].message);
+
+                const rows = response.table.rows;
+                allProjects = rows.map(r => {
+                    const c = r.c;
+                    return {
+                        id: c[0] ? (c[0].v ?? '') : '',
+                        title: c[1] ? (c[1].v ?? '') : '',
+                        category: c[2] ? (c[2].v ?? 'General') : 'General',
+                        status: c[3] ? (c[3].v ?? 'NEW') : 'NEW',
+                        description: c[4] ? (c[4].v ?? '') : '',
+                        ref_link: c[5] ? (c[5].v ?? '') : '',
+                        script_link: c[6] ? (c[6].v ?? '') : '',
+                        guide_project: c[7] ? (c[7].v ?? '') : '',
+                        guide_script: c[8] ? (c[8].v ?? '') : ''
+                    };
+                }).filter(p => p.title && p.title.toString().toLowerCase() !== 'title');
+
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('projectGrid').classList.remove('hidden');
+
+                buildCategoryTabs();
+                renderProjects();
+            } catch (err) {
+                document.getElementById('loader').innerHTML = `<div class="text-red-500 font-bold">Lỗi nạp dữ liệu từ Google Sheet!</div>`;
+            }
+        }
+
+        function loadJSONP() {
+            const script = document.createElement('script');
+            script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
+            document.body.appendChild(script);
+        }
+
+        function getCurrentList() {
+            if (currentTab === 'tools') return allProjects.filter(p => isToolCategory(p.category));
+            return allProjects.filter(p => !isToolCategory(p.category));
+        }
+
+        function buildCategoryTabs() {
+            const currentList = getCurrentList();
+            const categories = ['all', ...new Set(currentList.map(p => p.category).filter(Boolean))];
+            const container = document.getElementById('categoryTabs');
+            
+            container.innerHTML = categories.map(cat => `
+                <button class="filter-btn px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider border transition shadow-sm ${cat === activeCategory ? 'bg-primaryBlue text-white border-primaryBlue shadow-blue-500/20' : 'bg-white text-slate-600 border-borderLight hover:bg-slate-50 hover:text-slate-900'}" data-cat="${cat}">
+                    ${cat === 'all' ? 'TẤT CẢ' : cat}
+                </button>
+            `).join('');
+
+            container.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    activeCategory = e.target.getAttribute('data-cat');
+                    buildCategoryTabs();
+                    renderProjects();
+                });
+            });
+        }
+
+        function toggleDesc(id) {
+            const descEl = document.getElementById(`desc-${id}`);
+            const btnEl = document.getElementById(`btn-toggle-${id}`);
+            if (!descEl || !btnEl) return;
+
+            if (descEl.classList.contains('line-clamp-3')) {
+                descEl.classList.remove('line-clamp-3');
+                btnEl.innerText = 'THU GỌN ▲';
+            } else {
+                descEl.classList.add('line-clamp-3');
+                btnEl.innerText = 'XEM THÊM ▼';
+            }
+        }
+
+        function renderProjects() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const grid = document.getElementById('projectGrid');
+            const noData = document.getElementById('noData');
+            const currentList = getCurrentList();
+
+            const filtered = currentList.filter(p => {
+                const matchCat = activeCategory === 'all' || p.category === activeCategory;
+                const matchSearch = p.title.toString().toLowerCase().includes(query) || 
+                                    p.description.toString().toLowerCase().includes(query) ||
+                                    p.category.toString().toLowerCase().includes(query);
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noData.classList.remove('hidden');
+                return;
+            }
+
+            noData.classList.add('hidden');
+            grid.innerHTML = filtered.map((p) => {
+                const originalIndex = allProjects.indexOf(p);
+                const isHot = p.status.toString().toUpperCase() === 'HOT';
+                const statusBadge = isHot ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200';
+                const descText = p.description || 'Chưa có mô tả chi tiết.';
+                const isLongDesc = descText.length > 110;
+
+                let buttonsHTML = '';
+                if (currentTab === 'tools') {
+                    buttonsHTML = `
+                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
+                        ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95"><i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI VỀ</a>` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
+                        ${(p.guide_project || p.guide_script) ? `<button onclick="openGuideModal(${originalIndex}, 'tool_guide')" class="py-3 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95"><i class="fa-solid fa-book-open text-sm text-amber-600"></i> HƯỚNG DẪN</button>` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+                    </div>`;
+                } else {
+                    buttonsHTML = `
+                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
+                        ${p.ref_link ? `<a href="${p.ref_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-blue-500/20 active:scale-95"><i class="fa-solid fa-link text-sm text-blue-200"></i> ĐĂNG KÝ</a>` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
+                        ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95"><i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI SCRIPT</a>` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ TOOL</div>'}
+                        ${p.guide_project ? `<button onclick="openGuideModal(${originalIndex}, 'project')" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95"><i class="fa-solid fa-book-open text-sm text-amber-600"></i> HD DỰ ÁN</button>` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+                        ${p.guide_script ? `<button onclick="openGuideModal(${originalIndex}, 'script')" class="py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-300/80 text-purple-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95"><i class="fa-solid fa-book text-sm text-purple-600"></i> HD CHẠY TOOL</button>` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD TOOL</div>'}
+                    </div>`;
+                }
+
+                return `
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 hover:border-blue-400 hover:shadow-xl transition-all duration-200 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div>
+                                <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold border border-slate-200 uppercase tracking-wide">${p.category}</span>
+                                <h3 class="text-lg font-black text-slate-900 mt-2.5 tracking-tight">${p.title}</h3>
+                            </div>
+                            <span class="text-[11px] px-2.5 py-1 rounded-md font-black border uppercase tracking-wider ${statusBadge}">
+                                ${p.status}
+                            </span>
+                        </div>
+                        <div class="mb-5">
+                            <p id="desc-${originalIndex}" class="text-slate-600 text-xs ${isLongDesc ? 'line-clamp-3' : ''} leading-relaxed transition-all duration-300">
+                                ${descText}
+                            </p>
+                            ${isLongDesc ? `<button id="btn-toggle-${originalIndex}" onclick="toggleDesc(${originalIndex})" class="text-[11px] font-black text-blue-600 hover:text-blue-800 mt-1 cursor-pointer uppercase tracking-wider">XEM THÊM ▼</button>` : ''}
+                        </div>
+                    </div>
+                    ${buttonsHTML}
+                </div>`;
+            }).join('');
+        }
+
+        function openGuideModal(index, type) {
+            const project = allProjects[index];
+            if (!project) return;
+
+            const iconBox = document.getElementById('modalIconBox');
+            const headerIcon = document.getElementById('modalHeaderIcon');
+            const title = document.getElementById('modalProjectTitle');
+            const body = document.getElementById('modalGuideBody');
+
+            if (type === 'project') {
+                iconBox.className = "w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold";
+                headerIcon.className = "fa-solid fa-book-open";
+                title.innerText = `HƯỚNG DẪN DỰ ÁN: ${project.title}`;
+                body.innerText = project.guide_project;
+            } else if (type === 'script') {
+                iconBox.className = "w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center font-bold";
+                headerIcon.className = "fa-solid fa-book";
+                title.innerText = `HƯỚNG DẪN CHẠY TOOL: ${project.title}`;
+                body.innerText = project.guide_script;
+            } else {
+                iconBox.className = "w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold";
+                headerIcon.className = "fa-solid fa-book-open";
+                title.innerText = `HƯỚNG DẪN SỬ DỤNG: ${project.title}`;
+                body.innerText = project.guide_project || project.guide_script;
+            }
+
+            openModal('guideModal');
         }
 
         function switchMainTab(tab) {
@@ -220,247 +912,13 @@
             }
         }
 
-        function handleGoogleData(response) {
-            try {
-                if (response.status === 'error') throw new Error(response.errors[0].message);
-
-                const rows = response.table.rows;
-                allProjects = rows.map(r => {
-                    const c = r.c;
-                    return {
-                        id: c[0] ? (c[0].v ?? '') : '',
-                        title: c[1] ? (c[1].v ?? '') : '',
-                        category: c[2] ? (c[2].v ?? 'General') : 'General',
-                        status: c[3] ? (c[3].v ?? 'NEW') : 'NEW',
-                        description: c[4] ? (c[4].v ?? '') : '',
-                        ref_link: c[5] ? (c[5].v ?? '') : '',
-                        script_link: c[6] ? (c[6].v ?? '') : '',
-                        guide_project: c[7] ? (c[7].v ?? '') : '',
-                        guide_script: c[8] ? (c[8].v ?? '') : ''
-                    };
-                }).filter(p => p.title && p.title.toString().toLowerCase() !== 'title');
-
-                document.getElementById('loader').classList.add('hidden');
-                document.getElementById('projectGrid').classList.remove('hidden');
-
-                buildCategoryTabs();
-                renderProjects();
-            } catch (err) {
-                console.error("Lỗi:", err);
-                document.getElementById('loader').innerHTML = `
-                    <div class="text-red-500">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
-                        <p class="font-bold uppercase">Lỗi nạp dữ liệu từ Google Sheet!</p>
-                    </div>
-                `;
-            }
-        }
-
-        function loadJSONP() {
-            const script = document.createElement('script');
-            script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
-            document.body.appendChild(script);
-        }
-
-        function getCurrentList() {
-            if (currentTab === 'tools') {
-                return allProjects.filter(p => isToolCategory(p.category));
-            } else {
-                return allProjects.filter(p => !isToolCategory(p.category));
-            }
-        }
-
-        function buildCategoryTabs() {
-            const currentList = getCurrentList();
-            const categories = ['all', ...new Set(currentList.map(p => p.category).filter(Boolean))];
-            const container = document.getElementById('categoryTabs');
-            
-            container.innerHTML = categories.map(cat => `
-                <button class="filter-btn px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider border transition shadow-sm ${cat === activeCategory ? 'bg-primaryBlue text-white border-primaryBlue shadow-blue-500/20' : 'bg-white text-slate-600 border-borderLight hover:bg-slate-50 hover:text-slate-900'}" 
-                    data-cat="${cat}">
-                    ${cat === 'all' ? 'TẤT CẢ' : cat}
-                </button>
-            `).join('');
-
-            container.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    activeCategory = e.target.getAttribute('data-cat');
-                    buildCategoryTabs();
-                    renderProjects();
-                });
-            });
-        }
-
-        function toggleDesc(id) {
-            const descEl = document.getElementById(`desc-${id}`);
-            const btnEl = document.getElementById(`btn-toggle-${id}`);
-            if (!descEl || !btnEl) return;
-
-            if (descEl.classList.contains('line-clamp-3')) {
-                descEl.classList.remove('line-clamp-3');
-                btnEl.innerText = 'THU GỌN ▲';
-            } else {
-                descEl.classList.add('line-clamp-3');
-                btnEl.innerText = 'XEM THÊM ▼';
-            }
-        }
-
-        function renderProjects() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            const grid = document.getElementById('projectGrid');
-            const noData = document.getElementById('noData');
-            const currentList = getCurrentList();
-
-            const filtered = currentList.filter(p => {
-                const matchCat = activeCategory === 'all' || p.category === activeCategory;
-                const matchSearch = p.title.toString().toLowerCase().includes(query) || 
-                                    p.description.toString().toLowerCase().includes(query) ||
-                                    p.category.toString().toLowerCase().includes(query);
-                return matchCat && matchSearch;
-            });
-
-            if (filtered.length === 0) {
-                grid.innerHTML = '';
-                noData.classList.remove('hidden');
-                return;
-            }
-
-            noData.classList.add('hidden');
-            grid.innerHTML = filtered.map((p) => {
-                const originalIndex = allProjects.indexOf(p);
-                const isHot = p.status.toString().toUpperCase() === 'HOT';
-                const statusBadge = isHot 
-                    ? 'bg-rose-50 text-rose-600 border-rose-200' 
-                    : 'bg-emerald-50 text-emerald-600 border-emerald-200';
-
-                const descText = p.description || 'Chưa có mô tả chi tiết.';
-                const isLongDesc = descText.length > 110;
-
-                // Nút bấm cho tab APP/EXTENSION (Chỉ có 2 nút: Tải & HD Sử dụng)
-                let buttonsHTML = '';
-                if (currentTab === 'tools') {
-                    buttonsHTML = `
-                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
-                        ${p.script_link ? `
-                            <a href="${p.script_link}" target="_blank" class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
-                                <i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI VỀ
-                            </a>
-                        ` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
-
-                        ${(p.guide_project || p.guide_script) ? `
-                            <button onclick="openGuideModal(${originalIndex}, 'tool_guide')" class="py-3 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
-                                <i class="fa-solid fa-book-open text-sm text-amber-600"></i> HƯỚNG DẪN
-                            </button>
-                        ` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
-                    </div>
-                    `;
-                } else {
-                    // Nút bấm 4 ô chuẩn cho tab AIRDROP
-                    buttonsHTML = `
-                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
-                        ${p.ref_link ? `
-                            <a href="${p.ref_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-blue-500/20 active:scale-95">
-                                <i class="fa-solid fa-link text-sm text-blue-200"></i> ĐĂNG KÝ
-                            </a>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
-
-                        ${p.script_link ? `
-                            <a href="${p.script_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
-                                <i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI SCRIPT
-                            </a>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ TOOL</div>'}
-
-                        ${p.guide_project ? `
-                            <button onclick="openGuideModal(${originalIndex}, 'project')" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
-                                <i class="fa-solid fa-book-open text-sm text-amber-600"></i> HD DỰ ÁN
-                            </button>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
-
-                        ${p.guide_script ? `
-                            <button onclick="openGuideModal(${originalIndex}, 'script')" class="py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-300/80 text-purple-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
-                                <i class="fa-solid fa-book text-sm text-purple-600"></i> HD CHẠY TOOL
-                            </button>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD TOOL</div>'}
-                    </div>
-                    `;
-                }
-
-                return `
-                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 hover:border-blue-400 hover:shadow-xl transition-all duration-200 flex flex-col justify-between shadow-sm">
-                    <div>
-                        <div class="flex items-start justify-between gap-3 mb-3">
-                            <div>
-                                <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold border border-slate-200 uppercase tracking-wide">${p.category}</span>
-                                <h3 class="text-lg font-black text-slate-900 mt-2.5 tracking-tight">${p.title}</h3>
-                            </div>
-                            <span class="text-[11px] px-2.5 py-1 rounded-md font-black border uppercase tracking-wider ${statusBadge}">
-                                ${p.status}
-                            </span>
-                        </div>
-
-                        <div class="mb-5">
-                            <p id="desc-${originalIndex}" class="text-slate-600 text-xs ${isLongDesc ? 'line-clamp-3' : ''} leading-relaxed transition-all duration-300">
-                                ${descText}
-                            </p>
-                            ${isLongDesc ? `
-                                <button id="btn-toggle-${originalIndex}" onclick="toggleDesc(${originalIndex})" class="text-[11px] font-black text-blue-600 hover:text-blue-800 mt-1 cursor-pointer uppercase tracking-wider">
-                                    XEM THÊM ▼
-                                </button>
-                            ` : ''}
-                        </div>
-                    </div>
-
-                    ${buttonsHTML}
-                </div>
-                `;
-            }).join('');
-        }
-
-        function openGuideModal(index, type) {
-            const project = allProjects[index];
-            if (!project) return;
-
-            const iconBox = document.getElementById('modalIconBox');
-            const headerIcon = document.getElementById('modalHeaderIcon');
-            const title = document.getElementById('modalProjectTitle');
-            const body = document.getElementById('modalGuideBody');
-
-            if (type === 'project') {
-                iconBox.className = "w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold";
-                headerIcon.className = "fa-solid fa-book-open";
-                title.innerText = `HƯỚNG DẪN DỰ ÁN: ${project.title}`;
-                body.innerText = project.guide_project;
-            } else if (type === 'script') {
-                iconBox.className = "w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center font-bold";
-                headerIcon.className = "fa-solid fa-book";
-                title.innerText = `HƯỚNG DẪN CHẠY TOOL: ${project.title}`;
-                body.innerText = project.guide_script;
-            } else {
-                // Hướng dẫn chung cho App/Tool
-                iconBox.className = "w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold";
-                headerIcon.className = "fa-solid fa-book-open";
-                title.innerText = `HƯỚNG DẪN SỬ DỤNG: ${project.title}`;
-                body.innerText = project.guide_project || project.guide_script;
-            }
-
-            document.getElementById('guideModal').classList.remove('hidden');
-        }
-
-        function closeGuideModal() {
-            document.getElementById('guideModal').classList.add('hidden');
-        }
-
         function copyTelegram() {
             navigator.clipboard.writeText("@tranthanh1202");
             alert("Đã sao chép Telegram: @tranthanh1202");
         }
 
-        document.getElementById('guideModal').addEventListener('click', (e) => {
-            if (e.target.id === 'guideModal') closeGuideModal();
-        });
-
         document.getElementById('searchInput').addEventListener('input', renderProjects);
-        window.addEventListener('DOMContentLoaded', loadJSONP);
+        window.addEventListener('DOMContentLoaded', initAppSession);
     </script>
 </body>
 </html>
