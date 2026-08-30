@@ -16,7 +16,6 @@
                         cardBg: '#ffffff',
                         borderLight: '#e2e8f0',
                         primaryBlue: '#2563eb',
-                        primaryHover: '#1d4ed8',
                         textMain: '#0f172a',
                         textMuted: '#64748b'
                     }
@@ -45,14 +44,14 @@
 
                 <!-- Main Menu Tabs -->
                 <nav class="flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                    <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white text-blue-600 shadow-sm">
-                        <i class="fa-solid fa-meteor"></i> AIRDROP
+                    <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-5 py-2 rounded-lg text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
+                        <i class="fa-solid fa-parachute-box"></i> AIRDROP
                     </button>
-                    <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
-                        <i class="fa-solid fa-cubes"></i> TÀI NGUYÊN
+                    <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab px-5 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                        <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
                     </button>
-                    <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-2">
-                        <i class="fa-solid fa-server"></i> PROXY
+                    <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab px-5 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                        <i class="fa-solid fa-network-wired"></i> PROXY
                     </button>
                 </nav>
 
@@ -69,7 +68,7 @@
         <main id="section-airdrop" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
             <!-- Filter Categories -->
             <div class="flex flex-wrap items-center gap-2 mb-8" id="categoryTabs">
-                <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold bg-primaryBlue text-white shadow-sm transition" data-cat="all">Tất cả</button>
+                <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
             </div>
 
             <!-- Loader -->
@@ -92,17 +91,17 @@
         <main id="section-contact" class="max-w-3xl mx-auto px-4 sm:px-6 py-16 hidden">
             <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-xl">
                 <div id="contactIcon" class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
-                    <i class="fa-solid fa-server"></i>
+                    <i class="fa-solid fa-network-wired"></i>
                 </div>
                 
-                <h2 id="contactTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
+                <h2 id="contactTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
                 <p id="contactDesc" class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">
                     Cung cấp Proxy Residential, Datacenter, VPS và các giải pháp nuôi tài khoản tự động tốc độ cao.
                 </p>
 
                 <!-- Box Liên hệ Tele -->
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-sm">
-                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">Kênh hỗ trợ trực tiếp</div>
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
                     <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
                         <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
                     </div>
@@ -110,11 +109,11 @@
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
-                        <i class="fa-solid fa-paper-plane"></i> Nhắn tin Telegram ngay
+                    <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
+                        <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
                     </a>
-                    <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-bold text-sm flex items-center justify-center gap-2 transition">
-                        <i class="fa-regular fa-copy"></i> Copy Username
+                    <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition">
+                        <i class="fa-regular fa-copy"></i> COPY USERNAME
                     </button>
                 </div>
             </div>
@@ -130,7 +129,7 @@
                     <div id="modalIconBox" class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center font-bold">
                         <i id="modalHeaderIcon" class="fa-solid fa-book-open"></i>
                     </div>
-                    <h3 id="modalProjectTitle" class="text-base sm:text-lg font-bold text-slate-900">Chi tiết hướng dẫn</h3>
+                    <h3 id="modalProjectTitle" class="text-base sm:text-lg font-black text-slate-900 uppercase">CHI TIẾT HƯỚNG DẪN</h3>
                 </div>
                 <button onclick="closeGuideModal()" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
                     <i class="fa-solid fa-xmark text-sm"></i>
@@ -144,14 +143,14 @@
 
             <!-- Modal Footer -->
             <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
-                <button onclick="closeGuideModal()" class="px-5 py-2 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-bold transition">
-                    Đóng lại
+                <button onclick="closeGuideModal()" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-black uppercase tracking-wider transition">
+                    ĐÓNG LẠI
                 </button>
             </div>
         </div>
     </div>
 
-    <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white">
+    <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">
         © 2026 Trần Thành MMO Hub.
     </footer>
 
@@ -171,10 +170,10 @@
             const navProxy = document.getElementById('nav-proxy');
 
             [navAirdrop, navResource, navProxy].forEach(btn => {
-                btn.className = "nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-900 transition flex items-center gap-2";
+                btn.className = "nav-tab px-5 py-2 rounded-lg text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider";
             });
 
-            const activeClass = "nav-tab px-4 py-2 rounded-lg text-xs sm:text-sm font-bold transition flex items-center gap-2 bg-white text-blue-600 shadow-sm";
+            const activeClass = "nav-tab px-5 py-2 rounded-lg text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider";
 
             if (tab === 'airdrop') {
                 secAirdrop.classList.remove('hidden');
@@ -192,12 +191,12 @@
 
                 if (tab === 'resource') {
                     navResource.className = activeClass;
-                    icon.innerHTML = '<i class="fa-solid fa-cubes text-amber-500"></i>';
+                    icon.innerHTML = '<i class="fa-solid fa-box-archive text-amber-500"></i>';
                     title.innerText = "KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG";
                     desc.innerText = "Cung cấp các tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.";
                 } else if (tab === 'proxy') {
                     navProxy.className = activeClass;
-                    icon.innerHTML = '<i class="fa-solid fa-server text-blue-600"></i>';
+                    icon.innerHTML = '<i class="fa-solid fa-network-wired text-blue-600"></i>';
                     title.innerText = "DỊCH VỤ PROXY CHẤT LƯỢNG CAO";
                     desc.innerText = "Cung cấp Proxy Residential, Datacenter, IPv4/IPv6 sạch, tốc độ cao, hỗ trợ nuôi tài khoản không lo checkpoint.";
                 }
@@ -234,7 +233,7 @@
                 document.getElementById('loader').innerHTML = `
                     <div class="text-red-500">
                         <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
-                        <p class="font-bold">Lỗi nạp dữ liệu từ Google Sheet!</p>
+                        <p class="font-bold uppercase">Lỗi nạp dữ liệu từ Google Sheet!</p>
                     </div>
                 `;
             }
@@ -250,9 +249,9 @@
             const categories = ['all', ...new Set(allProjects.map(p => p.category).filter(Boolean))];
             const container = document.getElementById('categoryTabs');
             container.innerHTML = categories.map(cat => `
-                <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold border transition shadow-sm ${cat === activeCategory ? 'bg-primaryBlue text-white border-primaryBlue shadow-blue-500/20' : 'bg-white text-slate-600 border-borderLight hover:bg-slate-50 hover:text-slate-900'}" 
+                <button class="filter-btn px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider border transition shadow-sm ${cat === activeCategory ? 'bg-primaryBlue text-white border-primaryBlue shadow-blue-500/20' : 'bg-white text-slate-600 border-borderLight hover:bg-slate-50 hover:text-slate-900'}" 
                     data-cat="${cat}">
-                    ${cat === 'all' ? 'Tất cả' : cat}
+                    ${cat === 'all' ? 'TẤT CẢ' : cat}
                 </button>
             `).join('');
 
@@ -265,7 +264,6 @@
             });
         }
 
-        // Toggle Xem thêm / Thu gọn mô tả
         function toggleDesc(id) {
             const descEl = document.getElementById(`desc-${id}`);
             const btnEl = document.getElementById(`btn-toggle-${id}`);
@@ -273,10 +271,10 @@
 
             if (descEl.classList.contains('line-clamp-3')) {
                 descEl.classList.remove('line-clamp-3');
-                btnEl.innerText = 'Thu gọn ▲';
+                btnEl.innerText = 'THU GỌN ▲';
             } else {
                 descEl.classList.add('line-clamp-3');
-                btnEl.innerText = 'Xem thêm ▼';
+                btnEl.innerText = 'XEM THÊM ▼';
             }
         }
 
@@ -315,57 +313,57 @@
                         <!-- Header Card -->
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <div>
-                                <span class="text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 font-semibold border border-slate-200/60">${p.category}</span>
-                                <h3 class="text-lg font-black text-slate-900 mt-2.5">${p.title}</h3>
+                                <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold border border-slate-200 uppercase tracking-wide">${p.category}</span>
+                                <h3 class="text-lg font-black text-slate-900 mt-2.5 tracking-tight">${p.title}</h3>
                             </div>
-                            <span class="text-xs px-2.5 py-1 rounded-md font-bold border ${statusBadge}">
+                            <span class="text-[11px] px-2.5 py-1 rounded-md font-black border uppercase tracking-wider ${statusBadge}">
                                 ${p.status}
                             </span>
                         </div>
 
-                        <!-- Description + Nút Xem Thêm -->
+                        <!-- Description + Xem Thêm -->
                         <div class="mb-5">
                             <p id="desc-${index}" class="text-slate-600 text-xs ${isLongDesc ? 'line-clamp-3' : ''} leading-relaxed transition-all duration-300">
                                 ${descText}
                             </p>
                             ${isLongDesc ? `
-                                <button id="btn-toggle-${index}" onclick="toggleDesc(${index})" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 mt-1 cursor-pointer">
-                                    Xem thêm ▼
+                                <button id="btn-toggle-${index}" onclick="toggleDesc(${index})" class="text-[11px] font-black text-blue-600 hover:text-blue-800 mt-1 cursor-pointer uppercase tracking-wider">
+                                    XEM THÊM ▼
                                 </button>
                             ` : ''}
                         </div>
                     </div>
 
-                    <!-- Action Buttons: 4 Ô Công Nghệ Cao Cấp -->
-                    <div class="grid grid-cols-2 gap-2 pt-4 border-t border-slate-100">
+                    <!-- Action Buttons 4 Ô Đẳng Cấp -->
+                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
                         
-                        <!-- 1. Đăng ký Ref -->
+                        <!-- 1. ĐĂNG KÝ -->
                         ${p.ref_link ? `
-                            <a href="${p.ref_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-md shadow-blue-500/20">
-                                <i class="fa-solid fa-rocket text-cyan-300"></i> Đăng Ký (Ref)
+                            <a href="${p.ref_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-blue-500/20 active:scale-95">
+                                <i class="fa-solid fa-link text-sm text-blue-200"></i> ĐĂNG KÝ
                             </a>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-medium">No Ref</div>'}
+                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
 
-                        <!-- 2. Tải Script Auto -->
+                        <!-- 2. TẢI SCRIPT -->
                         ${p.script_link ? `
-                            <a href="${p.script_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-slate-900 hover:bg-black text-emerald-400 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow-md shadow-slate-900/20 border border-slate-800">
-                                <i class="fa-solid fa-code-branch text-emerald-400"></i> Tải Script
+                            <a href="${p.script_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
+                                <i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI SCRIPT
                             </a>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-medium">No Script</div>'}
+                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ TOOL</div>'}
 
-                        <!-- 3. Hướng Dẫn Kèo -->
+                        <!-- 3. HD DỰ ÁN -->
                         ${p.guide_project ? `
-                            <button onclick="openGuideModal(${index}, 'project')" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-xs font-bold flex items-center justify-center gap-1.5 transition">
-                                <i class="fa-solid fa-compass text-amber-600"></i> HD Dự Án
+                            <button onclick="openGuideModal(${index}, 'project')" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
+                                <i class="fa-solid fa-book-open text-sm text-amber-600"></i> HD DỰ ÁN
                             </button>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-medium">Chưa có HD</div>'}
+                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
 
-                        <!-- 4. Hướng Dẫn Chạy Tool -->
+                        <!-- 4. HD CHẠY TOOL -->
                         ${p.guide_script ? `
-                            <button onclick="openGuideModal(${index}, 'script')" class="py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-purple-800 text-xs font-bold flex items-center justify-center gap-1.5 transition">
-                                <i class="fa-solid fa-terminal text-purple-600"></i> HD Chạy Tool
+                            <button onclick="openGuideModal(${index}, 'script')" class="py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-300/80 text-purple-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
+                                <i class="fa-solid fa-book text-sm text-purple-600"></i> HD CHẠY TOOL
                             </button>
-                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-medium">Chưa có HD Tool</div>'}
+                        ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD TOOL</div>'}
 
                     </div>
                 </div>
@@ -384,13 +382,13 @@
 
             if (type === 'project') {
                 iconBox.className = "w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold";
-                headerIcon.className = "fa-solid fa-compass";
-                title.innerText = `Hướng dẫn dự án: ${project.title}`;
+                headerIcon.className = "fa-solid fa-book-open";
+                title.innerText = `HƯỚNG DẪN DỰ ÁN: ${project.title}`;
                 body.innerText = project.guide_project;
             } else {
                 iconBox.className = "w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center font-bold";
-                headerIcon.className = "fa-solid fa-terminal";
-                title.innerText = `Hướng dẫn chạy Tool: ${project.title}`;
+                headerIcon.className = "fa-solid fa-book";
+                title.innerText = `HƯỚNG DẪN CHẠY TOOL: ${project.title}`;
                 body.innerText = project.guide_script;
             }
 
