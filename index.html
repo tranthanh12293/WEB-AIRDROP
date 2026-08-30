@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>⚡ TRẦN THÀNH - CRYPTO & MMO HUB</title>
-    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
@@ -26,7 +25,7 @@
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none relative">
 
-    <!-- ==================== 1. MÀN HÌNH KHÓA CHƯA ĐĂNG NHẬP (LOCKSCREEN) ==================== -->
+    <!-- 1. MÀN HÌNH KHÓA CHƯA ĐĂNG NHẬP (LOCKSCREEN) -->
     <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
         <div></div>
         <div class="max-w-lg mx-auto w-full text-center">
@@ -50,14 +49,12 @@
         <footer class="text-center text-xs text-slate-400 font-medium py-4">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
     </div>
 
-    <!-- ==================== 2. NỘI DUNG CHÍNH (MAIN APPLICATION) ==================== -->
+    <!-- 2. NỘI DUNG CHÍNH (MAIN APPLICATION) -->
     <div id="mainApp" class="hidden min-h-screen flex flex-col justify-between">
         <div>
-            <!-- Header chuẩn căn giữa -->
             <header class="border-b border-borderLight bg-white shadow-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative flex flex-col items-center">
                     
-                    <!-- Avatar Profile Mini ở góc trên bên phải -->
                     <div class="absolute right-4 sm:right-6 top-6 z-30">
                         <button onclick="toggleUserDropdown(event)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-blue-600 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-circle-user text-xl"></i>
@@ -79,14 +76,12 @@
                         </div>
                     </div>
 
-                    <!-- Logo + Tiêu đề căn giữa -->
                     <div class="flex flex-col items-center text-center mb-5">
                         <img src="logo.png" alt="Logo" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-white ring-4 ring-blue-500/10 mb-2.5">
                         <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRẦN THÀNH HUB</h1>
                         <p class="text-xs sm:text-sm font-bold text-textMuted mt-0.5 tracking-wide">Airdrop, Scripts Auto & MMO Solution</p>
                     </div>
 
-                    <!-- Thanh Tab Menu 1 HÀNG DUY NHẤT -->
                     <div class="w-full max-w-4xl overflow-x-auto pb-2 sm:pb-0 mb-4 flex justify-center">
                         <nav class="inline-flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner flex-nowrap whitespace-nowrap">
                             <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider shrink-0">
@@ -104,7 +99,6 @@
                         </nav>
                     </div>
 
-                    <!-- Thanh tìm kiếm (Anti-Autofill) -->
                     <div id="searchContainer" class="relative w-full max-w-md">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="search" id="searchInput" name="app_search_keyword_no_autofill" autocomplete="new-password" placeholder="Tìm kiếm nhanh kèo, công cụ..." class="w-full bg-slate-50 border border-borderLight rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
@@ -112,7 +106,6 @@
                 </div>
             </header>
 
-            <!-- Cards / Grid Area -->
             <main id="section-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-8" id="categoryTabs">
                     <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
@@ -128,7 +121,6 @@
                 </div>
             </main>
 
-            <!-- Contact Section -->
             <main id="section-contact" class="max-w-3xl mx-auto px-4 sm:px-6 py-16 hidden">
                 <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-xl">
                     <div id="contactIcon" class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
@@ -157,12 +149,12 @@
         <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
     </div>
 
-    <!-- Nút Về Đầu Trang (Floating Button) -->
+    <!-- Nút Về Đầu Trang -->
     <button id="btnBackToTop" onclick="scrollToTop()" class="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-xl shadow-blue-500/30 transition-all duration-300 opacity-0 pointer-events-none translate-y-4 active:scale-90" title="Về đầu trang">
         <i class="fa-solid fa-arrow-up text-base"></i>
     </button>
 
-    <!-- ==================== 3. MODAL ĐĂNG NHẬP ==================== -->
+    <!-- 3. MODAL ĐĂNG NHẬP -->
     <div id="modalLogin" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
             <button onclick="closeModal('modalLogin')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -208,7 +200,7 @@
         </div>
     </div>
 
-    <!-- ==================== 4. MODAL ĐĂNG KÝ ==================== -->
+    <!-- 4. MODAL ĐĂNG KÝ -->
     <div id="modalRegister" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modalRegister')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -286,7 +278,7 @@
         </div>
     </div>
 
-    <!-- ==================== 5. MODAL QUÊN MẬT KHẨU ==================== -->
+    <!-- 5. MODAL QUÊN MẬT KHẨU -->
     <div id="modalForgot" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
             <button onclick="closeModal('modalForgot')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -334,7 +326,7 @@
         </div>
     </div>
 
-    <!-- ==================== 6. MODAL ĐỔI THÔNG TIN / PROFILE ==================== -->
+    <!-- 6. MODAL PROFILE -->
     <div id="modalProfile" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
             <button onclick="closeModal('modalProfile')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -381,7 +373,7 @@
         </div>
     </div>
 
-    <!-- ==================== 7. MODAL HƯỚNG DẪN ==================== -->
+    <!-- 7. MODAL HƯỚNG DẪN -->
     <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden transform transition-all">
             <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
@@ -404,7 +396,7 @@
         </div>
     </div>
 
-    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <!-- JAVASCRIPT LOGIC -->
     <script>
         const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
@@ -424,17 +416,14 @@
             return TOOL_CATEGORIES.some(t => cat.toUpperCase().includes(t));
         }
 
-        // Kiểm tra độ mạnh Mật khẩu (>= 8 ký tự, có in HOA, có ký tự đặc biệt)
         function checkPasswordStrength(p) {
             return p.length >= 8 && /[A-Z]/.test(p) && /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p);
         }
 
-        // Kiểm tra Số điện thoại (Bắt đầu bằng 0, đúng 10 số)
         function checkPhoneFormat(p) {
             return /^0[0-9]{9}$/.test(p);
         }
 
-        // Xử lý nút cuộn Về đầu trang
         window.addEventListener('scroll', () => {
             const btn = document.getElementById('btnBackToTop');
             if (window.scrollY > 300) {
@@ -507,6 +496,20 @@
             document.getElementById('profTele').value = '';
         }
 
+        // ================= HÀM GỌI API CHUẨN (CORS-SAFE) =================
+        async function callGAS(payload) {
+            const res = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                redirect: 'follow',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload)
+            });
+            const text = await res.text();
+            return JSON.parse(text);
+        }
+
         // ================= PROFILE: ĐỔI THÔNG TIN & MẬT KHẨU =================
         async function submitUpdateProfile() {
             const currentUsername = localStorage.getItem('hub_logged_username');
@@ -538,18 +541,14 @@
             msgEl.classList.add('hidden');
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'UPDATE_PROFILE',
-                        username: currentUsername,
-                        oldPassword: oldPass,
-                        newPassword: newPass,
-                        phone: phone,
-                        telegram: tele
-                    })
+                const data = await callGAS({
+                    action: 'UPDATE_PROFILE',
+                    username: currentUsername,
+                    oldPassword: oldPass,
+                    newPassword: newPass,
+                    phone: phone,
+                    telegram: tele
                 });
-                const data = await res.json();
 
                 if (data.status === 'success') {
                     alert("Cập nhật thông tin thành công!");
@@ -585,11 +584,7 @@
             msgEl.classList.add('hidden');
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'LOGIN_REQUEST_OTP', userOrMail: userOrMail, password: pass })
-                });
-                const data = await res.json();
+                const data = await callGAS({ action: 'LOGIN_REQUEST_OTP', userOrMail: userOrMail, password: pass });
 
                 if (data.status === 'pending_approval') {
                     msgEl.className = "mt-4 p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-xl text-xs font-bold text-center block leading-relaxed";
@@ -636,11 +631,7 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang kiểm tra OTP...';
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'LOGIN_VERIFY_OTP', email: tempLoginEmail, otp: otp })
-                });
-                const data = await res.json();
+                const data = await callGAS({ action: 'LOGIN_VERIFY_OTP', email: tempLoginEmail, otp: otp });
 
                 if (data.status === 'success') {
                     localStorage.setItem('hub_logged_username', data.username);
@@ -716,11 +707,7 @@
             msgEl.classList.add('hidden');
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'REGISTER_SEND_OTP', username: user, email: mail, password: pass, phone: phone })
-                });
-                const data = await res.json();
+                const data = await callGAS({ action: 'REGISTER_SEND_OTP', username: user, email: mail, password: pass, phone: phone });
 
                 if (data.status === 'success') {
                     tempRegOtp = data.otpToken;
@@ -755,11 +742,7 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang tạo tài khoản...';
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'REGISTER_SAVE_USER', ...tempRegData })
-                });
-                const data = await res.json();
+                const data = await callGAS({ action: 'REGISTER_SAVE_USER', ...tempRegData });
 
                 if (data.status === 'success') {
                     alert("🎉 Đăng ký thành công!\n\nTài khoản của bạn đang được đưa vào danh sách chờ kích hoạt. Vui lòng liên hệ Admin để được duyệt sớm!");
@@ -797,11 +780,7 @@
             msgEl.classList.add('hidden');
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'FORGOT_SEND_OTP', email: mail })
-                });
-                const data = await res.json();
+                const data = await callGAS({ action: 'FORGOT_SEND_OTP', email: mail });
 
                 if (data.status === 'success') {
                     tempForgotEmail = mail;
@@ -847,11 +826,7 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang cập nhật...';
 
             try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'FORGOT_RESET_PASSWORD', email: tempForgotEmail, otp: otp, newPassword: pass })
-                });
-                const data = await res.json();
+                const data = await callGAS({ action: 'FORGOT_RESET_PASSWORD', email: tempForgotEmail, otp: otp, newPassword: pass });
 
                 if (data.status === 'success') {
                     alert("Cập nhật mật khẩu thành công! Vui lòng đăng nhập lại.");
