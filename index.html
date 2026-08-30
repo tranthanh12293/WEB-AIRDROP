@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +23,7 @@
         }
     </script>
 </head>
-<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none">
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none relative">
 
     <!-- 1. LOCKSCREEN -->
     <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
@@ -52,11 +52,12 @@
     <!-- 2. MAIN APPLICATION -->
     <div id="mainApp" class="hidden min-h-screen flex flex-col justify-between">
         <div>
-            <header class="border-b border-borderLight bg-white/95 backdrop-blur sticky top-0 z-40 shadow-sm">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5 relative flex flex-col items-center">
+            <!-- Header cuộn tự nhiên cùng toàn bộ trang web -->
+            <header class="border-b border-borderLight bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative flex flex-col items-center">
                     
                     <!-- Avatar Profile Mini ở góc trên bên phải -->
-                    <div class="absolute right-4 sm:right-6 top-5 z-50">
+                    <div class="absolute right-4 sm:right-6 top-6 z-30">
                         <button onclick="toggleUserDropdown(event)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-blue-600 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-circle-user text-xl"></i>
                         </button>
@@ -84,7 +85,7 @@
                         <p class="text-xs sm:text-sm font-bold text-textMuted mt-0.5 tracking-wide">Airdrop, Scripts Auto & MMO Solution</p>
                     </div>
 
-                    <!-- Thanh Tab Menu 1 HÀNG DUY NHẤT (Khóa tuyệt đối không rớt dòng) -->
+                    <!-- Thanh Tab Menu 1 HÀNG DUY NHẤT -->
                     <div class="w-full max-w-4xl overflow-x-auto pb-2 sm:pb-0 mb-4 flex justify-center">
                         <nav class="inline-flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner flex-nowrap whitespace-nowrap">
                             <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider shrink-0">
@@ -102,7 +103,7 @@
                         </nav>
                     </div>
 
-                    <!-- Thanh tìm kiếm (Chống trình duyệt tự động điền user) -->
+                    <!-- Thanh tìm kiếm -->
                     <div id="searchContainer" class="relative w-full max-w-md">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="search" id="searchInput" name="app_search_keyword_no_autofill" autocomplete="new-password" placeholder="Tìm kiếm nhanh kèo, công cụ..." class="w-full bg-slate-50 border border-borderLight rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
@@ -151,8 +152,14 @@
                 </div>
             </main>
         </div>
+
         <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
     </div>
+
+    <!-- Nút Cuộn Về Đầu Trang (Back to Top Floating Button) -->
+    <button id="btnBackToTop" onclick="scrollToTop()" class="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-xl shadow-blue-500/30 transition-all duration-300 opacity-0 pointer-events-none translate-y-4 active:scale-90" title="Về đầu trang">
+        <i class="fa-solid fa-arrow-up text-base"></i>
+    </button>
 
     <!-- 3. MODAL ĐĂNG NHẬP -->
     <div id="modalLogin" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
@@ -416,6 +423,22 @@
             return TOOL_CATEGORIES.some(t => cat.toUpperCase().includes(t));
         }
 
+        // ================= XỬ LÝ NÚT VỀ ĐẦU TRANG =================
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('btnBackToTop');
+            if (window.scrollY > 300) {
+                btn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                btn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            } else {
+                btn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                btn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }
+        });
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
         function togglePassVisibility(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -444,7 +467,6 @@
                 document.getElementById('lockScreen').classList.add('hidden');
                 document.getElementById('mainApp').classList.remove('hidden');
                 document.getElementById('dropdownUsername').innerText = loggedUser;
-                // Xóa trắng giá trị tìm kiếm khi khởi tạo
                 const sInput = document.getElementById('searchInput');
                 if (sInput) sInput.value = '';
                 loadJSONP();
