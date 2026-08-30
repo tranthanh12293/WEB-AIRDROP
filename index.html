@@ -3,53 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIRDROP & CRYPTO SCRIPTS HUB</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #0b0e14; color: #e2e8f0; min-height: 100vh; padding-bottom: 50px; }
-        header { background: #151922; border-bottom: 1px solid #1f2430; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
-        .logo { font-size: 18px; font-weight: bold; color: #38bdf8; display: flex; align-items: center; gap: 10px; }
-        .search-box { background: #0e121b; border: 1px solid #1f2430; padding: 8px 15px; border-radius: 8px; color: #fff; width: 280px; outline: none; }
-        .search-box:focus { border-color: #38bdf8; }
-        main { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 25px; flex-wrap: wrap; }
-        .tab-btn { background: #151922; border: 1px solid #1f2430; color: #94a3b8; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 600; transition: 0.2s; }
-        .tab-btn.active, .tab-btn:hover { background: #38bdf8; color: #0b0e14; border-color: #38bdf8; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
-        .card { background: #151922; border: 1px solid #1f2430; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
-        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
-        .badge { background: #0e121b; border: 1px solid #1f2430; padding: 3px 10px; border-radius: 20px; font-size: 11px; color: #94a3b8; }
-        .status-hot { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .status-new { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; }
-        .card-title { font-size: 18px; font-weight: bold; color: #fff; margin-top: 6px; }
-        .card-desc { font-size: 13px; color: #94a3b8; line-height: 1.5; margin-bottom: 20px; }
-        .btn-ref { display: block; width: 100%; background: #0284c7; color: #fff; text-align: center; padding: 10px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 13px; margin-bottom: 10px; transition: 0.2s; }
-        .btn-ref:hover { background: #0369a1; }
-        .btn-sub-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .btn-sub { background: #1b202e; border: 1px solid #1f2430; color: #cbd5e1; text-align: center; padding: 8px; border-radius: 8px; text-decoration: none; font-size: 12px; transition: 0.2s; }
-        .btn-sub:hover { background: #23293b; color: #fff; }
-        #loader { text-align: center; padding: 60px 0; color: #94a3b8; font-size: 14px; }
-    </style>
+    <title>⚡ AIRDROP & CRYPTO SCRIPTS HUB</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pageBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        borderLight: '#e2e8f0',
+                        primaryBlue: '#2563eb',
+                        primaryHover: '#1d4ed8',
+                        textMain: '#0f172a',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased">
 
-    <header>
-        <div class="logo">⚡ AIRDROP & SCRIPTS HUB</div>
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 Tìm tên kèo, danh mục...">
+    <!-- Header / Navbar -->
+    <header class="border-b border-borderLight bg-white/90 backdrop-blur sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white font-bold text-xl shadow-md shadow-blue-500/20">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 tracking-wide">AIRDROP HUB & SCRIPTS</h1>
+                    <p class="text-xs text-textMuted font-medium">Cập nhật kèo Airdrop & Tool chạy tự động</p>
+                </div>
+            </div>
+
+            <!-- Thanh tìm kiếm -->
+            <div class="relative w-full sm:w-80">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" placeholder="Tìm tên kèo, danh mục..." 
+                    class="w-full bg-slate-50 border border-borderLight rounded-lg pl-10 pr-4 py-2 text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
+            </div>
+        </div>
     </header>
 
-    <main>
-        <div class="tabs" id="categoryTabs"></div>
-        <div id="loader">⏳ Đang tải dữ liệu từ Google Sheet...</div>
-        <div class="grid" id="projectGrid"></div>
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap items-center gap-2 mb-8" id="categoryTabs">
+            <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold bg-primaryBlue text-white shadow-sm transition" data-cat="all">Tất cả</button>
+        </div>
+
+        <!-- Trạng thái Loading -->
+        <div id="loader" class="text-center py-20">
+            <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
+            <p class="text-textMuted text-sm font-medium">Đang đồng bộ dữ liệu từ Google Sheet...</p>
+        </div>
+
+        <!-- Grid Cards -->
+        <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+
+        <!-- Không có kết quả -->
+        <div id="noData" class="text-center py-16 hidden">
+            <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
+            <p class="text-textMuted text-sm">Không tìm thấy dự án nào phù hợp.</p>
+        </div>
     </main>
 
+    <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white">
+        © 2026 Airdrop & Scripts Portal. Dữ liệu tự động cập nhật từ Google Sheet.
+    </footer>
+
+    <!-- Logic JS (JSONP chống chặn CORS) -->
     <script>
         const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
         let allProjects = [];
         let activeCategory = 'all';
 
-        // Hàm xử lý dữ liệu callback từ JSONP của Google
         function handleGoogleData(response) {
             try {
                 if (response.status === 'error') {
@@ -71,91 +104,131 @@
                     };
                 }).filter(p => p.title && p.title.toString().toLowerCase() !== 'title');
 
-                document.getElementById('loader').style.display = 'none';
-                buildTabs();
-                render();
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('projectGrid').classList.remove('hidden');
+
+                buildCategoryTabs();
+                renderProjects();
             } catch (err) {
                 console.error("Lỗi:", err);
                 document.getElementById('loader').innerHTML = `
-                    <div style="color: #f87171;">
-                        <p style="font-weight: bold; font-size: 16px;">⚠️ Lỗi nạp dữ liệu từ Google Sheet!</p>
-                        <p style="font-size: 12px; margin-top: 5px;">Kiểm tra xem dòng tiêu đề bảng tính đã có đúng thứ tự cột chưa.</p>
+                    <div class="text-red-500">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
+                        <p class="font-bold">Lỗi nạp dữ liệu từ Google Sheet!</p>
+                        <p class="text-xs text-slate-500 mt-1">Kiểm tra lại quyền công khai trên Google Sheet.</p>
                     </div>
                 `;
             }
         }
 
         function loadJSONP() {
-            // Tự động load tab đầu tiên (gid=0) qua JSONP không bị chặn CORS
             const script = document.createElement('script');
             script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
             script.onerror = function() {
                 document.getElementById('loader').innerHTML = `
-                    <div style="color: #f87171;">
-                        <p style="font-weight: bold; font-size: 16px;">⚠️ Không thể kết nối đến Google Sheet!</p>
-                        <p style="font-size: 12px; margin-top: 5px;">Hãy kiểm tra kết nối mạng Internet của máy tính.</p>
+                    <div class="text-red-500">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-2"></i>
+                        <p class="font-bold">Không thể kết nối đến Google Sheet!</p>
                     </div>
                 `;
             };
             document.body.appendChild(script);
         }
 
-        function buildTabs() {
+        function buildCategoryTabs() {
             const categories = ['all', ...new Set(allProjects.map(p => p.category).filter(Boolean))];
             const container = document.getElementById('categoryTabs');
             container.innerHTML = categories.map(cat => `
-                <button class="tab-btn ${cat === activeCategory ? 'active' : ''}" onclick="setCat('${cat}')">
+                <button class="filter-btn px-4 py-2 rounded-lg text-sm font-semibold border transition shadow-sm ${cat === activeCategory ? 'bg-primaryBlue text-white border-primaryBlue shadow-blue-500/20' : 'bg-white text-slate-600 border-borderLight hover:bg-slate-50 hover:text-slate-900'}" 
+                    data-cat="${cat}">
                     ${cat === 'all' ? 'Tất cả' : cat}
                 </button>
             `).join('');
+
+            container.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    activeCategory = e.target.getAttribute('data-cat');
+                    buildCategoryTabs();
+                    renderProjects();
+                });
+            });
         }
 
-        function setCat(cat) {
-            activeCategory = cat;
-            buildTabs();
-            render();
-        }
-
-        function render() {
-            const q = document.getElementById('searchInput').value.toLowerCase().trim();
+        function renderProjects() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
             const grid = document.getElementById('projectGrid');
+            const noData = document.getElementById('noData');
+
             const filtered = allProjects.filter(p => {
                 const matchCat = activeCategory === 'all' || p.category === activeCategory;
-                const matchSearch = p.title.toString().toLowerCase().includes(q) || p.description.toString().toLowerCase().includes(q);
+                const matchSearch = p.title.toString().toLowerCase().includes(query) || 
+                                    p.description.toString().toLowerCase().includes(query) ||
+                                    p.category.toString().toLowerCase().includes(query);
                 return matchCat && matchSearch;
             });
 
             if (filtered.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">Không có dự án nào phù hợp.</div>';
+                grid.innerHTML = '';
+                noData.classList.remove('hidden');
                 return;
             }
 
+            noData.classList.add('hidden');
             grid.innerHTML = filtered.map(p => {
                 const isHot = p.status.toString().toUpperCase() === 'HOT';
+                const statusBadge = isHot 
+                    ? 'bg-rose-50 text-rose-600 border-rose-200' 
+                    : 'bg-emerald-50 text-emerald-600 border-emerald-200';
+
                 return `
-                    <div class="card">
-                        <div>
-                            <div class="card-top">
-                                <span class="badge">${p.category}</span>
-                                <span class="${isHot ? 'status-hot' : 'status-new'}">${p.status}</span>
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-5 hover:border-blue-300 hover:shadow-lg transition-all duration-200 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <!-- Header Card -->
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div>
+                                <span class="text-xs px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 font-semibold border border-slate-200/60">${p.category}</span>
+                                <h3 class="text-lg font-bold text-slate-900 mt-2.5">${p.title}</h3>
                             </div>
-                            <div class="card-title">${p.title}</div>
-                            <div class="card-desc">${p.description || 'Chưa có mô tả.'}</div>
+                            <span class="text-xs px-2.5 py-1 rounded-md font-bold border ${statusBadge}">
+                                ${p.status}
+                            </span>
                         </div>
-                        <div>
-                            ${p.ref_link ? `<a href="${p.ref_link}" target="_blank" class="btn-ref">🔗 Tham gia (Link Ref)</a>` : ''}
-                            <div class="btn-sub-group">
-                                ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="btn-sub">💻 Tải Script</a>` : `<span class="btn-sub" style="opacity:0.35">No Script</span>`}
-                                ${p.guide_link ? `<a href="${p.guide_link}" target="_blank" class="btn-sub">📖 Hướng dẫn</a>` : `<span class="btn-sub" style="opacity:0.35">No Guide</span>`}
-                            </div>
+
+                        <!-- Description -->
+                        <p class="text-slate-600 text-xs line-clamp-3 mb-6 leading-relaxed">
+                            ${p.description || 'Chưa có mô tả dự án.'}
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="space-y-2 pt-4 border-t border-slate-100">
+                        ${p.ref_link ? `
+                            <a href="${p.ref_link}" target="_blank" class="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center justify-center gap-2 transition shadow-sm shadow-blue-500/20">
+                                <i class="fa-solid fa-arrow-up-right-from-square"></i> Tham gia (Link Ref)
+                            </a>
+                        ` : ''}
+
+                        <div class="grid grid-cols-2 gap-2">
+                            ${p.script_link ? `
+                                <a href="${p.script_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                                    <i class="fa-solid fa-code"></i> Tải Script
+                                </a>
+                            ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-medium">No Script</div>'}
+
+                            ${p.guide_link ? `
+                                <a href="${p.guide_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 text-xs font-bold flex items-center justify-center gap-1.5 transition">
+                                    <i class="fa-solid fa-book-open"></i> Hướng dẫn
+                                </a>
+                            ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-medium">No Guide</div>'}
                         </div>
                     </div>
+                </div>
                 `;
             }).join('');
         }
 
-        document.getElementById('searchInput').addEventListener('input', render);
-        window.onload = loadJSONP;
+        document.getElementById('searchInput').addEventListener('input', renderProjects);
+        window.addEventListener('DOMContentLoaded', loadJSONP);
     </script>
 </body>
 </html>
