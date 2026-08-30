@@ -1,246 +1,1058 @@
-const SPREADSHEET_ID = "1Lcj1GV718hze8yzZUET0yg0e70ZRPmt8fALKKHASm5A";
-
-function doPost(e) {
-  var lock = LockService.getScriptLock();
-  lock.tryLock(15000);
-  
-  try {
-    var data = JSON.parse(e.postData.contents);
-    var action = data.action;
-    
-    var ss = SpreadsheetApp.openById(SPREADSHEET_ID);
-    var sheet = ss.getSheetByName("Users");
-    if (!sheet) {
-      sheet = ss.insertSheet("Users");
-      sheet.appendRow(["username", "password", "email", "phone", "telegram", "otp", "otp_expired", "created_at"]);
-    }
-    
-    var rows = sheet.getDataRange().getValues();
-    
-    function maskEmail(mail) {
-      if (!mail) return "";
-      var parts = mail.split("@");
-      var name = parts[0];
-      if (name.length <= 3) return name[0] + "***@" + parts[1];
-      return name.substring(0, 2) + "***" + name.substring(name.length - 2) + "@" + parts[1];
-    }
-    
-    function sendOTPMail(targetEmail, code, purpose) {
-      var subject = "[" + code + "] Mã xác thực OTP - TRẦN THÀNH HUB";
-      var body = "Xin chào,\n\nMã xác thực OTP " + purpose + " của bạn là: " + code + "\n\nMã có hiệu lực trong 5 phút. Vui lòng không chia sẻ mã này cho bất kỳ ai.\n\nTrân trọng,\nTRẦN THÀNH HUB";
-      MailApp.sendEmail(targetEmail, subject, body);
-    }
-    
-    // 1. ĐĂNG NHẬP
-    if (action === "LOGIN_REQUEST_OTP") {
-      var userOrMail = (data.userOrMail || "").toString().trim().toLowerCase();
-      var password = (data.password || "").toString().trim();
-      var foundRow = -1;
-      var userRow = null;
-
-      for (var i = 1; i < rows.length; i++) {
-        var u = rows[i][0].toString().trim().toLowerCase();
-        var m = rows[i][2].toString().trim().toLowerCase();
-        if (u === userOrMail || m === userOrMail) {
-          foundRow = i + 1;
-          userRow = rows[i];
-          break;
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ TRẦN THÀNH - CRYPTO & MMO HUB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pageBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        borderLight: '#e2e8f0',
+                        primaryBlue: '#2563eb',
+                        textMain: '#0f172a',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
         }
-      }
+    </script>
+</head>
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none">
 
-      if (foundRow === -1) {
-        return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Tài khoản hoặc Email không tồn tại trên hệ thống!"})).setMimeType(ContentService.MimeType.JSON);
-      }
+    <!-- 1. LOCKSCREEN -->
+    <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
+        <div></div>
+        <div class="max-w-lg mx-auto w-full text-center">
+            <div class="relative w-28 h-28 mx-auto mb-6">
+                <img src="logo.png" alt="Logo" class="w-28 h-28 rounded-3xl object-cover shadow-2xl border-2 border-white ring-8 ring-blue-500/10">
+            </div>
+            <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">TRẦN THÀNH HUB</h1>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-10">Airdrop, Scripts Auto & MMO Solution</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+                <button onclick="openModal('modalLogin')" class="py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-blue-500/25 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket text-base"></i> ĐĂNG NHẬP
+                </button>
+                <button onclick="openModal('modalRegister')" class="py-4 px-6 rounded-2xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-sm uppercase tracking-wider shadow-lg shadow-slate-900/20 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-plus text-base"></i> ĐĂNG KÝ
+                </button>
+            </div>
+            <div class="mt-6">
+                <button onclick="openModal('modalForgot')" class="text-xs font-bold text-slate-500 hover:text-blue-600 transition">Quên mật khẩu?</button>
+            </div>
+        </div>
+        <footer class="text-center text-xs text-slate-400 font-medium py-4">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
+    </div>
 
-      if (userRow[1].toString().trim() !== password) {
-        return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Mật khẩu không chính xác!"})).setMimeType(ContentService.MimeType.JSON);
-      }
+    <!-- 2. MAIN APPLICATION -->
+    <div id="mainApp" class="hidden min-h-screen flex flex-col justify-between">
+        <div>
+            <!-- Header chuẩn giao diện trung tâm -->
+            <header class="border-b border-borderLight bg-white/95 backdrop-blur sticky top-0 z-40 shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5 relative flex flex-col items-center">
+                    
+                    <!-- Avatar Profile Mini ở góc trên bên phải -->
+                    <div class="absolute right-4 sm:right-6 top-5 z-50">
+                        <button onclick="toggleUserDropdown(event)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-blue-600 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-circle-user text-xl"></i>
+                        </button>
 
-      var userEmail = userRow[2].toString().trim();
-      var otp = Math.floor(100000 + Math.random() * 900000).toString();
-      var expireTime = new Date().getTime() + (5 * 60 * 1000);
+                        <!-- Dropdown Menu -->
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-2xl py-2 z-50">
+                            <div class="px-4 py-3 border-b border-slate-100 bg-slate-50 rounded-t-2xl">
+                                <p class="text-[11px] font-bold text-slate-400 uppercase">Tài khoản</p>
+                                <p id="dropdownUsername" class="text-sm font-black text-slate-900 truncate"></p>
+                            </div>
+                            <div class="py-1">
+                                <button onclick="openProfileModal()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition flex items-center gap-2.5">
+                                    <i class="fa-solid fa-user-gear text-slate-400"></i> Đổi thông tin & Mật khẩu
+                                </button>
+                                <button onclick="logout()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-2.5">
+                                    <i class="fa-solid fa-right-from-bracket text-rose-500"></i> Đăng xuất
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-      sheet.getRange(foundRow, 6).setValue(otp);
-      sheet.getRange(foundRow, 7).setValue(expireTime);
+                    <!-- Logo + Tiêu đề căn giữa, to nổi bật -->
+                    <div class="flex flex-col items-center text-center mb-5">
+                        <img src="logo.png" alt="Logo" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-white ring-4 ring-blue-500/10 mb-2.5">
+                        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRẦN THÀNH HUB</h1>
+                        <p class="text-xs sm:text-sm font-bold text-textMuted mt-0.5 tracking-wide">Airdrop, Scripts Auto & MMO Solution</p>
+                    </div>
 
-      sendOTPMail(userEmail, otp, "đăng nhập");
+                    <!-- Thanh Tab Menu -->
+                    <nav class="flex flex-wrap items-center justify-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 mb-4 shadow-inner max-w-2xl w-full">
+                        <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center justify-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
+                            <i class="fa-solid fa-parachute-box"></i> AIRDROP
+                        </button>
+                        <button id="nav-tools" onclick="switchMainTab('tools')" class="nav-tab flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-puzzle-piece"></i> APP + EXTENSION + SCR HỖ TRỢ
+                        </button>
+                        <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
+                        </button>
+                        <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-network-wired"></i> PROXY
+                        </button>
+                    </nav>
 
-      return ContentService.createTextOutput(JSON.stringify({
-        status: "success",
-        message: "Đã gửi mã xác thực về hòm thư!",
-        maskedEmail: maskEmail(userEmail),
-        fullEmail: userEmail
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
+                    <!-- Thanh tìm kiếm gọn gàng ở cuối -->
+                    <div id="searchContainer" class="relative w-full max-w-md">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="text" id="searchInput" placeholder="Tìm kiếm nhanh kèo, công cụ..." class="w-full bg-slate-50 border border-borderLight rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
+                    </div>
+                </div>
+            </header>
 
-    if (action === "LOGIN_VERIFY_OTP") {
-      var email = (data.email || "").toString().trim().toLowerCase();
-      var inputOtp = (data.otp || "").toString().trim();
-      var foundRow = -1;
-      var userRow = null;
+            <!-- Cards / Grid Area -->
+            <main id="section-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-8" id="categoryTabs">
+                    <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
+                </div>
+                <div id="loader" class="text-center py-20">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
+                    <p class="text-textMuted text-sm font-medium">Đang đồng bộ dữ liệu từ máy chủ...</p>
+                </div>
+                <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+                <div id="noData" class="text-center py-16 hidden">
+                    <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
+                    <p class="text-textMuted text-sm">Không tìm thấy mục nào phù hợp.</p>
+                </div>
+            </main>
 
-      for (var i = 1; i < rows.length; i++) {
-        if (rows[i][2].toString().trim().toLowerCase() === email) {
-          foundRow = i + 1;
-          userRow = rows[i];
-          break;
+            <!-- Contact Section -->
+            <main id="section-contact" class="max-w-3xl mx-auto px-4 sm:px-6 py-16 hidden">
+                <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-xl">
+                    <div id="contactIcon" class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <h2 id="contactTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
+                    <p id="contactDesc" class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp Proxy Residential, Datacenter, VPS và các giải pháp nuôi tài khoản tự động tốc độ cao.</p>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-sm">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
+                        <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
+                            <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
+                        </a>
+                        <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition">
+                            <i class="fa-regular fa-copy"></i> COPY USERNAME
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
+    </div>
+
+    <!-- 3. MODAL ĐĂNG NHẬP -->
+    <div id="modalLogin" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+            <button onclick="closeModal('modalLogin')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 uppercase">ĐĂNG NHẬP HỆ THỐNG</h3>
+            </div>
+            <div id="loginStep1" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản hoặc Gmail</label>
+                    <input type="text" id="loginUser" placeholder="Nhập username hoặc Gmail" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu</label>
+                    <div class="relative">
+                        <input type="password" id="loginPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                        <button type="button" onclick="togglePassVisibility('loginPass', 'eyeLoginPass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="eyeLoginPass" class="fa-solid fa-eye text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                <button onclick="submitLoginStep1()" id="btnLoginNext" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">TIẾP TỤC (LẤY OTP)</button>
+            </div>
+            <div id="loginStep2" class="space-y-4 hidden">
+                <div class="bg-blue-50 border border-blue-100 rounded-2xl p-3.5 text-center">
+                    <p class="text-xs text-slate-600">Mã OTP đã được gửi đến Gmail:</p>
+                    <p id="loginMaskedEmail" class="text-sm font-black text-blue-700 mt-0.5 tracking-wide"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã xác thực OTP (6 số)</label>
+                    <input type="text" id="loginOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <button onclick="submitLoginStep2()" id="btnLoginVerify" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">XÁC NHẬN VÀO TRANG CHỦ</button>
+                <div class="text-center">
+                    <button onclick="backLoginStep1()" class="text-xs font-bold text-blue-600 hover:underline">← Quay lại đăng nhập</button>
+                </div>
+            </div>
+            <div id="loginMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- 4. MODAL ĐĂNG KÝ -->
+    <div id="modalRegister" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeModal('modalRegister')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-user-plus"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 uppercase">ĐĂNG KÝ TÀI KHOẢN</h3>
+            </div>
+            <div id="regStep1" class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản đăng nhập *</label>
+                    <input type="text" id="regUser" placeholder="Tên tài khoản (viết liền)" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu *</label>
+                        <div class="relative">
+                            <input type="password" id="regPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
+                            <button type="button" onclick="togglePassVisibility('regPass', 'eyeRegPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <i id="eyeRegPass" class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu *</label>
+                        <div class="relative">
+                            <input type="password" id="regPassConfirm" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
+                            <button type="button" onclick="togglePassVisibility('regPassConfirm', 'eyeRegPassConfirm')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <i id="eyeRegPassConfirm" class="fa-solid fa-eye text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Gmail cá nhân *</label>
+                        <input type="email" id="regEmail" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận lại Gmail *</label>
+                        <input type="email" id="regEmailConfirm" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Số điện thoại *</label>
+                        <input type="text" id="regPhone" placeholder="0987654321" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username Telegram *</label>
+                        <input type="text" id="regTele" placeholder="@username" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 pt-2">
+                    <input type="checkbox" id="regAgree" class="w-4 h-4 text-blue-600 rounded border-slate-300">
+                    <label for="regAgree" class="text-xs text-slate-600 font-medium cursor-pointer">Tôi đồng ý với các điều khoản & chính sách thành viên</label>
+                </div>
+                <button onclick="submitRegisterStep1()" id="btnRegSubmit" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">ĐĂNG KÝ VÀ NHẬN OTP</button>
+            </div>
+            <div id="regStep2" class="space-y-4 hidden">
+                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-center">
+                    <p class="text-xs text-slate-600">Mã OTP đăng ký đã được gửi đến Gmail:</p>
+                    <p id="regTargetEmailDisplay" class="text-sm font-black text-emerald-700 mt-1"></p>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã xác thực OTP (6 số)</label>
+                    <input type="text" id="regOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-emerald-600 focus:bg-white transition">
+                </div>
+                <button onclick="submitRegisterStep2()" id="btnRegVerify" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">HOÀN TẤT ĐĂNG KÝ</button>
+            </div>
+            <div id="regMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- 5. MODAL QUÊN MẬT KHẨU -->
+    <div id="modalForgot" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+            <button onclick="closeModal('modalForgot')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 uppercase">KHÔI PHỤC MẬT KHẨU</h3>
+            </div>
+            <div id="forgotStep1" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Gmail đăng ký của bạn</label>
+                    <input type="email" id="forgotEmail" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <button onclick="submitForgotStep1()" id="btnForgotNext" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">GỬI MÃ KHÔI PHỤC</button>
+            </div>
+            <div id="forgotStep2" class="space-y-4 hidden">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã OTP xác thực (6 số)</label>
+                    <input type="text" id="forgotOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-blue-600 focus:bg-white transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới</label>
+                    <div class="relative">
+                        <input type="password" id="forgotNewPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <button type="button" onclick="togglePassVisibility('forgotNewPass', 'eyeForgotNewPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="eyeForgotNewPass" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới</label>
+                    <div class="relative">
+                        <input type="password" id="forgotConfirmPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <button type="button" onclick="togglePassVisibility('forgotConfirmPass', 'eyeForgotConfirmPass')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="eyeForgotConfirmPass" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <button onclick="submitForgotStep2()" id="btnForgotReset" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">CẬP NHẬT MẬT KHẨU MỚI</button>
+            </div>
+            <div id="forgotMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- 6. MODAL ĐỔI THÔNG TIN & MẬT KHẨU (PROFILE MODAL) -->
+    <div id="modalProfile" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+            <button onclick="closeModal('modalProfile')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-user-pen"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 uppercase">QUẢN LÝ TÀI KHOẢN</h3>
+            </div>
+            <div class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại * (Bắt buộc)</label>
+                    <div class="relative">
+                        <input type="password" id="profOldPass" placeholder="Nhập mật khẩu hiện tại để xác nhận" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2.5 text-sm outline-none focus:border-blue-600 transition">
+                        <button type="button" onclick="togglePassVisibility('profOldPass', 'eyeProfOldPass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="eyeProfOldPass" class="fa-solid fa-eye text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới (Bỏ trống nếu không đổi)</label>
+                    <div class="relative">
+                        <input type="password" id="profNewPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <button type="button" onclick="togglePassVisibility('profNewPass', 'eyeProfNewPass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="eyeProfNewPass" class="fa-solid fa-eye text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Số điện thoại</label>
+                    <input type="text" id="profPhone" placeholder="0987654321" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username Telegram</label>
+                    <input type="text" id="profTele" placeholder="@username" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <button onclick="submitUpdateProfile()" id="btnProfSubmit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
+                    LƯU THAY ĐỔI
+                </button>
+            </div>
+            <div id="profMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- 7. MODAL HƯỚNG DẪN -->
+    <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden transform transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-2.5">
+                    <div id="modalIconBox" class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center font-bold">
+                        <i id="modalHeaderIcon" class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 id="modalProjectTitle" class="text-base sm:text-lg font-black text-slate-900 uppercase">CHI TIẾT HƯỚNG DẪN</h3>
+                </div>
+                <button onclick="closeModal('guideModal')" class="w-8 h-8 rounded-full bg-slate-200/70 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <div id="modalGuideBody" class="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-200/80 font-mono"></div>
+            </div>
+            <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="closeModal('guideModal')" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-black uppercase tracking-wider transition">ĐÓNG LẠI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
+
+        let allProjects = [];
+        let currentTab = 'airdrop';
+        let activeCategory = 'all';
+
+        let tempLoginEmail = '';
+        let tempRegData = null;
+        let tempRegOtp = '';
+        let tempForgotEmail = '';
+
+        const TOOL_CATEGORIES = ['APP', 'EXTENSION', 'SCR', 'TOOL', 'SCR HỖ TRỢ', 'EXTENSION HỖ TRỢ'];
+
+        function isToolCategory(cat) {
+            return TOOL_CATEGORIES.some(t => cat.toUpperCase().includes(t));
         }
-      }
 
-      if (foundRow === -1) return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Không tìm thấy phiên đăng nhập!"})).setMimeType(ContentService.MimeType.JSON);
-
-      var savedOtp = userRow[5].toString().trim();
-      var savedExpire = Number(userRow[6]);
-      var now = new Date().getTime();
-
-      if (now > savedExpire) return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Mã OTP đã hết hạn!"})).setMimeType(ContentService.MimeType.JSON);
-      if (savedOtp !== inputOtp) return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Mã OTP không chính xác!"})).setMimeType(ContentService.MimeType.JSON);
-
-      sheet.getRange(foundRow, 6).setValue("");
-      sheet.getRange(foundRow, 7).setValue("");
-
-      return ContentService.createTextOutput(JSON.stringify({
-        status: "success",
-        username: userRow[0],
-        email: userRow[2],
-        phone: userRow[3],
-        telegram: userRow[4],
-        message: "Đăng nhập thành công!"
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // 2. ĐĂNG KÝ
-    if (action === "REGISTER_SEND_OTP") {
-      var regUser = (data.username || "").toString().trim();
-      var regEmail = (data.email || "").toString().trim().toLowerCase();
-
-      if (!regEmail.endsWith("@gmail.com")) {
-        return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Hệ thống chỉ hỗ trợ địa chỉ @gmail.com!"})).setMimeType(ContentService.MimeType.JSON);
-      }
-
-      for (var i = 1; i < rows.length; i++) {
-        if (rows[i][0].toString().trim().toLowerCase() === regUser.toLowerCase()) {
-          return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Tên tài khoản này đã tồn tại!"})).setMimeType(ContentService.MimeType.JSON);
+        function togglePassVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-solid fa-eye-slash text-blue-600 text-xs';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-solid fa-eye text-slate-400 text-xs';
+            }
         }
-        if (rows[i][2].toString().trim().toLowerCase() === regEmail) {
-          return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Email này đã được đăng ký tài khoản!"})).setMimeType(ContentService.MimeType.JSON);
+
+        function toggleUserDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('hidden');
         }
-      }
 
-      var otp = Math.floor(100000 + Math.random() * 900000).toString();
-      sendOTPMail(regEmail, otp, "đăng ký tài khoản");
+        document.addEventListener('click', () => {
+            const dd = document.getElementById('userDropdown');
+            if (dd && !dd.classList.contains('hidden')) dd.classList.add('hidden');
+        });
 
-      return ContentService.createTextOutput(JSON.stringify({
-        status: "success",
-        otpToken: otp,
-        message: "Mã OTP đã được gửi đến " + regEmail
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    if (action === "REGISTER_SAVE_USER") {
-      var username = (data.username || "").toString().trim();
-      var password = (data.password || "").toString().trim();
-      var email = (data.email || "").toString().trim().toLowerCase();
-      var phone = (data.phone || "").toString().trim();
-      var telegram = (data.telegram || "").toString().trim();
-      var nowStr = Utilities.formatDate(new Date(), "GMT+7", "yyyy-MM-dd HH:mm:ss");
-
-      sheet.appendRow([username, password, email, phone, telegram, "", "", nowStr]);
-
-      return ContentService.createTextOutput(JSON.stringify({status: "success", message: "Đăng ký thành công!"})).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // 3. QUÊN MẬT KHẨU
-    if (action === "FORGOT_SEND_OTP") {
-      var forgotMail = (data.email || "").toString().trim().toLowerCase();
-      var foundRow = -1;
-
-      for (var i = 1; i < rows.length; i++) {
-        if (rows[i][2].toString().trim().toLowerCase() === forgotMail) {
-          foundRow = i + 1;
-          break;
+        function initAppSession() {
+            const loggedUser = localStorage.getItem('hub_logged_username');
+            if (loggedUser) {
+                document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('dropdownUsername').innerText = loggedUser;
+                loadJSONP();
+            } else {
+                document.getElementById('lockScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
         }
-      }
 
-      if (foundRow === -1) {
-        return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Email này không tồn tại trong hệ thống!"})).setMimeType(ContentService.MimeType.JSON);
-      }
-
-      var otp = Math.floor(100000 + Math.random() * 900000).toString();
-      var expireTime = new Date().getTime() + (5 * 60 * 1000);
-
-      sheet.getRange(foundRow, 6).setValue(otp);
-      sheet.getRange(foundRow, 7).setValue(expireTime);
-
-      sendOTPMail(forgotMail, otp, "khôi phục mật khẩu");
-
-      return ContentService.createTextOutput(JSON.stringify({status: "success", message: "Mã xác thực đã được gửi về Gmail của bạn!"})).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    if (action === "FORGOT_RESET_PASSWORD") {
-      var email = (data.email || "").toString().trim().toLowerCase();
-      var inputOtp = (data.otp || "").toString().trim();
-      var newPass = (data.newPassword || "").toString().trim();
-      var foundRow = -1;
-      var userRow = null;
-
-      for (var i = 1; i < rows.length; i++) {
-        if (rows[i][2].toString().trim().toLowerCase() === email) {
-          foundRow = i + 1;
-          userRow = rows[i];
-          break;
+        function logout() {
+            if (confirm("Bạn có chắc chắn muốn đăng xuất khỏi hệ thống?")) {
+                localStorage.removeItem('hub_logged_username');
+                localStorage.removeItem('hub_logged_email');
+                window.location.reload();
+            }
         }
-      }
 
-      if (foundRow === -1) return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Email không tồn tại!"})).setMimeType(ContentService.MimeType.JSON);
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-      var savedOtp = userRow[5].toString().trim();
-      var savedExpire = Number(userRow[6]);
-      var now = new Date().getTime();
-
-      if (now > savedExpire) return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Mã OTP đã hết hạn!"})).setMimeType(ContentService.MimeType.JSON);
-      if (savedOtp !== inputOtp) return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Mã OTP không chính xác!"})).setMimeType(ContentService.MimeType.JSON);
-
-      sheet.getRange(foundRow, 2).setValue(newPass);
-      sheet.getRange(foundRow, 6).setValue("");
-      sheet.getRange(foundRow, 7).setValue("");
-
-      return ContentService.createTextOutput(JSON.stringify({status: "success", message: "Cập nhật mật khẩu mới thành công!"})).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // 4. ĐỔI MẬT KHẨU & THÔNG TIN KHI ĐANG ĐĂNG NHẬP
-    if (action === "UPDATE_PROFILE") {
-      var currentUsername = (data.username || "").toString().trim();
-      var oldPass = (data.oldPassword || "").toString().trim();
-      var newPass = (data.newPassword || "").toString().trim();
-      var phone = (data.phone || "").toString().trim();
-      var telegram = (data.telegram || "").toString().trim();
-      var foundRow = -1;
-      var userRow = null;
-
-      for (var i = 1; i < rows.length; i++) {
-        if (rows[i][0].toString().trim().toLowerCase() === currentUsername.toLowerCase()) {
-          foundRow = i + 1;
-          userRow = rows[i];
-          break;
+        function openProfileModal() {
+            openModal('modalProfile');
+            document.getElementById('profMsg').classList.add('hidden');
+            document.getElementById('profOldPass').value = '';
+            document.getElementById('profNewPass').value = '';
         }
-      }
 
-      if (foundRow === -1) return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Tài khoản không tồn tại!"})).setMimeType(ContentService.MimeType.JSON);
-      if (userRow[1].toString().trim() !== oldPass) {
-        return ContentService.createTextOutput(JSON.stringify({status: "error", message: "Mật khẩu hiện tại không chính xác!"})).setMimeType(ContentService.MimeType.JSON);
-      }
+        async function submitUpdateProfile() {
+            const currentUsername = localStorage.getItem('hub_logged_username');
+            const oldPass = document.getElementById('profOldPass').value.trim();
+            const newPass = document.getElementById('profNewPass').value.trim();
+            const phone = document.getElementById('profPhone').value.trim();
+            const tele = document.getElementById('profTele').value.trim();
+            const msgEl = document.getElementById('profMsg');
+            const btn = document.getElementById('btnProfSubmit');
 
-      if (newPass) sheet.getRange(foundRow, 2).setValue(newPass);
-      if (phone) sheet.getRange(foundRow, 4).setValue(phone);
-      if (telegram) sheet.getRange(foundRow, 5).setValue(telegram);
+            if (!oldPass) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng nhập mật khẩu hiện tại!";
+                return;
+            }
 
-      return ContentService.createTextOutput(JSON.stringify({status: "success", message: "Cập nhật thông tin thành công!"})).setMimeType(ContentService.MimeType.JSON);
-    }
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang cập nhật...';
+            msgEl.classList.add('hidden');
 
-  } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({status: "error", message: err.toString()})).setMimeType(ContentService.MimeType.JSON);
-  } finally {
-    lock.releaseLock();
-  }
-}
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: 'UPDATE_PROFILE',
+                        username: currentUsername,
+                        oldPassword: oldPass,
+                        newPassword: newPass,
+                        phone: phone,
+                        telegram: tele
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    alert("Cập nhật thông tin thành công!");
+                    closeModal('modalProfile');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi kết nối máy chủ!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'LƯU THAY ĐỔI';
+            }
+        }
+
+        // ================= AUTH 1: ĐĂNG NHẬP =================
+        async function submitLoginStep1() {
+            const userOrMail = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            const msgEl = document.getElementById('loginMsg');
+            const btn = document.getElementById('btnLoginNext');
+
+            if (!userOrMail || !pass) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng điền đầy đủ tài khoản và mật khẩu!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang xác thực...';
+            msgEl.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'LOGIN_REQUEST_OTP', userOrMail: userOrMail, password: pass })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    tempLoginEmail = data.fullEmail;
+                    document.getElementById('loginMaskedEmail').innerText = data.maskedEmail;
+                    document.getElementById('loginStep1').classList.add('hidden');
+                    document.getElementById('loginStep2').classList.remove('hidden');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi kết nối máy chủ!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'TIẾP TỤC (LẤY OTP)';
+            }
+        }
+
+        function backLoginStep1() {
+            document.getElementById('loginStep1').classList.remove('hidden');
+            document.getElementById('loginStep2').classList.add('hidden');
+            document.getElementById('loginMsg').classList.add('hidden');
+        }
+
+        async function submitLoginStep2() {
+            const otp = document.getElementById('loginOtp').value.trim();
+            const msgEl = document.getElementById('loginMsg');
+            const btn = document.getElementById('btnLoginVerify');
+
+            if (!otp || otp.length < 6) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng nhập đúng 6 chữ số OTP!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang kiểm tra OTP...';
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'LOGIN_VERIFY_OTP', email: tempLoginEmail, otp: otp })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    localStorage.setItem('hub_logged_username', data.username);
+                    localStorage.setItem('hub_logged_email', data.email);
+                    closeModal('modalLogin');
+                    initAppSession();
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi xác thực!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'XÁC NHẬN VÀO TRANG CHỦ';
+            }
+        }
+
+        // ================= AUTH 2: ĐĂNG KÝ =================
+        async function submitRegisterStep1() {
+            const user = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value.trim();
+            const passC = document.getElementById('regPassConfirm').value.trim();
+            const mail = document.getElementById('regEmail').value.trim().toLowerCase();
+            const mailC = document.getElementById('regEmailConfirm').value.trim().toLowerCase();
+            const phone = document.getElementById('regPhone').value.trim();
+            const tele = document.getElementById('regTele').value.trim();
+            const agree = document.getElementById('regAgree').checked;
+            const msgEl = document.getElementById('regMsg');
+            const btn = document.getElementById('btnRegSubmit');
+
+            if (!user || !pass || !passC || !mail || !mailC || !phone || !tele) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng điền đầy đủ tất cả các trường!";
+                return;
+            }
+            if (pass !== passC) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Hai mật khẩu không trùng khớp!";
+                return;
+            }
+            if (!mail.endsWith("@gmail.com") || !mailC.endsWith("@gmail.com")) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Chỉ chấp nhận địa chỉ @gmail.com!";
+                return;
+            }
+            if (mail !== mailC) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Hai địa chỉ Gmail không trùng khớp!";
+                return;
+            }
+            if (!agree) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Bạn cần đồng ý với điều khoản & chính sách!";
+                return;
+            }
+
+            tempRegData = { username: user, password: pass, email: mail, phone: phone, telegram: tele };
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang gửi mã OTP...';
+            msgEl.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'REGISTER_SEND_OTP', username: user, email: mail })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    tempRegOtp = data.otpToken;
+                    document.getElementById('regTargetEmailDisplay').innerText = mail;
+                    document.getElementById('regStep1').classList.add('hidden');
+                    document.getElementById('regStep2').classList.remove('hidden');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi kết nối máy chủ!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'ĐĂNG KÝ VÀ NHẬN OTP';
+            }
+        }
+
+        async function submitRegisterStep2() {
+            const inputOtp = document.getElementById('regOtp').value.trim();
+            const msgEl = document.getElementById('regMsg');
+            const btn = document.getElementById('btnRegVerify');
+
+            if (!inputOtp || inputOtp !== tempRegOtp) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Mã OTP không chính xác!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang tạo tài khoản...';
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'REGISTER_SAVE_USER', ...tempRegData })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                    closeModal('modalRegister');
+                    document.getElementById('regStep1').classList.remove('hidden');
+                    document.getElementById('regStep2').classList.add('hidden');
+                    openModal('modalLogin');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi lưu tài khoản!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'HOÀN TẤT ĐĂNG KÝ';
+            }
+        }
+
+        // ================= AUTH 3: QUÊN MẬT KHẨU =================
+        async function submitForgotStep1() {
+            const mail = document.getElementById('forgotEmail').value.trim().toLowerCase();
+            const msgEl = document.getElementById('forgotMsg');
+            const btn = document.getElementById('btnForgotNext');
+
+            if (!mail || !mail.endsWith('@gmail.com')) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng nhập đúng Gmail hợp lệ!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang kiểm tra...';
+            msgEl.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'FORGOT_SEND_OTP', email: mail })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    tempForgotEmail = mail;
+                    document.getElementById('forgotStep1').classList.add('hidden');
+                    document.getElementById('forgotStep2').classList.remove('hidden');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi kết nối máy chủ!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'GỬI MÃ KHÔI PHỤC';
+            }
+        }
+
+        async function submitForgotStep2() {
+            const otp = document.getElementById('forgotOtp').value.trim();
+            const pass = document.getElementById('forgotNewPass').value.trim();
+            const passC = document.getElementById('forgotConfirmPass').value.trim();
+            const msgEl = document.getElementById('forgotMsg');
+            const btn = document.getElementById('btnForgotReset');
+
+            if (!otp || !pass || !passC) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Vui lòng nhập đầy đủ OTP và mật khẩu mới!";
+                return;
+            }
+            if (pass !== passC) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Mật khẩu xác nhận không khớp!";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang cập nhật...';
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: 'FORGOT_RESET_PASSWORD', email: tempForgotEmail, otp: otp, newPassword: pass })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    alert("Cập nhật mật khẩu thành công! Vui lòng đăng nhập lại.");
+                    closeModal('modalForgot');
+                    openModal('modalLogin');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                    msgEl.innerText = data.message;
+                }
+            } catch (err) {
+                msgEl.className = "mt-4 text-xs font-bold text-center text-rose-500 block";
+                msgEl.innerText = "Lỗi cập nhật mật khẩu!";
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'CẬP NHẬT MẬT KHẨU MỚI';
+            }
+        }
+
+        function handleGoogleData(response) {
+            try {
+                if (response.status === 'error') throw new Error(response.errors[0].message);
+
+                const rows = response.table.rows;
+                allProjects = rows.map(r => {
+                    const c = r.c;
+                    return {
+                        id: c[0] ? (c[0].v ?? '') : '',
+                        title: c[1] ? (c[1].v ?? '') : '',
+                        category: c[2] ? (c[2].v ?? 'General') : 'General',
+                        status: c[3] ? (c[3].v ?? 'NEW') : 'NEW',
+                        description: c[4] ? (c[4].v ?? '') : '',
+                        script_link: c[6] ? (c[6].v ?? '') : '',
+                        guide_project: c[7] ? (c[7].v ?? '') : '',
+                        guide_script: c[8] ? (c[8].v ?? '') : ''
+                    };
+                }).filter(p => p.title && p.title.toString().toLowerCase() !== 'title');
+
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('projectGrid').classList.remove('hidden');
+
+                buildCategoryTabs();
+                renderProjects();
+            } catch (err) {
+                document.getElementById('loader').innerHTML = `<div class="text-red-500 font-bold">Lỗi đồng bộ dữ liệu từ máy chủ!</div>`;
+            }
+        }
+
+        function loadJSONP() {
+            const script = document.createElement('script');
+            script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
+            document.body.appendChild(script);
+        }
+
+        function getCurrentList() {
+            if (currentTab === 'tools') return allProjects.filter(p => isToolCategory(p.category));
+            return allProjects.filter(p => !isToolCategory(p.category));
+        }
+
+        function buildCategoryTabs() {
+            const currentList = getCurrentList();
+            const categories = ['all', ...new Set(currentList.map(p => p.category).filter(Boolean))];
+            const container = document.getElementById('categoryTabs');
+            
+            container.innerHTML = categories.map(cat => `
+                <button class="filter-btn px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider border transition shadow-sm ${cat === activeCategory ? 'bg-primaryBlue text-white border-primaryBlue shadow-blue-500/20' : 'bg-white text-slate-600 border-borderLight hover:bg-slate-50 hover:text-slate-900'}" data-cat="${cat}">
+                    ${cat === 'all' ? 'TẤT CẢ' : cat}
+                </button>
+            `).join('');
+
+            container.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    activeCategory = e.target.getAttribute('data-cat');
+                    buildCategoryTabs();
+                    renderProjects();
+                });
+            });
+        }
+
+        function toggleDesc(id) {
+            const descEl = document.getElementById(`desc-${id}`);
+            const btnEl = document.getElementById(`btn-toggle-${id}`);
+            if (!descEl || !btnEl) return;
+
+            if (descEl.classList.contains('line-clamp-3')) {
+                descEl.classList.remove('line-clamp-3');
+                btnEl.innerText = 'THU GỌN ▲';
+            } else {
+                descEl.classList.add('line-clamp-3');
+                btnEl.innerText = 'XEM THÊM ▼';
+            }
+        }
+
+        function renderProjects() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const grid = document.getElementById('projectGrid');
+            const noData = document.getElementById('noData');
+            const currentList = getCurrentList();
+
+            const filtered = currentList.filter(p => {
+                const matchCat = activeCategory === 'all' || p.category === activeCategory;
+                const matchSearch = p.title.toString().toLowerCase().includes(query) || 
+                                    p.description.toString().toLowerCase().includes(query) ||
+                                    p.category.toString().toLowerCase().includes(query);
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noData.classList.remove('hidden');
+                return;
+            }
+
+            noData.classList.add('hidden');
+            grid.innerHTML = filtered.map((p) => {
+                const originalIndex = allProjects.indexOf(p);
+                const isHot = p.status.toString().toUpperCase() === 'HOT';
+                const statusBadge = isHot ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200';
+                const descText = p.description || 'Chưa có mô tả chi tiết.';
+                const isLongDesc = descText.length > 110;
+
+                let buttonsHTML = '';
+                if (currentTab === 'tools') {
+                    buttonsHTML = `
+                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
+                        ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95"><i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI VỀ</a>` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
+                        ${(p.guide_project || p.guide_script) ? `<button onclick="openGuideModal(${originalIndex}, 'tool_guide')" class="py-3 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95"><i class="fa-solid fa-book-open text-sm text-amber-600"></i> HƯỚNG DẪN</button>` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+                    </div>`;
+                } else {
+                    buttonsHTML = `
+                    <div class="flex flex-col gap-2.5 pt-4 border-t border-slate-100">
+                        ${p.script_link ? `
+                            <a href="${p.script_link}" target="_blank" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-emerald-600/20 active:scale-95">
+                                <i class="fa-solid fa-download text-sm text-emerald-200"></i> TẢI SCRIPT
+                            </a>
+                        ` : '<div class="w-full text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ TOOL</div>'}
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            ${p.guide_project ? `
+                                <button onclick="openGuideModal(${originalIndex}, 'project')" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
+                                    <i class="fa-solid fa-book-open text-sm text-amber-600"></i> HD DỰ ÁN
+                                </button>
+                            ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+
+                            ${p.guide_script ? `
+                                <button onclick="openGuideModal(${originalIndex}, 'script')" class="py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-300/80 text-purple-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95">
+                                    <i class="fa-solid fa-book text-sm text-purple-600"></i> HD CHẠY TOOL
+                                </button>
+                            ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD TOOL</div>'}
+                        </div>
+                    </div>`;
+                }
+
+                return `
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 hover:border-blue-400 hover:shadow-xl transition-all duration-200 flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <div>
+                                <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold border border-slate-200 uppercase tracking-wide">${p.category}</span>
+                                <h3 class="text-lg font-black text-slate-900 mt-2.5 tracking-tight">${p.title}</h3>
+                            </div>
+                            <span class="text-[11px] px-2.5 py-1 rounded-md font-black border uppercase tracking-wider ${statusBadge}">
+                                ${p.status}
+                            </span>
+                        </div>
+                        <div class="mb-5">
+                            <p id="desc-${originalIndex}" class="text-slate-600 text-xs ${isLongDesc ? 'line-clamp-3' : ''} leading-relaxed transition-all duration-300">
+                                ${descText}
+                            </p>
+                            ${isLongDesc ? `<button id="btn-toggle-${originalIndex}" onclick="toggleDesc(${originalIndex})" class="text-[11px] font-black text-blue-600 hover:text-blue-800 mt-1 cursor-pointer uppercase tracking-wider">XEM THÊM ▼</button>` : ''}
+                        </div>
+                    </div>
+                    ${buttonsHTML}
+                </div>`;
+            }).join('');
+        }
+
+        function openGuideModal(index, type) {
+            const project = allProjects[index];
+            if (!project) return;
+
+            const iconBox = document.getElementById('modalIconBox');
+            const headerIcon = document.getElementById('modalHeaderIcon');
+            const title = document.getElementById('modalProjectTitle');
+            const body = document.getElementById('modalGuideBody');
+
+            if (type === 'project') {
+                iconBox.className = "w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold";
+                headerIcon.className = "fa-solid fa-book-open";
+                title.innerText = `HƯỚNG DẪN DỰ ÁN: ${project.title}`;
+                body.innerText = project.guide_project;
+            } else if (type === 'script') {
+                iconBox.className = "w-9 h-9 rounded-xl bg-purple-50 border border-purple-200 text-purple-600 flex items-center justify-center font-bold";
+                headerIcon.className = "fa-solid fa-book";
+                title.innerText = `HƯỚNG DẪN CHẠY TOOL: ${project.title}`;
+                body.innerText = project.guide_script;
+            } else {
+                iconBox.className = "w-9 h-9 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center font-bold";
+                headerIcon.className = "fa-solid fa-book-open";
+                title.innerText = `HƯỚNG DẪN SỬ DỤNG: ${project.title}`;
+                body.innerText = project.guide_project || project.guide_script;
+            }
+
+            openModal('guideModal');
+        }
+
+        function switchMainTab(tab) {
+            currentTab = tab;
+            activeCategory = 'all';
+
+            const secContent = document.getElementById('section-content');
+            const secContact = document.getElementById('section-contact');
+            const searchContainer = document.getElementById('searchContainer');
+
+            const navAirdrop = document.getElementById('nav-airdrop');
+            const navTools = document.getElementById('nav-tools');
+            const navResource = document.getElementById('nav-resource');
+            const navProxy = document.getElementById('nav-proxy');
+
+            [navAirdrop, navTools, navResource, navProxy].forEach(btn => {
+                btn.className = "nav-tab flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center justify-center gap-2 tracking-wider";
+            });
+
+            const activeClass = "nav-tab flex-1 sm:flex-initial px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center justify-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider";
+
+            if (tab === 'airdrop' || tab === 'tools') {
+                secContent.classList.remove('hidden');
+                secContact.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+
+                if (tab === 'airdrop') navAirdrop.className = activeClass;
+                if (tab === 'tools') navTools.className = activeClass;
+
+                buildCategoryTabs();
+                renderProjects();
+            } else {
+                secContent.classList.add('hidden');
+                secContact.classList.remove('hidden');
+                searchContainer.classList.add('hidden');
+
+                const title = document.getElementById('contactTitle');
+                const desc = document.getElementById('contactDesc');
+                const icon = document.getElementById('contactIcon');
+
+                if (tab === 'resource') {
+                    navResource.className = activeClass;
+                    icon.innerHTML = '<i class="fa-solid fa-box-archive text-amber-500"></i>';
+                    title.innerText = "KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG";
+                    desc.innerText = "Cung cấp các tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.";
+                } else if (tab === 'proxy') {
+                    navProxy.className = activeClass;
+                    icon.innerHTML = '<i class="fa-solid fa-network-wired text-blue-600"></i>';
+                    title.innerText = "DỊCH VỤ PROXY CHẤT LƯỢNG CAO";
+                    desc.innerText = "Cung cấp Proxy Residential, Datacenter, IPv4/IPv6 sạch, tốc độ cao, hỗ trợ nuôi tài khoản không lo checkpoint.";
+                }
+            }
+        }
+
+        function copyTelegram() {
+            navigator.clipboard.writeText("@tranthanh1202");
+            alert("Đã sao chép Telegram: @tranthanh1202");
+        }
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'u')) {
+                e.preventDefault();
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', renderProjects);
+        window.addEventListener('DOMContentLoaded', initAppSession);
+    </script>
+</body>
+</html>
