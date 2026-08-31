@@ -55,7 +55,7 @@
                     <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                         <i class="fa-brands fa-x-twitter text-slate-900"></i> X CHECKER & EXCEL MATCHER PRO
                     </h1>
-                    <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X (Live/Die/Suspended) & Lọc dòng file Excel tự động</p>
+                    <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X & Lọc dòng file Excel tự động đồng bộ Drive</p>
                 </div>
             </div>
             <a href="resources.html" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
@@ -121,7 +121,7 @@
             </div>
         </div>
 
-        <!-- Controls 2: Lọc Excel -->
+        <!-- Controls 2: Lọc Excel & Tải thủ công -->
         <div class="flex flex-wrap items-center justify-between gap-3 bg-blue-50/50 p-3.5 rounded-2xl border border-blue-200 shadow-sm">
             <div class="flex flex-wrap items-center gap-3">
                 <span class="text-xs font-black text-blue-900 uppercase flex items-center gap-1.5">
@@ -133,11 +133,14 @@
                 </div>
                 <input type="file" id="fileExcel" accept=".xlsx, .xls" multiple class="hidden" onchange="handleExcelProcess(event)">
                 <button onclick="document.getElementById('fileExcel').click()" class="h-9 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition flex items-center gap-2 shadow-sm active:scale-95">
-                    <i class="fa-solid fa-filter"></i> CHỌN EXCEL & LỌC DÒNG LIVE
+                    <i class="fa-solid fa-filter"></i> CHỌN EXCEL & LỌC
+                </button>
+                <button id="btnDownloadExcel" onclick="downloadFilteredExcel()" class="hidden h-9 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider transition flex items-center gap-2 shadow-sm active:scale-95 animate-pulse">
+                    <i class="fa-solid fa-cloud-arrow-down"></i> TẢI FILE EXCEL (<span id="countMatched">0</span>)
                 </button>
             </div>
-            <div id="excelStatusTxt" class="text-xs font-medium text-slate-500 truncate max-w-md">
-                (Hỗ trợ chọn nhiều file .xlsx, xuất kèm tên file nguồn ở cột N & đồng bộ Drive)
+            <div id="excelStatusTxt" class="text-xs font-semibold text-slate-600 truncate max-w-md">
+                (Tự động đồng bộ vào thư mục X FINAL trên Drive)
             </div>
         </div>
 
@@ -180,14 +183,14 @@
     </footer>
 
     <script>
-        // 1. API RENDER BACKEND XỬ LÝ CHECK TÀI KHOẢN
         const BACKEND_API_URL = 'https://web-airdrop.onrender.com/check-x';
         
-        // 2. APPS SCRIPT WEB APP XỬ LÝ LƯU FILE VỀ GOOGLE DRIVE
+        // Link Web App Google Apps Script của bạn
         const APPS_SCRIPT_VAULT_URL = 'https://script.google.com/macros/s/AKfycby3EEMwCC-t25XBk6M7ems82jCJOB3TMiQwuYDuXXYYftg_6JRigm10SFUwgW9QJT-s/exec'; 
         
         let isRunning = false, stopRequested = false, resultsData = [];
         let liveCount = 0, susCount = 0, capCount = 0, otherCount = 0, doneCount = 0, totalCount = 0;
+        let lastGeneratedWorkbook = null, lastGeneratedFileName = "";
 
         function cleanUser(u) { return u.toString().trim().replace(/^@/, '').toLowerCase(); }
 
@@ -231,6 +234,7 @@
             document.getElementById('cardCap').innerText = '0';
             document.getElementById('cardOther').innerText = '0';
             document.getElementById('progressBar').style.width = '0%';
+            document.getElementById('btnDownloadExcel').classList.add('hidden');
 
             document.getElementById('btnStart').disabled = true;
             document.getElementById('btnStart').classList.add('opacity-50', 'cursor-not-allowed');
@@ -351,7 +355,7 @@
                 colIndex = Math.max(0, colIndex - 1);
             }
 
-            document.getElementById('excelStatusTxt').innerText = `Đang xử lý ${files.length} file Excel...`;
+            document.getElementById('excelStatusTxt').innerText = `Đang lọc ${files.length} file Excel...`;
 
             let matchedRows = [];
             const seenUser = new Set();
@@ -386,12 +390,11 @@
             const outWb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(outWb, outWs, "LIVE_MATCHED");
             const timeStr = new Date().toISOString().replace(/[-:T.]/g, '').substring(0, 14);
-            const outFileName = `ket_qua_loc_excel_${timeStr}.xlsx`;
+            
+            lastGeneratedWorkbook = outWb;
+            lastGeneratedFileName = `ket_qua_loc_excel_${timeStr}.xlsx`;
 
-            // 1. Tải file về máy tính
-            XLSX.writeFile(outWb, outFileName);
-
-            // 2. Gửi bản sao ngầm lên Google Drive qua Apps Script
+            // Đồng bộ ngầm lên Drive X FINAL
             try {
                 const wbout = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
                 const currentUser = localStorage.getItem('hub_logged_username') || 'Admin';
@@ -410,8 +413,15 @@
                 console.error("Lỗi đồng bộ Drive:", eDrive);
             }
 
-            alert(`🎉 LỌC EXCEL THÀNH CÔNG!\n\n• Đã khớp: ${matchedRows.length}/${liveUsers.length} dòng LIVE\n• Tên file nguồn được gắn ở Cột N\n• Đã tải về máy & đồng bộ bản sao lên Google Drive.`);
-            document.getElementById('excelStatusTxt').innerText = `Đã xuất ${matchedRows.length} dòng khớp thành công!`;
+            // Cập nhật giao diện: Hiện nút Tải & Báo trạng thái (Không popup, không tự tải)
+            document.getElementById('countMatched').innerText = matchedRows.length;
+            document.getElementById('btnDownloadExcel').classList.remove('hidden');
+            document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã lọc xong ${matchedRows.length} dòng & lưu vào X FINAL</span>`;
+        }
+
+        function downloadFilteredExcel() {
+            if (!lastGeneratedWorkbook) return;
+            XLSX.writeFile(lastGeneratedWorkbook, lastGeneratedFileName);
         }
     </script>
 </body>
