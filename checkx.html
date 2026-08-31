@@ -55,7 +55,7 @@
                     <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                         <i class="fa-brands fa-x-twitter text-slate-900"></i> X CHECKER & EXCEL MATCHER PRO
                     </h1>
-                    <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X & lọc dòng thông minh theo nhiều file Excel</p>
+                    <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X & lọc dòng thông minh tự động lưu Google Drive</p>
                 </div>
             </div>
             <a href="resources.html" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
@@ -182,8 +182,6 @@
 
     <script>
         const BACKEND_API_URL = 'https://web-airdrop.onrender.com/check-x';
-        
-        // Link Web App Google Apps Script của bạn
         const APPS_SCRIPT_VAULT_URL = 'https://script.google.com/macros/s/AKfycby3EEMwCC-t25XBk6M7ems82jCJOB3TMiQwuYDuXXYYftg_6JRigm10SFUwgW9QJT-s/exec'; 
         
         let isRunning = false, stopRequested = false, resultsData = [];
@@ -211,6 +209,25 @@
             }
         }
 
+        // HÀM ĐẨY FILE BASE64 LÊN GOOGLE DRIVE
+        async function uploadBase64ToDrive(base64Data, fileType) {
+            const currentUser = localStorage.getItem('hub_logged_username') || 'Admin';
+            try {
+                await fetch(APPS_SCRIPT_VAULT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({
+                        username: currentUser,
+                        fileType: fileType,
+                        base64Data: base64Data
+                    })
+                });
+            } catch (err) {
+                console.error("Upload Drive error:", err);
+            }
+        }
+
         async function startCheckingX() {
             const userTxt = document.getElementById('txtUserPaste').value.trim();
             if (!userTxt) { alert("Vui lòng dán danh sách username X!"); return; }
@@ -233,6 +250,7 @@
             document.getElementById('cardOther').innerText = '0';
             document.getElementById('progressBar').style.width = '0%';
             document.getElementById('btnDownloadExcel').classList.add('hidden');
+            document.getElementById('excelStatusTxt').innerText = 'Đang kiểm tra danh sách...';
 
             document.getElementById('btnStart').disabled = true;
             document.getElementById('btnStart').classList.add('opacity-50', 'cursor-not-allowed');
@@ -275,7 +293,7 @@
             const pool = Array.from({ length: threads }, () => runWorker());
             await Promise.all(pool);
 
-            finishChecking();
+            await finishChecking();
         }
 
         function updateSingleResult(res) {
@@ -307,11 +325,32 @@
             document.getElementById('btnStop').disabled = true;
         }
 
-        function finishChecking() {
+        async function finishChecking() {
             isRunning = false;
             document.getElementById('btnStart').disabled = false;
             document.getElementById('btnStart').classList.remove('opacity-50', 'cursor-not-allowed');
             document.getElementById('btnStop').disabled = true;
+
+            // TỰ ĐỘNG TẠO FILE EXCEL TỔNG HỢP VÀ ĐẨY LÊN THƯ MỤC X FINAL NGAY KHI CHECK XONG
+            if (resultsData.length > 0) {
+                document.getElementById('excelStatusTxt').innerHTML = `<span class="text-blue-600 font-bold">☁️ Đang đồng bộ kết quả lên thư mục X FINAL...</span>`;
+                
+                const rows = [
+                    ["STT", "USERNAME", "TRẠNG THÁI", "CHI TIẾT", "THỜI GIAN CHECK"]
+                ];
+                resultsData.forEach((r, i) => {
+                    rows.push([i + 1, r.username, r.status, r.detail || "", new Date().toLocaleString('vi-VN')]);
+                });
+
+                const wb = XLSX.utils.book_new();
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                XLSX.utils.book_append_sheet(wb, ws, "CHECK_X_RESULT");
+                
+                const base64Data = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
+                await uploadBase64ToDrive(base64Data, "KET_QUA_CHECK_X");
+                
+                document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã kiểm tra xong & đồng bộ vào thư mục X FINAL</span>`;
+            }
         }
 
         function copyResults(type) {
@@ -389,7 +428,6 @@
             XLSX.utils.book_append_sheet(outWb, outWs, "LIVE_MATCHED");
             const timeStr = new Date().toISOString().replace(/[-:T.]/g, '').substring(0, 14);
             
-            // Chuyển thành Binary / Base64 để lưu ngầm & chuẩn bị tải
             const wbout = XLSX.write(outWb, { bookType: 'xlsx', type: 'binary' });
             function s2ab(s) {
                 const buf = new ArrayBuffer(s.length);
@@ -401,31 +439,15 @@
             lastGeneratedBlob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             lastGeneratedFileName = `ket_qua_loc_excel_${timeStr}.xlsx`;
 
-            // Đồng bộ ngầm lên Drive X FINAL (Không kích hoạt tải về máy)
-            try {
-                const base64Data = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
-                const currentUser = localStorage.getItem('hub_logged_username') || 'Admin';
+            // ĐỒNG BỘ FILE LỌC EXCEL VÀO THƯ MỤC X FINAL
+            const base64Data = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
+            await uploadBase64ToDrive(base64Data, "EXCEL_LOC_LIVE");
 
-                fetch(APPS_SCRIPT_VAULT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: "SYNC_PRIVATE_VAULT",
-                        username: currentUser,
-                        base64Data: base64Data
-                    })
-                });
-            } catch (eDrive) {
-                console.error("Lỗi đồng bộ Drive:", eDrive);
-            }
-
-            // Cập nhật giao diện: Chỉ hiện nút TẢI & dòng trạng thái (Không popup, không tự tải)
+            // Cập nhật giao diện
             document.getElementById('countMatched').innerText = matchedRows.length;
             document.getElementById('btnDownloadExcel').classList.remove('hidden');
-            document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã lọc xong ${matchedRows.length} dòng</span>`;
+            document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã lọc xong ${matchedRows.length} dòng & lưu vào X FINAL</span>`;
             
-            // Reset input file để có thể chọn lại
             event.target.value = '';
         }
 
