@@ -250,7 +250,7 @@
             document.getElementById('cardOther').innerText = '0';
             document.getElementById('progressBar').style.width = '0%';
             document.getElementById('btnDownloadExcel').classList.add('hidden');
-            document.getElementById('excelStatusTxt').innerText = 'Đang kiểm tra danh sách...';
+            document.getElementById('excelStatusTxt').innerText = '';
 
             document.getElementById('btnStart').disabled = true;
             document.getElementById('btnStart').classList.add('opacity-50', 'cursor-not-allowed');
@@ -293,7 +293,7 @@
             const pool = Array.from({ length: threads }, () => runWorker());
             await Promise.all(pool);
 
-            await finishChecking();
+            finishChecking();
         }
 
         function updateSingleResult(res) {
@@ -325,32 +325,11 @@
             document.getElementById('btnStop').disabled = true;
         }
 
-        async function finishChecking() {
+        function finishChecking() {
             isRunning = false;
             document.getElementById('btnStart').disabled = false;
             document.getElementById('btnStart').classList.remove('opacity-50', 'cursor-not-allowed');
             document.getElementById('btnStop').disabled = true;
-
-            // TỰ ĐỘNG TẠO FILE EXCEL TỔNG HỢP VÀ ĐẨY LÊN THƯ MỤC X FINAL NGAY KHI CHECK XONG
-            if (resultsData.length > 0) {
-                document.getElementById('excelStatusTxt').innerHTML = `<span class="text-blue-600 font-bold">☁️ Đang đồng bộ kết quả lên thư mục X FINAL...</span>`;
-                
-                const rows = [
-                    ["STT", "USERNAME", "TRẠNG THÁI", "CHI TIẾT", "THỜI GIAN CHECK"]
-                ];
-                resultsData.forEach((r, i) => {
-                    rows.push([i + 1, r.username, r.status, r.detail || "", new Date().toLocaleString('vi-VN')]);
-                });
-
-                const wb = XLSX.utils.book_new();
-                const ws = XLSX.utils.aoa_to_sheet(rows);
-                XLSX.utils.book_append_sheet(wb, ws, "CHECK_X_RESULT");
-                
-                const base64Data = XLSX.write(wb, { bookType: 'xlsx', type: 'base64' });
-                await uploadBase64ToDrive(base64Data, "KET_QUA_CHECK_X");
-                
-                document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã kiểm tra xong & đồng bộ vào thư mục X FINAL</span>`;
-            }
         }
 
         function copyResults(type) {
@@ -439,11 +418,11 @@
             lastGeneratedBlob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             lastGeneratedFileName = `ket_qua_loc_excel_${timeStr}.xlsx`;
 
-            // ĐỒNG BỘ FILE LỌC EXCEL VÀO THƯ MỤC X FINAL
+            // TỰ ĐỘNG ĐỒNG BỘ FILE EXCEL ĐÃ LỌC LÊN THƯ MỤC X FINAL
             const base64Data = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
             await uploadBase64ToDrive(base64Data, "EXCEL_LOC_LIVE");
 
-            // Cập nhật giao diện
+            // Hiển thị nút TẢI và cập nhật thông báo
             document.getElementById('countMatched').innerText = matchedRows.length;
             document.getElementById('btnDownloadExcel').classList.remove('hidden');
             document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã lọc xong ${matchedRows.length} dòng & lưu vào X FINAL</span>`;
