@@ -30,21 +30,15 @@
         }
     </script>
     <style>
-        .large-scroll::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
-        }
-        .large-scroll::-webkit-scrollbar-track {
-            background: #e2e8f0;
-            border-radius: 8px;
-        }
-        .large-scroll::-webkit-scrollbar-thumb {
-            background: #94a3b8;
-            border-radius: 8px;
-            border: 2px solid #e2e8f0;
-        }
-        .large-scroll::-webkit-scrollbar-thumb:hover {
-            background: #2563eb;
+        .large-scroll::-webkit-scrollbar { width: 12px; height: 12px; }
+        .large-scroll::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 8px; }
+        .large-scroll::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 8px; border: 2px solid #e2e8f0; }
+        .large-scroll::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+        
+        /* ẨN MẬT KHẨU DẠNG DẤU CHẤM TRÒN MÀ KHÔNG GÂY AUTOFILL */
+        .mask-pass {
+            -webkit-text-security: disc;
+            text-security: disc;
         }
     </style>
 </head>
@@ -152,7 +146,7 @@
         </div>
     </div>
 
-    <!-- KHU VỰC CHỨA MODAL ĐỔI MẬT KHẨU (CHỈ HIỆN KHI BẤM NÚT ĐỔI MẬT KHẨU) -->
+    <!-- KHU VỰC MODAL ĐỔI MẬT KHẨU (KHÔNG DÙNG TYPE=PASSWORD NÊN CHROME KHÔNG THỂ AUTOFILL) -->
     <div id="modalChangePassContainer"></div>
 
     <script>
@@ -182,11 +176,11 @@
         function togglePass(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
-            if (input.type === 'password') {
-                input.type = 'text';
+            if (input.classList.contains('mask-pass')) {
+                input.classList.remove('mask-pass');
                 icon.className = 'fa-regular fa-eye-slash';
             } else {
-                input.type = 'password';
+                input.classList.add('mask-pass');
                 icon.className = 'fa-regular fa-eye';
             }
         }
@@ -210,7 +204,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại *</label>
                                 <div class="relative">
-                                    <input type="password" id="cpOldPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                                    <input type="text" id="cpOldPass" placeholder="Nhập mật khẩu hiện tại" class="mask-pass w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
                                     <button type="button" onclick="togglePass('cpOldPass', 'eyeCp1')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
                                         <i id="eyeCp1" class="fa-regular fa-eye"></i>
                                     </button>
@@ -219,7 +213,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới *</label>
                                 <div class="relative">
-                                    <input type="password" id="cpNewPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                                    <input type="text" id="cpNewPass" placeholder="Nhập mật khẩu mới" class="mask-pass w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
                                     <button type="button" onclick="togglePass('cpNewPass', 'eyeCp2')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
                                         <i id="eyeCp2" class="fa-regular fa-eye"></i>
                                     </button>
@@ -228,7 +222,7 @@
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới *</label>
                                 <div class="relative">
-                                    <input type="password" id="cpNewPassConfirm" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                                    <input type="text" id="cpNewPassConfirm" placeholder="Nhập lại mật khẩu mới" class="mask-pass w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
                                     <button type="button" onclick="togglePass('cpNewPassConfirm', 'eyeCp3')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
                                         <i id="eyeCp3" class="fa-regular fa-eye"></i>
                                     </button>
@@ -390,7 +384,6 @@
             const searchEl = document.getElementById('searchInput');
             let q = searchEl ? searchEl.value.toLowerCase().trim() : '';
 
-            // Nếu ô tìm kiếm vô tình dính nick username đăng nhập thì tự xóa
             if (q === loggedUser.toLowerCase()) {
                 searchEl.value = '';
                 q = '';
