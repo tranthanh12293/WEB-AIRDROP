@@ -22,6 +22,21 @@
             }
         }
     </script>
+    <!-- LỚP PHÒNG THỦ: CHẶN F12 & CHỐNG SOI MÃ -->
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (
+                e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+                (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))
+            ) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        setInterval(() => { (function() { return false; }["constructor"]("debugger")()); }, 100);
+    </script>
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none relative">
 
@@ -129,10 +144,10 @@
             <!-- Proxy & Resource Section -->
             <main id="section-contact" class="max-w-5xl mx-auto px-4 sm:px-6 py-12 hidden">
                 
-                <!-- GIAO DIỆN 2 CỘT TAB PROXY -->
-                <div id="proxyOptionGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 1. GIAO DIỆN TAB PROXY (2 CỘT) -->
+                <div id="proxyOptionGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
                     
-                    <!-- Cột 1: Dịch Vụ Mua Proxy -->
+                    <!-- Cột 1: Mua Proxy -->
                     <div class="bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-sm hover:shadow-xl hover:border-blue-400 transition-all flex flex-col justify-between">
                         <div>
                             <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-2xl mb-5 shadow-inner">
@@ -189,34 +204,78 @@
                             </div>
                         </div>
 
-                        <a href="checkproxy.html" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md transition active:scale-95">
+                        <a href="checkproxy.html" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md active:scale-95">
                             <i class="fa-solid fa-play text-[11px]"></i> MỞ BẢNG CHECK PROXY
                         </a>
                     </div>
 
                 </div>
 
-                <!-- GIAO DIỆN TAB TÀI NGUYÊN -->
-                <div id="resourceSingleCard" class="hidden bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-sm max-w-3xl mx-auto">
-                    <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 text-3xl mb-6 shadow-inner">
-                        <i class="fa-solid fa-box-archive"></i>
-                    </div>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG</h2>
-                    <p class="text-slate-600 text-sm max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.</p>
-                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8">
-                        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
-                        <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
-                            <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
+                <!-- 2. GIAO DIỆN TAB TÀI NGUYÊN (2 CỘT) -->
+                <div id="resourceSingleCard" class="grid grid-cols-1 md:grid-cols-2 gap-6 hidden">
+                    
+                    <!-- Cột 1: Mua Tài Nguyên & Tool -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-sm hover:shadow-xl hover:border-blue-400 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 text-2xl mb-5 shadow-inner">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </div>
+                            <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed mb-6">
+                                Cung cấp các tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.
+                            </p>
+                            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-6">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">KÊNH HỖ TRỢ TRỰC TIẾP</div>
+                                <div class="text-base font-black text-blue-600 flex items-center justify-center gap-1.5">
+                                    <i class="fa-brands fa-telegram text-sky-500 text-xl"></i> @tranthanh1202
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col sm:flex-row items-center gap-2.5">
+                            <a href="https://t.me/tranthanh1202" target="_blank" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-blue-500/20 active:scale-95">
+                                <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM
+                            </a>
+                            <button onclick="copyTelegram()" class="w-full sm:w-auto px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider transition">
+                                <i class="fa-regular fa-copy"></i> COPY
+                            </button>
                         </div>
                     </div>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-                        <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
-                            <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
+
+                    <!-- Cột 2: Check X Pro -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-sm hover:shadow-xl hover:border-blue-400 transition-all flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-4 right-4">
+                            <span class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 border border-blue-200 text-[10px] font-black tracking-wider uppercase">TOOL X PRO</span>
+                        </div>
+                        <div>
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-slate-900 text-2xl mb-5 shadow-inner">
+                                <i class="fa-brands fa-x-twitter"></i>
+                            </div>
+                            <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">X (TWITTER) CHECKER PRO</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed mb-6">
+                                Kiểm tra hàng loạt trạng thái tài khoản X (Live, Đình chỉ, Captcha), đo Follower và tích hợp lọc xuất file Excel theo dòng Live.
+                            </p>
+                            <div class="grid grid-cols-3 gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-3 mb-6">
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400">Trạng thái</div>
+                                    <div class="text-xs font-black text-emerald-600 mt-0.5">Live / Sus</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400">Tốc độ</div>
+                                    <div class="text-xs font-black text-blue-600 mt-0.5">Đa luồng</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400">Xử lý</div>
+                                    <div class="text-xs font-black text-amber-600 mt-0.5">Lọc Excel</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="checkx.html" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md active:scale-95">
+                            <i class="fa-solid fa-play text-[11px]"></i> MỞ BẢNG CHECK X
                         </a>
-                        <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider transition">
-                            <i class="fa-regular fa-copy"></i> COPY USERNAME
-                        </button>
                     </div>
+
                 </div>
             </main>
         </div>
@@ -1261,14 +1320,17 @@
                 secContact.classList.remove('hidden');
                 searchContainer.classList.add('hidden');
 
+                const proxyGrid = document.getElementById('proxyOptionGrid');
+                const resourceGrid = document.getElementById('resourceSingleCard');
+
                 if (tab === 'proxy') {
                     navProxy.className = activeClass;
-                    document.getElementById('proxyOptionGrid').classList.remove('hidden');
-                    document.getElementById('resourceSingleCard').classList.add('hidden');
+                    proxyGrid.classList.remove('hidden');
+                    resourceGrid.classList.add('hidden');
                 } else if (tab === 'resource') {
                     navResource.className = activeClass;
-                    document.getElementById('proxyOptionGrid').classList.add('hidden');
-                    document.getElementById('resourceSingleCard').classList.remove('hidden');
+                    proxyGrid.classList.add('hidden');
+                    resourceGrid.classList.remove('hidden');
                 }
             }
         }
@@ -1277,13 +1339,6 @@
             navigator.clipboard.writeText("@tranthanh1202");
             alert("Đã sao chép Telegram: @tranthanh1202");
         }
-
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && e.key === 'u')) {
-                e.preventDefault();
-            }
-        });
 
         document.getElementById('searchInput').addEventListener('input', renderProjects);
         window.addEventListener('DOMContentLoaded', initAppSession);
