@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LICENSE SCRIPT - TRẦN THÀNH HUB</title>
+    <title>AIRDROP - TRẦN THÀNH HUB</title>
     <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -66,7 +65,7 @@
                 <a href="home.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
                     <i class="fa-solid fa-house w-5 text-center text-sm"></i> TRANG CHỦ
                 </a>
-                <a href="airdrop.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
+                <a href="airdrop.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-blue-50 text-blue-600 font-black shadow-sm transition">
                     <i class="fa-solid fa-parachute-box w-5 text-center text-sm"></i> AIRDROP
                 </a>
                 <a href="tools.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
@@ -78,7 +77,7 @@
                 <a href="proxy.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
                     <i class="fa-solid fa-network-wired w-5 text-center text-sm"></i> DỊCH VỤ PROXY
                 </a>
-                <a href="license.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-blue-50 text-blue-600 font-black shadow-sm transition">
+                <a href="license.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
                     <i class="fa-solid fa-key w-5 text-center text-sm"></i> LICENSE SCRIPT
                 </a>
             </nav>
@@ -108,81 +107,31 @@
         </div>
     </aside>
 
-    <!-- NỘI DUNG LICENSE SCRIPT -->
+    <!-- NỘI DUNG AIRDROP -->
     <div class="flex-1 flex flex-col justify-between h-screen overflow-y-auto large-scroll">
-        <main class="max-w-[1700px] w-full mx-auto px-6 py-8 space-y-6">
+        <main class="max-w-6xl w-full mx-auto px-6 py-8 space-y-6">
 
-            <div class="flex flex-wrap items-center justify-between gap-4 border-b border-borderLight pb-4 bg-white p-5 rounded-3xl shadow-sm">
-                <div>
-                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                        <i class="fa-solid fa-key text-blue-600"></i> LICENSE SCRIPT & EXTENSION
-                    </h2>
-                    <p class="text-xs text-textMuted font-medium mt-1">Danh sách Key bản quyền tự động phân phối theo số lượng tài khoản của bạn</p>
-                </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="downloadExcelLicense()" class="h-10 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider transition flex items-center gap-2 shadow-sm active:scale-95">
-                        <i class="fa-solid fa-file-excel"></i> TẢI EXCEL
-                    </button>
-                    <button onclick="loadMyLicenses()" class="h-10 px-5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition flex items-center gap-2 shadow-sm active:scale-95">
-                        <i class="fa-solid fa-rotate"></i> LÀM MỚI
-                    </button>
-                </div>
+            <!-- Search bar -->
+            <div class="relative w-full max-w-lg mx-auto sm:mx-0">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                <input type="text" id="searchInput" oninput="render()" placeholder="Tìm kiếm nhanh kèo airdrop..." class="w-full bg-white border border-borderLight rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-600 shadow-sm transition">
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-black shrink-0">
-                        <i class="fa-solid fa-layer-group"></i>
-                    </div>
-                    <div>
-                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">SỐ KEY ĐƯỢC CẤP</div>
-                        <div id="statAllocated" class="text-2xl font-black text-blue-600">0</div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-black shrink-0">
-                        <i class="fa-solid fa-code-branch"></i>
-                    </div>
-                    <div>
-                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">TỔNG LOẠI SCRIPT</div>
-                        <div id="statScriptTypes" class="text-2xl font-black text-emerald-600">0</div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center">
-                    <div class="relative w-full">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input type="text" id="searchInput" oninput="filterTable()" placeholder="Tìm kiếm key hoặc tên script..." class="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 text-xs outline-none bg-slate-50 focus:bg-white focus:border-blue-600 shadow-inner">
-                    </div>
-                </div>
+            <!-- Category Tabs -->
+            <div class="flex flex-wrap items-center gap-2" id="categoryTabs">
+                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
             </div>
 
-            <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm h-[620px] flex flex-col overflow-hidden">
-                <div id="loadingBox" class="flex-1 flex flex-col items-center justify-center gap-3">
-                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-2"></i>
-                    <p class="text-xs font-bold text-slate-500">Đang tải và đồng bộ Key bản quyền của bạn...</p>
-                </div>
-
-                <div id="emptyBox" class="flex-1 flex-col items-center justify-center gap-3 hidden text-center p-8">
-                    <div class="w-16 h-16 rounded-3xl bg-amber-50 text-amber-500 flex items-center justify-center text-2xl mx-auto mb-1">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
-                    </div>
-                    <h3 class="text-sm font-black text-slate-800 uppercase">CHƯA ĐƯỢC PHÂN PHỐI KEY</h3>
-                    <p id="emptyReason" class="text-xs text-slate-500 max-w-md mx-auto">Tài khoản của bạn hiện có NUMBER_KEY = 0 hoặc chưa được Admin kích hoạt.</p>
-                    <a href="https://t.me/tranthanh1202" target="_blank" class="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-50 text-blue-600 rounded-2xl text-xs font-black border border-blue-200 hover:bg-blue-100 transition shadow-sm">
-                        <i class="fa-brands fa-telegram text-sm"></i> LIÊN HỆ ADMIN: @tranthanh1202
-                    </a>
-                </div>
-
-                <div id="tableWrapper" class="overflow-x-auto overflow-y-auto large-scroll flex-1 rounded-2xl border border-slate-200 hidden bg-white">
-                    <table class="min-w-full text-left border-collapse text-xs whitespace-nowrap">
-                        <thead id="licenseHead" class="sticky top-0 bg-slate-900 text-white font-black uppercase text-[12px] tracking-wider z-20 shadow-md"></thead>
-                        <tbody id="licenseBody" class="font-mono divide-y divide-slate-200 text-slate-800 bg-white"></tbody>
-                    </table>
-                </div>
+            <div id="loader" class="text-center py-20">
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
+                <p class="text-textMuted text-sm font-medium">Đang nạp danh sách kèo Airdrop...</p>
             </div>
 
+            <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+            <div id="noData" class="text-center py-16 hidden">
+                <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
+                <p class="text-textMuted text-sm">Không tìm thấy kèo nào phù hợp.</p>
+            </div>
         </main>
 
         <footer class="border-t border-borderLight py-6 text-center text-xs text-textMuted bg-white font-medium">
@@ -190,22 +139,29 @@
         </footer>
     </div>
 
-    <!-- CONTAINER CHỨA MODAL ĐỔI MẬT KHẨU ĐỘNG -->
-    <div id="modalChangePassContainer"></div>
-
-    <!-- Toast Copy -->
-    <div id="copyToast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 hidden z-50 border border-slate-700">
-        <i class="fa-solid fa-circle-check text-emerald-400"></i>
-        <span>Đã sao chép Key vào Clipboard!</span>
+    <!-- MODAL HƯỚNG DẪN -->
+    <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <h3 id="modalProjectTitle" class="text-base font-black text-slate-900 uppercase">CHI TIẾT HƯỚNG DẪN</h3>
+                <button onclick="document.getElementById('guideModal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto large-scroll">
+                <div id="modalGuideBody" class="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-200 font-mono"></div>
+            </div>
+        </div>
     </div>
 
+    <!-- KHU VỰC CHỨA MODAL ĐỔI MẬT KHẨU (CHỈ HIỆN KHI BẤM NÚT ĐỔI MẬT KHẨU) -->
+    <div id="modalChangePassContainer"></div>
+
     <script>
+        const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
+        let allAirdrops = [], activeCat = 'all';
+
         const loggedUser = localStorage.getItem('hub_logged_username') || 'Member';
         document.getElementById('sidebarUsername').innerText = loggedUser;
-
-        let globalHeaders = [];
-        let globalRows = [];
 
         function toggleUserDropdown() { 
             document.getElementById('userMenuPopup').classList.toggle('hidden'); 
@@ -400,147 +356,87 @@
             }
         }
 
-        async function loadMyLicenses() {
-            document.getElementById('loadingBox').classList.remove('hidden');
-            document.getElementById('emptyBox').classList.add('hidden');
-            document.getElementById('tableWrapper').classList.add('hidden');
+        function handleGoogleData(res) {
+            const rows = res.table.rows;
+            allAirdrops = rows.map(r => {
+                const c = r.c;
+                return {
+                    title: c[1] ? (c[1].v ?? '') : '',
+                    category: c[2] ? (c[2].v ?? 'Airdrop') : 'Airdrop',
+                    status: c[3] ? (c[3].v ?? 'NEW') : 'NEW',
+                    description: c[4] ? (c[4].v ?? '') : '',
+                    script_link: c[6] ? (c[6].v ?? '') : '',
+                    guide_project: c[7] ? (c[7].v ?? '') : '',
+                    guide_script: c[8] ? (c[8].v ?? '') : ''
+                };
+            }).filter(p => p.title && p.title.toLowerCase() !== 'title' && !['APP', 'EXTENSION', 'SCR', 'TOOL'].some(t => p.category.toUpperCase().includes(t)));
 
-            try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'GET_MY_LICENSES',
-                        username: loggedUser
-                    })
-                });
-
-                const json = await res.json();
-                document.getElementById('loadingBox').classList.add('hidden');
-
-                if (json.status === 'success') {
-                    if (!json.rows || json.rows.length === 0) {
-                        document.getElementById('emptyBox').classList.remove('hidden');
-                        document.getElementById('emptyReason').innerText = json.message || "Tài khoản của bạn chưa được cấp Key.";
-                        document.getElementById('statAllocated').innerText = "0";
-                        document.getElementById('statScriptTypes').innerText = "0";
-                        return;
-                    }
-
-                    globalHeaders = json.headers || [];
-                    globalRows = json.rows || [];
-
-                    document.getElementById('statAllocated').innerText = json.allocatedCount || json.rows.length;
-                    document.getElementById('statScriptTypes').innerText = globalHeaders.length;
-
-                    renderTable(globalHeaders, globalRows);
-                    document.getElementById('tableWrapper').classList.remove('hidden');
-                } else {
-                    document.getElementById('emptyBox').classList.remove('hidden');
-                    document.getElementById('emptyReason').innerText = json.message || "Lỗi tải dữ liệu Key!";
-                }
-            } catch (err) {
-                document.getElementById('loadingBox').classList.add('hidden');
-                document.getElementById('emptyBox').classList.remove('hidden');
-                document.getElementById('emptyReason').innerText = "Lỗi kết nối máy chủ!";
-            }
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('projectGrid').classList.remove('hidden');
+            buildTabs();
+            render();
         }
 
-        function renderTable(headers, rows) {
-            const thead = document.getElementById('licenseHead');
-            const tbody = document.getElementById('licenseBody');
-
-            thead.innerHTML = `
-                <tr>
-                    <th class="py-4 px-4 text-center w-14 bg-slate-950 border-r border-slate-800">STT</th>
-                    ${headers.map((h, i) => `
-                        <th class="py-4 px-5 border-r border-slate-800 bg-slate-900">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-code text-blue-400 text-xs"></i>
-                                <span class="font-black text-amber-300 text-xs tracking-wide">${h || `SCRIPT_${i+1}`}</span>
-                            </div>
-                        </th>
-                    `).join('')}
-                </tr>
-            `;
-
-            if (rows.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="${headers.length + 1}" class="py-12 text-center text-slate-400 font-bold">
-                            Không tìm thấy Key nào khớp với từ khóa tìm kiếm.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = rows.map((row, rIdx) => `
-                <tr class="${rIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-blue-50/70 transition">
-                    <td class="py-3 px-4 text-center text-slate-500 font-bold border-r border-slate-200 bg-slate-100/50">${rIdx + 1}</td>
-                    ${headers.map((_, cIdx) => {
-                        const cellVal = (row[cIdx] !== undefined && row[cIdx] !== null) ? row[cIdx] : '';
-                        return `
-                            <td class="py-3 px-5 border-r border-slate-200 group">
-                                <div class="flex items-center justify-between gap-3">
-                                    <span class="font-bold text-slate-800 select-all">${cellVal}</span>
-                                    ${cellVal ? `
-                                        <button onclick="copyToClip('${cellVal}')" title="Sao chép Key" class="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-blue-600 transition rounded-lg hover:bg-blue-50">
-                                            <i class="fa-regular fa-copy text-sm"></i>
-                                        </button>
-                                    ` : ''}
-                                </div>
-                            </td>
-                        `;
-                    }).join('')}
-                </tr>
+        function buildTabs() {
+            const cats = ['all', ...new Set(allAirdrops.map(p => p.category).filter(Boolean))];
+            document.getElementById('categoryTabs').innerHTML = cats.map(c => `
+                <button class="px-4 py-2 rounded-xl text-xs font-black uppercase border transition ${c === activeCat ? 'bg-primaryBlue text-white border-primaryBlue' : 'bg-white text-slate-600 border-borderLight'}" onclick="activeCat='${c}'; buildTabs(); render();">
+                    ${c === 'all' ? 'TẤT CẢ' : c}
+                </button>
             `).join('');
         }
 
-        function copyToClip(text) {
-            navigator.clipboard.writeText(text);
-            const toast = document.getElementById('copyToast');
-            toast.classList.remove('hidden');
-            setTimeout(() => { toast.classList.add('hidden'); }, 2000);
-        }
-
-        function filterTable() {
+        function render() {
             const searchEl = document.getElementById('searchInput');
-            let query = searchEl ? searchEl.value.toLowerCase().trim() : '';
-            if (query === loggedUser.toLowerCase()) {
+            let q = searchEl ? searchEl.value.toLowerCase().trim() : '';
+
+            // Nếu ô tìm kiếm vô tình dính nick username đăng nhập thì tự xóa
+            if (q === loggedUser.toLowerCase()) {
                 searchEl.value = '';
-                query = '';
+                q = '';
             }
-            if (!query) {
-                renderTable(globalHeaders, globalRows);
-                return;
-            }
-            const filteredRows = globalRows.filter(row => {
-                return row.some(cell => cell && cell.toString().toLowerCase().includes(query));
-            });
-            renderTable(globalHeaders, filteredRows);
+
+            const filtered = allAirdrops.filter(p => (activeCat === 'all' || p.category === activeCat) && (p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)));
+            
+            const grid = document.getElementById('projectGrid');
+            if (filtered.length === 0) { grid.innerHTML = ''; document.getElementById('noData').classList.remove('hidden'); return; }
+            document.getElementById('noData').classList.add('hidden');
+
+            grid.innerHTML = filtered.map(p => `
+                <div class="bg-white border border-borderLight rounded-3xl p-5 hover:shadow-xl hover:border-blue-400 transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold uppercase">${p.category}</span>
+                            <span class="text-[11px] px-2.5 py-1 rounded-md font-black ${p.status === 'HOT' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}">${p.status}</span>
+                        </div>
+                        <h3 class="text-base font-black text-slate-900 tracking-tight mb-2">${p.title}</h3>
+                        <p class="text-slate-600 text-xs leading-relaxed mb-4">${p.description || 'Chưa có mô tả chi tiết.'}</p>
+                    </div>
+                    <div class="flex flex-col gap-2 pt-4 border-t border-slate-100">
+                        ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 text-white text-xs font-black text-center uppercase tracking-wider shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> TẢI SCRIPT</a>` : ''}
+                        <div class="grid grid-cols-2 gap-2">
+                            ${p.guide_project ? `<button onclick="showGuide('${p.title}', '${encodeURIComponent(p.guide_project)}')" class="py-2.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-black uppercase">HD DỰ ÁN</button>` : ''}
+                            ${p.guide_script ? `<button onclick="showGuide('${p.title}', '${encodeURIComponent(p.guide_script)}')" class="py-2.5 rounded-xl bg-purple-50 border border-purple-300 text-purple-900 text-xs font-black uppercase">HD TOOL</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function downloadExcelLicense() {
-            if (globalRows.length === 0) {
-                alert("Không có dữ liệu Key để tải!");
-                return;
-            }
-
-            const exportData = [globalHeaders, ...globalRows];
-            const ws = XLSX.utils.aoa_to_sheet(exportData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "LICENSES");
-            
-            const timeStr = new Date().toISOString().replace(/[-:T.]/g, '').substring(0, 14);
-            XLSX.writeFile(wb, `LICENSE_${loggedUser}_${timeStr}.xlsx`);
+        function showGuide(title, encodedText) {
+            document.getElementById('modalProjectTitle').innerText = `HƯỚNG DẪN: ${title}`;
+            document.getElementById('modalGuideBody').innerText = decodeURIComponent(encodedText);
+            document.getElementById('guideModal').classList.remove('hidden');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             const searchEl = document.getElementById('searchInput');
             if (searchEl) searchEl.value = '';
-            loadMyLicenses();
         });
+
+        const script = document.createElement('script');
+        script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
+        document.body.appendChild(script);
     </script>
 </body>
 </html>
