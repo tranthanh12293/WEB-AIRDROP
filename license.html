@@ -43,7 +43,6 @@
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex">
 
-    <!-- SIDEBAR DỌC BÊN TRÁI -->
     <aside class="w-64 bg-sidebarBg border-r border-borderLight flex flex-col justify-between h-screen sticky top-0 shrink-0 p-4">
         <div>
             <div class="flex items-center gap-3 px-2 py-3 mb-6 border-b border-borderLight">
@@ -100,11 +99,9 @@
         </div>
     </aside>
 
-    <!-- NỘI DUNG LICENSE SCRIPT -->
     <div class="flex-1 flex flex-col justify-between h-screen overflow-y-auto large-scroll">
         <main class="max-w-[1700px] w-full mx-auto px-6 py-8 space-y-6">
 
-            <!-- Header & Thao tác nhanh -->
             <div class="flex flex-wrap items-center justify-between gap-4 border-b border-borderLight pb-4 bg-white p-5 rounded-3xl shadow-sm">
                 <div>
                     <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -122,10 +119,8 @@
                 </div>
             </div>
 
-            <!-- Dashboard 4 Card Thống Kê Hiện Đại -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 
-                <!-- Card 1: Số Key Được Cấp -->
                 <div class="bg-white p-5 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4 hover:shadow-md transition">
                     <div class="w-13 h-13 p-3.5 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-black shrink-0">
                         <i class="fa-solid fa-layer-group"></i>
@@ -136,7 +131,6 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Tổng Loại Script -->
                 <div class="bg-white p-5 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4 hover:shadow-md transition">
                     <div class="w-13 h-13 p-3.5 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-black shrink-0">
                         <i class="fa-solid fa-code-branch"></i>
@@ -147,33 +141,30 @@
                     </div>
                 </div>
 
-                <!-- Card 3: Hạn Dùng License (Mùng 1 Hàng Tháng) -->
                 <div class="bg-white p-5 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4 hover:shadow-md transition">
                     <div class="w-13 h-13 p-3.5 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-2xl font-black shrink-0">
                         <i class="fa-regular fa-calendar-check"></i>
                     </div>
                     <div>
                         <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">HẠN DÙNG LICENSE</div>
-                        <div id="statExpireDate" class="text-xl font-black text-amber-600">01/09/2026</div>
+                        <div id="statExpireDate" class="text-xl font-black text-amber-600">--/--/----</div>
                     </div>
                 </div>
 
-                <!-- Card 4: Trạng Thái Hệ Thống -->
                 <div class="bg-white p-5 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4 hover:shadow-md transition">
                     <div class="w-13 h-13 p-3.5 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl font-black shrink-0">
                         <i class="fa-solid fa-shield-halved"></i>
                     </div>
                     <div>
                         <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">TRẠNG THÁI KEY</div>
-                        <div class="text-base font-black text-purple-600 flex items-center gap-1.5 mt-0.5">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> HOẠT ĐỘNG
+                        <div class="text-base font-black text-emerald-600 flex items-center gap-1.5 mt-0.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> ĐANG HOẠT ĐỘNG
                         </div>
                     </div>
                 </div>
 
             </div>
 
-            <!-- Bảng Dữ Liệu Key Bản Quyền -->
             <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm h-[620px] flex flex-col overflow-hidden">
                 <div id="loadingBox" class="flex-1 flex flex-col items-center justify-center gap-3">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-2"></i>
@@ -206,10 +197,8 @@
         </footer>
     </div>
 
-    <!-- KHU VỰC MODAL ĐỔI MẬT KHẨU (DYNAMIC INJECTION CHỐNG AUTOFILL) -->
     <div id="modalChangePassContainer"></div>
 
-    <!-- Toast Copy -->
     <div id="copyToast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 hidden z-50 border border-slate-700">
         <i class="fa-solid fa-circle-check text-emerald-400"></i>
         <span>Đã sao chép Key vào Clipboard!</span>
@@ -223,9 +212,10 @@
         let globalHeaders = [];
         let globalRows = [];
 
-        // Tính ngày mùng 1 của tháng kế tiếp
+        // Logic tự động tính hạn dùng: Luôn là mùng 1 của tháng kế tiếp
         function calculateNextFirstOfMonth() {
             const now = new Date();
+            // Nếu hôm nay là ngày 1 thì cộng thêm 1 tháng, nếu từ ngày 2 trở đi thì vẫn lấy mùng 1 của tháng sau
             const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
             const d = String(nextMonth.getDate()).padStart(2, '0');
             const m = String(nextMonth.getMonth() + 1).padStart(2, '0');
