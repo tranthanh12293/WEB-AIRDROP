@@ -94,11 +94,6 @@
                     <i class="fa-regular fa-folder-open text-blue-600"></i> Upload File (.txt)
                 </button>
 
-                <div class="flex items-center gap-2 bg-slate-50 px-3.5 h-10 rounded-xl border border-slate-200">
-                    <span class="text-xs text-slate-600 font-medium">Số lần test/proxy:</span>
-                    <input type="number" id="inputRetries" value="2" min="1" max="5" class="w-10 bg-transparent text-center text-xs font-black text-blue-600 outline-none border-b-2 border-blue-500">
-                </div>
-
                 <button id="btnStart" onclick="startChecking()" class="h-10 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-black text-white uppercase tracking-wider transition shadow-md shadow-blue-500/25 active:scale-95 flex items-center gap-2">
                     <i class="fa-solid fa-play text-[10px]"></i> BẮT ĐẦU CHECK
                 </button>
@@ -161,7 +156,8 @@
     </footer>
 
     <script>
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
+        // API PYTHON BACKEND TRÊN RENDER
+        const BACKEND_API_URL = 'https://web-airdrop.onrender.com/check-proxy';
 
         let isRunning = false, stopRequested = false, resultsData = [];
         let fastCount = 0, midCount = 0, lagCount = 0, dieCount = 0, doneCount = 0, totalCount = 0;
@@ -191,8 +187,6 @@
 
             const proxies = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
             if (proxies.length === 0) return;
-
-            const retries = parseInt(document.getElementById('inputRetries').value) || 2;
 
             resultsData = [];
             fastCount = midCount = lagCount = dieCount = doneCount = 0;
@@ -231,16 +225,12 @@
                     const idx = currentIndex + 1;
 
                     try {
-                        const res = await fetch(APPS_SCRIPT_URL, {
+                        const res = await fetch(BACKEND_API_URL, {
                             method: 'POST',
-                            body: JSON.stringify({ action: 'CHECK_SINGLE_PROXY', proxy: proxy, retries: retries })
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ proxy: proxy })
                         });
-                        const textData = await res.text();
-                        let result;
-                        try { result = JSON.parse(textData); } catch (e) {
-                            const match = textData.match(/\{[\s\S]*\}/);
-                            result = match ? JSON.parse(match[0]) : { status: 'DIE', avg_ping: -1, jitter: -1, loss: 100 };
-                        }
+                        const result = await res.json();
                         result.idx = idx;
                         updateSingleResult(result);
                     } catch (err) {
@@ -259,9 +249,10 @@
             resultsData.push(res);
             doneCount++;
 
-            if (res.status === 'FAST') fastCount++;
-            else if (res.status === 'MEDIUM') midCount++;
-            else if (res.status === 'LAG') lagCount++;
+            const st = res.status || 'DIE';
+            if (st === 'FAST') fastCount++;
+            else if (st === 'MEDIUM') midCount++;
+            else if (st === 'LAG') lagCount++;
             else dieCount++;
 
             document.getElementById('cardFast').innerText = fastCount;
@@ -272,11 +263,16 @@
 
             const row = document.getElementById(`row-${res.idx}`);
             if (row) {
-                document.getElementById(`status-${res.idx}`).innerHTML = getStatusBadge(res.status);
+                document.getElementById(`status-${res.idx}`).innerHTML = getStatusBadge(st);
                 document.getElementById(`ipout-${res.idx}`).innerText = res.ip_out || '--';
-                document.getElementById(`ping-${res.idx}`).innerText = res.avg_ping !== -1 ? `${res.avg_ping} ms` : 'Timeout';
-                document.getElementById(`jit-${res.idx}`).innerText = res.jitter !== -1 ? `${res.jitter} ms` : '--';
-                document.getElementById(`loss-${res.idx}`).innerText = `${res.loss}%`;
+                
+                const pingVal = (res.avg_ping !== undefined && res.avg_ping !== -1) ? `${res.avg_ping} ms` : 'Timeout';
+                const jitVal = (res.jitter !== undefined && res.jitter !== -1) ? `${res.jitter} ms` : '--';
+                const lossVal = (res.loss !== undefined) ? `${res.loss}%` : '100%';
+
+                document.getElementById(`ping-${res.idx}`).innerText = pingVal;
+                document.getElementById(`jit-${res.idx}`).innerText = jitVal;
+                document.getElementById(`loss-${res.idx}`).innerText = lossVal;
             }
         }
 
