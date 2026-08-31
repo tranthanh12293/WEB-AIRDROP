@@ -52,6 +52,10 @@
 
             <div id="loginMsg" class="text-xs font-bold text-rose-500 text-center hidden"></div>
             <div id="loginSuccessMsg" class="text-xs font-bold text-emerald-600 text-center hidden"></div>
+            <div id="loginPendingMsg" class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 text-center hidden">
+                <p class="font-bold">⚠️ Tài khoản đang chờ Admin kích hoạt!</p>
+                <p class="mt-1 text-[11px]">Vui lòng liên hệ Telegram Admin để duyệt nhanh: <a href="https://t.me/tranthanh1202" target="_blank" class="font-black text-blue-600 underline">@tranthanh1202</a></p>
+            </div>
 
             <div class="grid grid-cols-2 gap-3 pt-1">
                 <button id="btnLogin" onclick="handleLogin()" class="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1.5 active:scale-95">
@@ -265,6 +269,7 @@
             document.getElementById('regFormStep2').classList.add('hidden');
             document.getElementById('regMsg').classList.add('hidden');
             document.getElementById('loginSuccessMsg').classList.add('hidden');
+            document.getElementById('loginPendingMsg').classList.add('hidden');
         }
 
         function closeRegisterModal() {
@@ -277,6 +282,7 @@
             document.getElementById('forgotStep2').classList.add('hidden');
             document.getElementById('forgotMsg1').classList.add('hidden');
             document.getElementById('loginSuccessMsg').classList.add('hidden');
+            document.getElementById('loginPendingMsg').classList.add('hidden');
             const rememberedEmail = localStorage.getItem('hub_remembered_email');
             if (rememberedEmail && !document.getElementById('forgotEmail').value) {
                 document.getElementById('forgotEmail').value = rememberedEmail;
@@ -301,9 +307,11 @@
             const p = document.getElementById('loginPass').value.trim();
             const msg = document.getElementById('loginMsg');
             const successMsg = document.getElementById('loginSuccessMsg');
+            const pendingMsg = document.getElementById('loginPendingMsg');
             const btn = document.getElementById('btnLogin');
 
             successMsg.classList.add('hidden');
+            pendingMsg.classList.add('hidden');
 
             if (!u || !p) {
                 msg.innerText = "Vui lòng nhập tài khoản và mật khẩu!";
@@ -325,6 +333,8 @@
                     if (res.email) localStorage.setItem('hub_remembered_email', res.email);
 
                     window.location.href = "resources.html";
+                } else if (res.status === 'pending') {
+                    pendingMsg.classList.remove('hidden');
                 } else {
                     msg.innerText = res.message || "Sai thông tin đăng nhập!";
                     msg.classList.remove('hidden');
@@ -433,9 +443,12 @@
                     document.getElementById('loginUser').value = document.getElementById('regUser').value;
                     document.getElementById('loginPass').value = document.getElementById('regPass').value;
                     
-                    const successMsg = document.getElementById('loginSuccessMsg');
-                    successMsg.innerText = "✅ Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.";
-                    successMsg.classList.remove('hidden');
+                    const pendingMsg = document.getElementById('loginPendingMsg');
+                    pendingMsg.innerHTML = `
+                        <p class="font-bold">🎉 Đăng ký thành công! Trạng thái: PENDING</p>
+                        <p class="mt-1 text-[11px]">Tài khoản đang chờ Admin duyệt. Liên hệ Telegram để kích hoạt ngay: <a href="https://t.me/tranthanh1202" target="_blank" class="font-black text-blue-600 underline">@tranthanh1202</a></p>
+                    `;
+                    pendingMsg.classList.remove('hidden');
                 } else {
                     msg.innerText = res.message || "Xác thực OTP thất bại!";
                     msg.classList.remove('hidden');
