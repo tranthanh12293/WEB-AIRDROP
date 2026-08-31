@@ -104,12 +104,13 @@
     <div class="flex-1 flex flex-col justify-between h-screen overflow-y-auto large-scroll">
         <main class="max-w-[1700px] w-full mx-auto px-6 py-8 space-y-6">
 
+            <!-- Header & Thao tác nhanh -->
             <div class="flex flex-wrap items-center justify-between gap-4 border-b border-borderLight pb-4 bg-white p-5 rounded-3xl shadow-sm">
                 <div>
                     <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                         <i class="fa-solid fa-key text-blue-600"></i> LICENSE SCRIPT & EXTENSION
                     </h2>
-                    <p class="text-xs text-textMuted font-medium mt-1">Danh sách Key bản quyền tự động phân phối theo số lượng tài khoản của bạn</p>
+                    <p class="text-xs text-textMuted font-medium mt-1">Hệ thống phân phối Key bản quyền tự động, độc quyền theo tài khoản thành viên</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="downloadExcelLicense()" class="h-10 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider transition flex items-center gap-2 shadow-sm active:scale-95">
@@ -121,9 +122,12 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-black shrink-0">
+            <!-- Dashboard 4 Card Thống Kê Hiện Đại -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Card 1: Số Key Được Cấp -->
+                <div class="bg-white p-5 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4 hover:shadow-md transition">
+                    <div class="w-13 h-13 p-3.5 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-black shrink-0">
                         <i class="fa-solid fa-layer-group"></i>
                     </div>
                     <div>
@@ -132,8 +136,9 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4">
-                    <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-black shrink-0">
+                <!-- Card 2: Tổng Loại Script -->
+                <div class="bg-white p-5 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4 hover:shadow-md transition">
+                    <div class="w-13 h-13 p-3.5 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-black shrink-0">
                         <i class="fa-solid fa-code-branch"></i>
                     </div>
                     <div>
@@ -142,14 +147,33 @@
                     </div>
                 </div>
 
-                <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center">
-                    <div class="relative w-full">
-                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input type="text" id="searchInput" oninput="filterTable()" placeholder="Tìm kiếm key hoặc tên script..." class="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 text-xs outline-none bg-slate-50 focus:bg-white focus:border-blue-600 shadow-inner">
+                <!-- Card 3: Hạn Dùng License (Mùng 1 Hàng Tháng) -->
+                <div class="bg-white p-5 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4 hover:shadow-md transition">
+                    <div class="w-13 h-13 p-3.5 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center text-2xl font-black shrink-0">
+                        <i class="fa-regular fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">HẠN DÙNG LICENSE</div>
+                        <div id="statExpireDate" class="text-xl font-black text-amber-600">01/09/2026</div>
                     </div>
                 </div>
+
+                <!-- Card 4: Trạng Thái Hệ Thống -->
+                <div class="bg-white p-5 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4 hover:shadow-md transition">
+                    <div class="w-13 h-13 p-3.5 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl font-black shrink-0">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">TRẠNG THÁI KEY</div>
+                        <div class="text-base font-black text-purple-600 flex items-center gap-1.5 mt-0.5">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span> HOẠT ĐỘNG
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
+            <!-- Bảng Dữ Liệu Key Bản Quyền -->
             <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm h-[620px] flex flex-col overflow-hidden">
                 <div id="loadingBox" class="flex-1 flex flex-col items-center justify-center gap-3">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-2"></i>
@@ -182,7 +206,7 @@
         </footer>
     </div>
 
-    <!-- KHU VỰC MODAL ĐỔI MẬT KHẨU -->
+    <!-- KHU VỰC MODAL ĐỔI MẬT KHẨU (DYNAMIC INJECTION CHỐNG AUTOFILL) -->
     <div id="modalChangePassContainer"></div>
 
     <!-- Toast Copy -->
@@ -198,6 +222,16 @@
 
         let globalHeaders = [];
         let globalRows = [];
+
+        // Tính ngày mùng 1 của tháng kế tiếp
+        function calculateNextFirstOfMonth() {
+            const now = new Date();
+            const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            const d = String(nextMonth.getDate()).padStart(2, '0');
+            const m = String(nextMonth.getMonth() + 1).padStart(2, '0');
+            const y = nextMonth.getFullYear();
+            document.getElementById('statExpireDate').innerText = `${d}/${m}/${y}`;
+        }
 
         function toggleUserDropdown() { 
             document.getElementById('userMenuPopup').classList.toggle('hidden'); 
@@ -456,17 +490,6 @@
                 </tr>
             `;
 
-            if (rows.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="${headers.length + 1}" class="py-12 text-center text-slate-400 font-bold">
-                            Không tìm thấy Key nào khớp với từ khóa tìm kiếm.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
             tbody.innerHTML = rows.map((row, rIdx) => `
                 <tr class="${rIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-blue-50/70 transition">
                     <td class="py-3 px-4 text-center text-slate-500 font-bold border-r border-slate-200 bg-slate-100/50">${rIdx + 1}</td>
@@ -496,23 +519,6 @@
             setTimeout(() => { toast.classList.add('hidden'); }, 2000);
         }
 
-        function filterTable() {
-            const searchEl = document.getElementById('searchInput');
-            let query = searchEl ? searchEl.value.toLowerCase().trim() : '';
-            if (query === loggedUser.toLowerCase()) {
-                searchEl.value = '';
-                query = '';
-            }
-            if (!query) {
-                renderTable(globalHeaders, globalRows);
-                return;
-            }
-            const filteredRows = globalRows.filter(row => {
-                return row.some(cell => cell && cell.toString().toLowerCase().includes(query));
-            });
-            renderTable(globalHeaders, filteredRows);
-        }
-
         function downloadExcelLicense() {
             if (globalRows.length === 0) {
                 alert("Không có dữ liệu Key để tải!");
@@ -529,8 +535,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const searchEl = document.getElementById('searchInput');
-            if (searchEl) searchEl.value = '';
+            calculateNextFirstOfMonth();
             loadMyLicenses();
         });
     </script>
