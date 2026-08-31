@@ -31,19 +31,19 @@
         }
     </script>
     <style>
-        /* THANH CUỘN TO 12PX CỰC KỲ DỄ KÉO */
+        /* THANH CUỘN TO 14PX ĐẬM NÉT - DỄ CẦM KÉO */
         .large-scroll::-webkit-scrollbar {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
         }
         .large-scroll::-webkit-scrollbar-track {
-            background: #e2e8f0;
+            background: #cbd5e1;
             border-radius: 8px;
         }
         .large-scroll::-webkit-scrollbar-thumb {
-            background: #94a3b8;
+            background: #64748b;
             border-radius: 8px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #cbd5e1;
         }
         .large-scroll::-webkit-scrollbar-thumb:hover {
             background: #2563eb;
@@ -156,12 +156,13 @@
                 <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center">
                     <div class="relative w-full">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Tìm kiếm key hoặc tên script..." class="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 text-xs outline-none bg-slate-50 focus:bg-white focus:border-blue-600 shadow-inner">
+                        <!-- Chặn Autofill của trình duyệt triệt để -->
+                        <input type="search" id="searchInput" oninput="filterTable()" autocomplete="new-password" name="license_search_field_no_fill" placeholder="Tìm kiếm key hoặc tên script..." class="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 text-xs outline-none bg-slate-50 focus:bg-white focus:border-blue-600 shadow-inner">
                     </div>
                 </div>
             </div>
 
-            <!-- Bảng Dữ Liệu Key với THANH CUỘN TO & TIÊU ĐỀ NỔI BẬT -->
+            <!-- Bảng Dữ Liệu Key với THANH CUỘN TO 14PX & KHÔNG BỊ TRẮNG BẢNG -->
             <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm h-[620px] flex flex-col overflow-hidden">
                 <div id="loadingBox" class="flex-1 flex flex-col items-center justify-center gap-3">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-2"></i>
@@ -179,10 +180,10 @@
                     </a>
                 </div>
 
-                <div id="tableWrapper" class="overflow-x-auto overflow-y-auto large-scroll flex-1 rounded-2xl border border-slate-200 hidden">
-                    <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
-                        <thead id="licenseHead" class="sticky top-0 bg-slate-900 text-white font-black uppercase text-[12px] tracking-wider z-10 shadow-md"></thead>
-                        <tbody id="licenseBody" class="font-mono divide-y divide-slate-200 text-slate-800"></tbody>
+                <div id="tableWrapper" class="overflow-x-auto overflow-y-auto large-scroll flex-1 rounded-2xl border border-slate-200 hidden bg-white">
+                    <table class="min-w-full text-left border-collapse text-xs whitespace-nowrap">
+                        <thead id="licenseHead" class="sticky top-0 bg-slate-900 text-white font-black uppercase text-[12px] tracking-wider z-20 shadow-md"></thead>
+                        <tbody id="licenseBody" class="font-mono divide-y divide-slate-200 text-slate-800 bg-white"></tbody>
                     </table>
                 </div>
             </div>
@@ -194,7 +195,7 @@
         </footer>
     </div>
 
-    <!-- MODAL ĐỔI MẬT KHẨU (CÓ XÁC THỰC OTP QUA GMAIL) -->
+    <!-- MODAL ĐỔI MẬT KHẨU -->
     <div id="changePassModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative space-y-4">
             <button onclick="closeChangePassModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
@@ -208,7 +209,7 @@
                 <h3 class="text-lg font-black text-slate-900 uppercase">ĐỔI MẬT KHẨU TÀI KHOẢN</h3>
             </div>
 
-            <!-- Bước 1: Nhập mật khẩu cũ & mới -->
+            <!-- Bước 1 -->
             <div id="cpStep1" class="space-y-3">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại *</label>
@@ -247,7 +248,7 @@
                 </button>
             </div>
 
-            <!-- Bước 2: Nhập OTP xác thực -->
+            <!-- Bước 2 -->
             <div id="cpStep2" class="space-y-4 hidden">
                 <div class="text-center p-3 bg-blue-50 rounded-xl border border-blue-100">
                     <p class="text-xs text-blue-800">Mã xác thực đã gửi tới Gmail: <b id="cpTargetEmail"></b></p>
@@ -268,7 +269,7 @@
         </div>
     </div>
 
-    <!-- Thông báo Toast Copy -->
+    <!-- Toast Copy -->
     <div id="copyToast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 hidden z-50 border border-slate-700">
         <i class="fa-solid fa-circle-check text-emerald-400"></i>
         <span>Đã sao chép Key vào Clipboard!</span>
@@ -418,6 +419,7 @@
         }
 
         async function loadMyLicenses() {
+            document.getElementById('searchInput').value = '';
             document.getElementById('loadingBox').classList.remove('hidden');
             document.getElementById('emptyBox').classList.add('hidden');
             document.getElementById('tableWrapper').classList.add('hidden');
@@ -481,6 +483,17 @@
                 </tr>
             `;
 
+            if (rows.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="${headers.length + 1}" class="py-12 text-center text-slate-400 font-bold">
+                            Không tìm thấy Key nào khớp với từ khóa tìm kiếm.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
             tbody.innerHTML = rows.map((row, rIdx) => `
                 <tr class="${rIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-blue-50/70 transition">
                     <td class="py-3 px-4 text-center text-slate-500 font-bold border-r border-slate-200 bg-slate-100/50">${rIdx + 1}</td>
@@ -511,7 +524,11 @@
         }
 
         function filterTable() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (!query) {
+                renderTable(globalHeaders, globalRows);
+                return;
+            }
             const filteredRows = globalRows.filter(row => {
                 return row.some(cell => cell && cell.toString().toLowerCase().includes(query));
             });
@@ -533,7 +550,11 @@
             XLSX.writeFile(wb, `LICENSE_${loggedUser}_${timeStr}.xlsx`);
         }
 
-        window.addEventListener('DOMContentLoaded', loadMyLicenses);
+        window.addEventListener('DOMContentLoaded', () => {
+            const searchEl = document.getElementById('searchInput');
+            if (searchEl) searchEl.value = '';
+            loadMyLicenses();
+        });
     </script>
 </body>
 </html>
