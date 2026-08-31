@@ -1,449 +1,208 @@
 <!DOCTYPE html>
-<html lang="vi" class="scroll-smooth">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIRDROP - TRẦN THÀNH HUB</title>
-    <link rel="icon" type="image/png" href="logo.png">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        pageBg: '#f8fafc',
-                        primaryBlue: '#2563eb',
-                        sidebarBg: '#ffffff',
-                        borderLight: '#e2e8f0',
-                        textMain: '#0f172a',
-                        textMuted: '#64748b'
-                    }
-                }
-            }
-        }
-    </script>
-    <script>
-        if (!localStorage.getItem('hub_logged_username')) { window.location.href = "index.html"; }
-        if (window.location.pathname.endsWith(".html")) {
-            window.history.replaceState(null, "", window.location.pathname.replace(".html", ""));
-        }
-    </script>
-    <style>
-        /* THANH CUỘN TO 14PX ĐẬM NÉT - DỄ CẦM KÉO */
-        .large-scroll::-webkit-scrollbar {
-            width: 14px;
-            height: 14px;
-        }
-        .large-scroll::-webkit-scrollbar-track {
-            background: #cbd5e1;
-            border-radius: 8px;
-        }
-        .large-scroll::-webkit-scrollbar-thumb {
-            background: #64748b;
-            border-radius: 8px;
-            border: 2px solid #cbd5e1;
-        }
-        .large-scroll::-webkit-scrollbar-thumb:hover {
-            background: #2563eb;
-        }
-    </style>
+    <title>Airdrop - Trần Thành Hub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex">
-
-    <!-- SIDEBAR DỌC BÊN TRÁI -->
-    <aside class="w-64 bg-sidebarBg border-r border-borderLight flex flex-col justify-between h-screen sticky top-0 shrink-0 p-4">
-        <div>
-            <div class="flex items-center gap-3 px-2 py-3 mb-6 border-b border-borderLight">
-                <img src="logo.png" alt="Logo" class="w-10 h-10 rounded-2xl object-cover shadow-md border border-slate-200">
-                <div class="truncate">
-                    <h1 class="text-sm font-black text-slate-900 tracking-tight truncate">TRẦN THÀNH HUB</h1>
-                    <p class="text-[10px] font-bold text-textMuted uppercase tracking-wider">MMO & Crypto Hub</p>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="brand">
+                <div class="brand-icon"><i class="fa-solid fa-cube"></i></div>
+                <div class="brand-text">
+                    <h2>TRẦN THÀNH</h2>
+                    <span>COMMUNITY HUB</span>
                 </div>
             </div>
-
-            <nav class="space-y-1.5 font-bold text-xs">
-                <a href="home.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
-                    <i class="fa-solid fa-house w-5 text-center text-sm"></i> TRANG CHỦ
-                </a>
-                <a href="airdrop.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl bg-blue-50 text-blue-600 font-black shadow-sm transition">
-                    <i class="fa-solid fa-parachute-box w-5 text-center text-sm"></i> AIRDROP
-                </a>
-                <a href="tools.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
-                    <i class="fa-solid fa-puzzle-piece w-5 text-center text-sm"></i> APP & EXTENSION
-                </a>
-                <a href="resources.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
-                    <i class="fa-solid fa-box-archive w-5 text-center text-sm"></i> TÀI NGUYÊN
-                </a>
-                <a href="proxy.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
-                    <i class="fa-solid fa-network-wired w-5 text-center text-sm"></i> DỊCH VỤ PROXY
-                </a>
-                <a href="license.html" class="flex items-center gap-3 px-3.5 py-3 rounded-2xl text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition">
-                    <i class="fa-solid fa-key w-5 text-center text-sm"></i> LICENSE SCRIPT
-                </a>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-item"><i class="fa-solid fa-house"></i><span>Trang chủ</span></a>
+                <a href="airdrop.html" class="nav-item active"><i class="fa-solid fa-parachute-box"></i><span>Airdrop</span></a>
+                <a href="tools.html" class="nav-item"><i class="fa-solid fa-shapes"></i><span>App & Extension</span></a>
+                <a href="resources.html" class="nav-item"><i class="fa-solid fa-folder-open"></i><span>Tài nguyên</span></a>
+                <a href="proxy.html" class="nav-item"><i class="fa-solid fa-network-wired"></i><span>Dịch vụ Proxy</span></a>
+                <a href="license.html" class="nav-item"><i class="fa-solid fa-key"></i><span>License Script</span></a>
             </nav>
-        </div>
+        </aside>
 
-        <div class="pt-3 border-t border-borderLight relative">
-            <button onclick="toggleUserDropdown()" class="w-full flex items-center justify-between p-2 rounded-2xl hover:bg-slate-50 transition">
-                <div class="flex items-center gap-2.5 truncate">
-                    <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-black text-sm shrink-0">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <div class="text-left truncate">
-                        <p id="sidebarUsername" class="text-xs font-black text-slate-900 truncate">Member</p>
-                        <p class="text-[10px] text-emerald-600 font-bold">Active Member</p>
+        <main class="main-content">
+            <header class="top-header">
+                <button class="mobile-toggle" id="menuToggle"><i class="fa-solid fa-bars"></i></button>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="search" 
+                           id="searchInput" 
+                           placeholder="Tìm kiếm nhanh kèo airdrop..." 
+                           autocomplete="off" 
+                           autocorrect="off" 
+                           autocapitalize="off" 
+                           spellcheck="false"
+                           readonly 
+                           onfocus="this.removeAttribute('readonly');"
+                           oninput="render()">
+                </div>
+            </header>
+
+            <div class="content-wrapper">
+                <div class="page-title">
+                    <div>
+                        <h1>DANH SÁCH AIRDROP</h1>
+                        <p>Cập nhật liên tục các kèo Airdrop & Retroactive tiềm năng</p>
                     </div>
                 </div>
-                <i class="fa-solid fa-ellipsis-vertical text-slate-400 text-xs px-1"></i>
-            </button>
-            <div id="userMenuPopup" class="hidden absolute bottom-16 left-0 w-full bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50">
-                <button onclick="openChangePassModal()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
-                    <i class="fa-solid fa-key text-blue-600"></i> Đổi Mật Khẩu
-                </button>
-                <button onclick="logoutNow()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2">
-                    <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
-                </button>
-            </div>
-        </div>
-    </aside>
 
-    <!-- NỘI DUNG AIRDROP -->
-    <div class="flex-1 flex flex-col justify-between h-screen overflow-y-auto large-scroll">
-        <main class="max-w-6xl w-full mx-auto px-6 py-8 space-y-6">
+                <div class="filter-tabs" id="filterTabs">
+                    <button class="tab-btn active" onclick="setCategory('ALL')">TẤT CẢ</button>
+                    <button class="tab-btn" onclick="setCategory('TELEGRAM')">TELEGRAM BOT</button>
+                    <button class="tab-btn" onclick="setCategory('TESTNET')">TESTNET</button>
+                    <button class="tab-btn" onclick="setCategory('RETROACTIVE')">RETROACTIVE</button>
+                    <button class="tab-btn" onclick="setCategory('NODE')">NODE</button>
+                </div>
 
-            <!-- Search bar: Đã chặn triệt để Autofill -->
-            <div class="relative w-full max-w-lg mx-auto sm:mx-0">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                <input type="search" id="searchInput" oninput="render()" autocomplete="new-password" name="airdrop_search_no_autofill" placeholder="Tìm kiếm nhanh kèo airdrop..." class="w-full bg-white border border-borderLight rounded-2xl pl-11 pr-4 py-3 text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-600 shadow-sm transition">
-            </div>
+                <div id="loading" class="loading-state">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i>
+                    <span>Đang tải danh sách kèo...</span>
+                </div>
 
-            <!-- Category Tabs -->
-            <div class="flex flex-wrap items-center gap-2" id="categoryTabs">
-                <button class="filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
-            </div>
+                <div class="cards-grid" id="airdropGrid"></div>
 
-            <div id="loader" class="text-center py-20">
-                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
-                <p class="text-textMuted text-sm font-medium">Đang nạp danh sách kèo Airdrop...</p>
-            </div>
+                <div id="noData" class="no-data" style="display: none;">
+                    <i class="fa-solid fa-folder-open"></i>
+                    <p>Không tìm thấy kèo nào phù hợp.</p>
+                </div>
 
-            <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
-            <div id="noData" class="text-center py-16 hidden">
-                <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
-                <p class="text-textMuted text-sm">Không tìm thấy kèo nào phù hợp.</p>
+                <div class="pagination" id="pagination"></div>
             </div>
         </main>
-
-        <footer class="border-t border-borderLight py-6 text-center text-xs text-textMuted bg-white font-medium">
-            © 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.
-        </footer>
-    </div>
-
-    <!-- MODAL HƯỚNG DẪN -->
-    <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
-        <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
-            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h3 id="modalProjectTitle" class="text-base font-black text-slate-900 uppercase">CHI TIẾT HƯỚNG DẪN</h3>
-                <button onclick="document.getElementById('guideModal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
-            </div>
-            <div class="p-6 overflow-y-auto large-scroll">
-                <div id="modalGuideBody" class="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-200 font-mono"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL ĐỔI MẬT KHẨU (CÓ XÁC THỰC OTP QUA GMAIL) -->
-    <div id="changePassModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
-        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative space-y-4">
-            <button onclick="closeChangePassModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-            
-            <div class="text-center">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mx-auto mb-2">
-                    <i class="fa-solid fa-key"></i>
-                </div>
-                <h3 class="text-lg font-black text-slate-900 uppercase">ĐỔI MẬT KHẨU TÀI KHOẢN</h3>
-            </div>
-
-            <!-- Bước 1: Nhập mật khẩu cũ & mới -->
-            <div id="cpStep1" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại *</label>
-                    <div class="relative">
-                        <input type="password" id="cpOldPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
-                        <button type="button" onclick="togglePass('cpOldPass', 'eyeCp1')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
-                            <i id="eyeCp1" class="fa-regular fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới *</label>
-                    <div class="relative">
-                        <input type="password" id="cpNewPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
-                        <button type="button" onclick="togglePass('cpNewPass', 'eyeCp2')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
-                            <i id="eyeCp2" class="fa-regular fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới *</label>
-                    <div class="relative">
-                        <input type="password" id="cpNewPassConfirm" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
-                        <button type="button" onclick="togglePass('cpNewPassConfirm', 'eyeCp3')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
-                            <i id="eyeCp3" class="fa-regular fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div id="cpMsg1" class="text-xs font-bold text-rose-500 text-center hidden"></div>
-
-                <button id="btnCpSendOtp" onclick="handleChangePassSendOtp()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i> GỬI MÃ OTP VỀ GMAIL
-                </button>
-            </div>
-
-            <!-- Bước 2: Nhập OTP xác thực -->
-            <div id="cpStep2" class="space-y-4 hidden">
-                <div class="text-center p-3 bg-blue-50 rounded-xl border border-blue-100">
-                    <p class="text-xs text-blue-800">Mã xác thực đã gửi tới Gmail: <b id="cpTargetEmail"></b></p>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1 text-center">Nhập mã OTP 6 số</label>
-                    <input type="text" id="cpOtpInput" maxlength="6" placeholder="123456" class="w-full h-11 text-center text-lg font-mono font-black tracking-widest rounded-xl border border-slate-200 outline-none focus:border-blue-600 bg-slate-50 focus:bg-white">
-                </div>
-
-                <div id="cpMsg2" class="text-xs font-bold text-rose-500 text-center hidden"></div>
-
-                <button id="btnCpVerify" onclick="handleChangePassVerify()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md">
-                    XÁC THỰC & CẬP NHẬT MẬT KHẨU
-                </button>
-            </div>
-
-        </div>
     </div>
 
     <script>
-        const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
-        let allAirdrops = [], activeCat = 'all';
+        const SHEET_ID = '123h17u79sI1u4G2jW8m3W837w4B60i78w79Qj-69K6Q'; // Giữ nguyên ID Sheet của bạn
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
 
-        const loggedUser = localStorage.getItem('hub_logged_username') || 'Member';
-        document.getElementById('sidebarUsername').innerText = loggedUser;
-
-        function toggleUserDropdown() { 
-            document.getElementById('userMenuPopup').classList.toggle('hidden'); 
-        }
-
-        document.addEventListener('click', (e) => {
-            const popup = document.getElementById('userMenuPopup');
-            if (popup && !popup.contains(e.target) && !e.target.closest('button[onclick="toggleUserDropdown()"]')) {
-                popup.classList.add('hidden');
-            }
-        });
-
-        function logoutNow() { 
-            localStorage.clear(); 
-            window.location.href = "index.html"; 
-        }
-
-        function togglePass(inputId, iconId) {
-            const input = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.className = 'fa-regular fa-eye-slash';
-            } else {
-                input.type = 'password';
-                icon.className = 'fa-regular fa-eye';
-            }
-        }
-
-        function openChangePassModal() {
-            document.getElementById('changePassModal').classList.remove('hidden');
-            document.getElementById('cpStep1').classList.remove('hidden');
-            document.getElementById('cpStep2').classList.add('hidden');
-            document.getElementById('cpMsg1').classList.add('hidden');
-            document.getElementById('userMenuPopup').classList.add('hidden');
-        }
-
-        function closeChangePassModal() {
-            document.getElementById('changePassModal').classList.add('hidden');
-        }
-
-        async function handleChangePassSendOtp() {
-            const oldP = document.getElementById('cpOldPass').value.trim();
-            const newP = document.getElementById('cpNewPass').value.trim();
-            const newPC = document.getElementById('cpNewPassConfirm').value.trim();
-            const msg = document.getElementById('cpMsg1');
-            const btn = document.getElementById('btnCpSendOtp');
-
-            if (!oldP || !newP || !newPC) {
-                msg.innerText = "Vui lòng nhập đầy đủ mật khẩu!";
-                msg.classList.remove('hidden');
-                return;
-            }
-            if (newP !== newPC) {
-                msg.innerText = "Mật khẩu mới xác nhận không khớp!";
-                msg.classList.remove('hidden');
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG GỬI OTP...';
-            msg.classList.add('hidden');
-
-            try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'CHANGE_PASS_SEND_OTP',
-                        username: loggedUser,
-                        oldPassword: oldP,
-                        newPassword: newP
-                    })
-                });
-
-                const json = await res.json();
-                if (json.status === 'success') {
-                    document.getElementById('cpTargetEmail').innerText = json.email || '';
-                    document.getElementById('cpStep1').classList.add('hidden');
-                    document.getElementById('cpStep2').classList.remove('hidden');
-                } else {
-                    msg.innerText = json.message || "Gửi OTP thất bại!";
-                    msg.classList.remove('hidden');
-                }
-            } catch (err) {
-                msg.innerText = "Lỗi kết nối máy chủ!";
-                msg.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> GỬI MÃ OTP VỀ GMAIL';
-            }
-        }
-
-        async function handleChangePassVerify() {
-            const otp = document.getElementById('cpOtpInput').value.trim();
-            const msg = document.getElementById('cpMsg2');
-            const btn = document.getElementById('btnCpVerify');
-
-            if (!otp || otp.length < 6) {
-                msg.innerText = "Vui lòng nhập đủ 6 số OTP!";
-                msg.classList.remove('hidden');
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XÁC THỰC...';
-            msg.classList.add('hidden');
-
-            try {
-                const res = await fetch(APPS_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({
-                        action: 'CHANGE_PASS_VERIFY',
-                        username: loggedUser,
-                        otp: otp
-                    })
-                });
-
-                const json = await res.json();
-                if (json.status === 'success') {
-                    alert("🎉 Đổi mật khẩu thành công!");
-                    closeChangePassModal();
-                } else {
-                    msg.innerText = json.message || "Mã OTP không hợp lệ!";
-                    msg.classList.remove('hidden');
-                }
-            } catch (err) {
-                msg.innerText = "Lỗi kết nối máy chủ!";
-                msg.classList.remove('hidden');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = 'XÁC THỰC & CẬP NHẬT MẬT KHẨU';
-            }
-        }
+        let allAirdrops = [];
+        let currentCategory = 'ALL';
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 12; // Đã đổi về 12 cho vừa vặn và đồng bộ
 
         function handleGoogleData(res) {
+            document.getElementById('loading').style.display = 'none';
+            if (!res || !res.table || !res.table.rows) {
+                document.getElementById('noData').style.display = 'block';
+                return;
+            }
+
             const rows = res.table.rows;
             allAirdrops = rows.map(r => {
-                const c = r.c;
+                const c = r.c || [];
                 return {
+                    id: c[0] ? (c[0].v ?? '') : '',
                     title: c[1] ? (c[1].v ?? '') : '',
-                    category: c[2] ? (c[2].v ?? 'Airdrop') : 'Airdrop',
-                    status: c[3] ? (c[3].v ?? 'NEW') : 'NEW',
-                    description: c[4] ? (c[4].v ?? '') : '',
-                    script_link: c[6] ? (c[6].v ?? '') : '',
-                    guide_project: c[7] ? (c[7].v ?? '') : '',
-                    guide_script: c[8] ? (c[8].v ?? '') : ''
+                    category: c[2] ? (c[2].v ?? '') : '',
+                    status: c[3] ? (c[3].v ?? '') : '',
+                    desc: c[4] ? (c[4].v ?? '') : '',
+                    link: c[5] ? (c[5].v ?? '') : '',
+                    scriptLink: c[6] ? (c[6].v ?? '') : '',
+                    guideProject: c[7] ? (c[7].v ?? '') : '',
+                    guideScript: c[8] ? (c[8].v ?? '') : ''
                 };
-            }).filter(p => p.title && p.title.toLowerCase() !== 'title' && !['APP', 'EXTENSION', 'SCR', 'TOOL'].some(t => p.category.toUpperCase().includes(t)));
+            }).filter(p => p.title && p.title.toLowerCase() !== 'title' && p.title.toLowerCase() !== 'tên kèo');
 
-            document.getElementById('loader').classList.add('hidden');
-            document.getElementById('projectGrid').classList.remove('hidden');
-            buildTabs();
             render();
         }
 
-        function buildTabs() {
-            const cats = ['all', ...new Set(allAirdrops.map(p => p.category).filter(Boolean))];
-            document.getElementById('categoryTabs').innerHTML = cats.map(c => `
-                <button class="px-4 py-2 rounded-xl text-xs font-black uppercase border transition ${c === activeCat ? 'bg-primaryBlue text-white border-primaryBlue' : 'bg-white text-slate-600 border-borderLight'}" onclick="activeCat='${c}'; buildTabs(); render();">
-                    ${c === 'all' ? 'TẤT CẢ' : c}
-                </button>
-            `).join('');
+        function setCategory(cat) {
+            currentCategory = cat;
+            currentPage = 1;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.innerText.toUpperCase() === cat || (cat === 'ALL' && btn.innerText === 'TẤT CẢ'));
+            });
+            render();
         }
 
         function render() {
-            const searchEl = document.getElementById('searchInput');
-            const q = searchEl ? searchEl.value.toLowerCase().trim() : '';
-            const filtered = allAirdrops.filter(p => (activeCat === 'all' || p.category === activeCat) && (p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)));
+            const query = (document.getElementById('searchInput').value || '').trim().toLowerCase();
             
-            const grid = document.getElementById('projectGrid');
-            if (filtered.length === 0) { grid.innerHTML = ''; document.getElementById('noData').classList.remove('hidden'); return; }
-            document.getElementById('noData').classList.add('hidden');
+            const filtered = allAirdrops.filter(item => {
+                const matchCat = currentCategory === 'ALL' || item.category.toUpperCase().includes(currentCategory);
+                const matchQuery = !query || 
+                                   item.title.toLowerCase().includes(query) || 
+                                   item.desc.toLowerCase().includes(query) ||
+                                   item.category.toLowerCase().includes(query);
+                return matchCat && matchQuery;
+            });
 
-            grid.innerHTML = filtered.map(p => `
-                <div class="bg-white border border-borderLight rounded-3xl p-5 hover:shadow-xl hover:border-blue-400 transition flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-start justify-between gap-3 mb-3">
-                            <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold uppercase">${p.category}</span>
-                            <span class="text-[11px] px-2.5 py-1 rounded-md font-black ${p.status === 'HOT' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}">${p.status}</span>
-                        </div>
-                        <h3 class="text-base font-black text-slate-900 tracking-tight mb-2">${p.title}</h3>
-                        <p class="text-slate-600 text-xs leading-relaxed mb-4">${p.description || 'Chưa có mô tả chi tiết.'}</p>
+            const grid = document.getElementById('airdropGrid');
+            const noData = document.getElementById('noData');
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                noData.style.display = 'block';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+            noData.style.display = 'none';
+
+            const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+            if (currentPage > totalPages) currentPage = 1;
+
+            const start = (currentPage - 1) * ITEMS_PER_PAGE;
+            const end = start + ITEMS_PER_PAGE;
+            const pageData = filtered.slice(start, end);
+
+            pageData.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'hub-card';
+                card.innerHTML = `
+                    <div class="card-header">
+                        <span class="badge ${item.status.toLowerCase().includes('end') ? 'badge-danger' : 'badge-success'}">${item.status || 'Active'}</span>
+                        <span class="card-cat">${item.category || 'Airdrop'}</span>
                     </div>
-                    <div class="flex flex-col gap-2 pt-4 border-t border-slate-100">
-                        ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 text-white text-xs font-black text-center uppercase tracking-wider shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> TẢI SCRIPT</a>` : ''}
-                        <div class="grid grid-cols-2 gap-2">
-                            ${p.guide_project ? `<button onclick="showGuide('${p.title}', '${encodeURIComponent(p.guide_project)}')" class="py-2.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-black uppercase">HD DỰ ÁN</button>` : ''}
-                            ${p.guide_script ? `<button onclick="showGuide('${p.title}', '${encodeURIComponent(p.guide_script)}')" class="py-2.5 rounded-xl bg-purple-50 border border-purple-300 text-purple-900 text-xs font-black uppercase">HD TOOL</button>` : ''}
-                        </div>
+                    <div class="card-body">
+                        <h3 class="card-title">${item.title}</h3>
+                        <p class="card-desc">${item.desc || 'Không có mô tả chi tiết.'}</p>
                     </div>
-                </div>
-            `).join('');
+                    <div class="card-actions">
+                        ${item.link ? `<a href="${item.link}" target="_blank" class="btn btn-primary"><i class="fa-solid fa-arrow-up-right-from-square"></i> Tham gia</a>` : ''}
+                        ${item.scriptLink ? `<a href="${item.scriptLink}" target="_blank" class="btn btn-secondary"><i class="fa-solid fa-code"></i> Script</a>` : ''}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+
+            renderPagination(totalPages);
         }
 
-        function showGuide(title, encodedText) {
-            document.getElementById('modalProjectTitle').innerText = `HƯỚNG DẪN: ${title}`;
-            document.getElementById('modalGuideBody').innerText = decodeURIComponent(encodedText);
-            document.getElementById('guideModal').classList.remove('hidden');
+        function renderPagination(totalPages) {
+            const pag = document.getElementById('pagination');
+            if (totalPages <= 1) {
+                pag.innerHTML = '';
+                return;
+            }
+
+            let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : ''} onclick="goToPage(${currentPage - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+                    html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 2 || i === currentPage + 2) {
+                    html += `<span class="page-dots">...</span>`;
+                }
+            }
+
+            html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : ''} onclick="goToPage(${currentPage + 1})"><i class="fa-solid fa-chevron-right"></i></button>`;
+            pag.innerHTML = html;
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const searchEl = document.getElementById('searchInput');
-            if (searchEl) searchEl.value = '';
-        });
-
-        const script = document.createElement('script');
-        script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
-        document.body.appendChild(script);
+        function goToPage(page) {
+            currentPage = page;
+            render();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
+    <script src="https://docs.google.com/spreadsheets/d/123h17u79sI1u4G2jW8m3W837w4B60i78w79Qj-69K6Q/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0"></script>
 </body>
 </html>
