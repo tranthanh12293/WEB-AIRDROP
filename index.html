@@ -41,10 +41,7 @@
             </div>
 
             <div>
-                <div class="flex items-center justify-between mb-1">
-                    <label class="text-xs font-bold text-slate-700 uppercase">Mật khẩu</label>
-                    <button type="button" onclick="openForgotModal()" class="text-xs font-bold text-blue-600 hover:underline">Quên mật khẩu?</button>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu</label>
                 <div class="relative">
                     <input type="password" id="loginPass" placeholder="••••••••" class="w-full h-11 px-4 pr-11 rounded-xl border border-slate-200 text-sm focus:border-blue-600 outline-none transition bg-slate-50 focus:bg-white">
                     <button type="button" onclick="togglePass('loginPass', 'eyeLogin')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
@@ -54,14 +51,21 @@
             </div>
 
             <div id="loginMsg" class="text-xs font-bold text-rose-500 text-center hidden"></div>
+            <div id="loginSuccessMsg" class="text-xs font-bold text-emerald-600 text-center hidden"></div>
 
-            <button id="btnLogin" onclick="handleLogin()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-right-to-bracket"></i> ĐĂNG NHẬP
-            </button>
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button id="btnLogin" onclick="handleLogin()" class="h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-right-to-bracket"></i> ĐĂNG NHẬP
+                </button>
+                <button onclick="openRegisterModal()" class="h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider transition shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-user-plus"></i> ĐĂNG KÝ
+                </button>
+            </div>
 
             <div class="text-center pt-2">
-                <span class="text-xs text-slate-500">Chưa có tài khoản?</span>
-                <button onclick="openRegisterModal()" class="text-xs font-bold text-blue-600 hover:underline ml-1">Đăng ký ngay</button>
+                <button type="button" onclick="openForgotModal()" class="text-xs font-bold text-slate-500 hover:text-blue-600 hover:underline">
+                    Quên mật khẩu?
+                </button>
             </div>
         </div>
     </div>
@@ -232,6 +236,17 @@
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
 
+        window.addEventListener('DOMContentLoaded', () => {
+            const rememberedUser = localStorage.getItem('hub_remembered_username');
+            const rememberedEmail = localStorage.getItem('hub_remembered_email');
+            if (rememberedUser) {
+                document.getElementById('loginUser').value = rememberedUser;
+            }
+            if (rememberedEmail) {
+                document.getElementById('forgotEmail').value = rememberedEmail;
+            }
+        });
+
         function togglePass(inputId, iconId) {
             const input = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
@@ -249,6 +264,7 @@
             document.getElementById('regFormStep1').classList.remove('hidden');
             document.getElementById('regFormStep2').classList.add('hidden');
             document.getElementById('regMsg').classList.add('hidden');
+            document.getElementById('loginSuccessMsg').classList.add('hidden');
         }
 
         function closeRegisterModal() {
@@ -260,6 +276,11 @@
             document.getElementById('forgotStep1').classList.remove('hidden');
             document.getElementById('forgotStep2').classList.add('hidden');
             document.getElementById('forgotMsg1').classList.add('hidden');
+            document.getElementById('loginSuccessMsg').classList.add('hidden');
+            const rememberedEmail = localStorage.getItem('hub_remembered_email');
+            if (rememberedEmail && !document.getElementById('forgotEmail').value) {
+                document.getElementById('forgotEmail').value = rememberedEmail;
+            }
         }
 
         function closeForgotModal() {
@@ -279,7 +300,10 @@
             const u = document.getElementById('loginUser').value.trim();
             const p = document.getElementById('loginPass').value.trim();
             const msg = document.getElementById('loginMsg');
+            const successMsg = document.getElementById('loginSuccessMsg');
             const btn = document.getElementById('btnLogin');
+
+            successMsg.classList.add('hidden');
 
             if (!u || !p) {
                 msg.innerText = "Vui lòng nhập tài khoản và mật khẩu!";
@@ -297,6 +321,9 @@
                     localStorage.setItem('hub_logged_username', res.username);
                     localStorage.setItem('hub_logged_email', res.email || '');
                     localStorage.setItem('hub_key_count', res.keyCount || 0);
+                    localStorage.setItem('hub_remembered_username', res.username);
+                    if (res.email) localStorage.setItem('hub_remembered_email', res.email);
+
                     window.location.href = "resources.html";
                 } else {
                     msg.innerText = res.message || "Sai thông tin đăng nhập!";
@@ -359,6 +386,9 @@
                 });
 
                 if (res.status === 'success') {
+                    localStorage.setItem('hub_remembered_email', e);
+                    localStorage.setItem('hub_remembered_username', u);
+
                     document.getElementById('otpTargetEmail').innerText = e;
                     document.getElementById('regFormStep1').classList.add('hidden');
                     document.getElementById('regFormStep2').classList.remove('hidden');
@@ -399,10 +429,13 @@
                 });
 
                 if (res.status === 'success') {
-                    alert("🎉 Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.");
                     closeRegisterModal();
                     document.getElementById('loginUser').value = document.getElementById('regUser').value;
                     document.getElementById('loginPass').value = document.getElementById('regPass').value;
+                    
+                    const successMsg = document.getElementById('loginSuccessMsg');
+                    successMsg.innerText = "✅ Đăng ký tài khoản thành công! Bạn có thể đăng nhập ngay.";
+                    successMsg.classList.remove('hidden');
                 } else {
                     msg.innerText = res.message || "Xác thực OTP thất bại!";
                     msg.classList.remove('hidden');
@@ -438,6 +471,7 @@
                 });
 
                 if (res.status === 'success') {
+                    localStorage.setItem('hub_remembered_email', e);
                     document.getElementById('forgotTargetEmail').innerText = e;
                     document.getElementById('forgotStep1').classList.add('hidden');
                     document.getElementById('forgotStep2').classList.remove('hidden');
@@ -486,9 +520,12 @@
                 });
 
                 if (res.status === 'success') {
-                    alert("🎉 Đặt lại mật khẩu thành công! Hãy đăng nhập bằng mật khẩu mới.");
                     closeForgotModal();
                     document.getElementById('loginPass').value = p;
+                    
+                    const successMsg = document.getElementById('loginSuccessMsg');
+                    successMsg.innerText = "✅ Đặt lại mật khẩu thành công! Hãy đăng nhập bằng mật khẩu mới.";
+                    successMsg.classList.remove('hidden');
                 } else {
                     msg.innerText = res.message || "Cập nhật mật khẩu thất bại!";
                     msg.classList.remove('hidden');
