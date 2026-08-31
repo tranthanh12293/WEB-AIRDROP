@@ -55,7 +55,7 @@
                     <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                         <i class="fa-brands fa-x-twitter text-slate-900"></i> X CHECKER & EXCEL MATCHER PRO
                     </h1>
-                    <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X & lọc dòng thông minh tự động lưu Google Drive</p>
+                    <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X & lọc dòng thông minh tự động theo nhieuf fiile EXCEL</p>
                 </div>
             </div>
             <a href="resources.html" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
@@ -116,7 +116,7 @@
                     <i class="fa-regular fa-copy"></i> Copy LIVE
                 </button>
                 <button onclick="downloadLiveTxt()" class="h-10 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black transition flex items-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-download"></i> Tải x_live.txt
+                    <i class="fa-solid fa-download"></i> Tải User_X_live.txt
                 </button>
             </div>
         </div>
@@ -209,7 +209,6 @@
             }
         }
 
-        // HÀM ĐẨY FILE BASE64 LÊN GOOGLE DRIVE
         async function uploadBase64ToDrive(base64Data, fileType) {
             const currentUser = localStorage.getItem('hub_logged_username') || 'Admin';
             try {
@@ -224,7 +223,7 @@
                     })
                 });
             } catch (err) {
-                console.error("Upload Drive error:", err);
+                console.error("error:", err);
             }
         }
 
@@ -418,14 +417,13 @@
             lastGeneratedBlob = new Blob([s2ab(wbout)], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
             lastGeneratedFileName = `ket_qua_loc_excel_${timeStr}.xlsx`;
 
-            // TỰ ĐỘNG ĐỒNG BỘ FILE EXCEL ĐÃ LỌC LÊN THƯ MỤC X FINAL
             const base64Data = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
             await uploadBase64ToDrive(base64Data, "EXCEL_LOC_LIVE");
 
             // Hiển thị nút TẢI và cập nhật thông báo
             document.getElementById('countMatched').innerText = matchedRows.length;
             document.getElementById('btnDownloadExcel').classList.remove('hidden');
-            document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã lọc xong ${matchedRows.length} dòng & lưu vào X FINAL</span>`;
+            document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã lọc xong ${matchedRows.length} dòng</span>`;
             
             event.target.value = '';
         }
