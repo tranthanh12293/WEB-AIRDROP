@@ -180,7 +180,6 @@
     </footer>
 
     <script>
-        // API PYTHON BACKEND TRÊN RENDER
         const BACKEND_API_URL = 'https://web-airdrop.onrender.com/check-x';
         
         let isRunning = false, stopRequested = false, resultsData = [];
@@ -239,7 +238,7 @@
                     <td class="py-2.5 px-3 text-center text-slate-400 font-medium">${i+1}</td>
                     <td class="py-2.5 px-3 text-slate-800 font-bold">${u}</td>
                     <td id="status-${i+1}" class="py-2.5 px-3 text-center">${getStatusBadge('CHECKING')}</td>
-                    <td id="detail-${i+1}" class="py-2.5 px-3 text-slate-600 truncate max-w-xs">Đang kết nối Python Backend...</td>
+                    <td id="detail-${i+1}" class="py-2.5 px-3 text-slate-600 truncate max-w-xs">Đang kiểm tra...</td>
                     <td id="time-${i+1}" class="py-2.5 px-3 text-center text-slate-400">--</td>
                 </tr>
             `).join('');
@@ -262,7 +261,7 @@
                         jsonRes.username = user;
                         updateSingleResult(jsonRes);
                     } catch (err) {
-                        updateSingleResult({ idx: idx, username: user, status: 'FAILED', detail: 'Đang khởi động Render API / Thử lại' });
+                        updateSingleResult({ idx: idx, username: user, status: 'FAILED', detail: 'Render Backend đang khởi động lại...' });
                     }
                 }
             }
