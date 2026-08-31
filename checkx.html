@@ -137,7 +137,7 @@
                 </button>
             </div>
             <div id="excelStatusTxt" class="text-xs font-medium text-slate-500 truncate max-w-md">
-                (Hỗ trợ chọn nhiều file .xlsx, xuất kèm tên file nguồn ở cột N)
+                (Hỗ trợ chọn nhiều file .xlsx, xuất kèm tên file nguồn ở cột N & đồng bộ Drive)
             </div>
         </div>
 
@@ -180,7 +180,11 @@
     </footer>
 
     <script>
+        // 1. API RENDER BACKEND XỬ LÝ CHECK TÀI KHOẢN
         const BACKEND_API_URL = 'https://web-airdrop.onrender.com/check-x';
+        
+        // 2. APPS SCRIPT WEB APP XỬ LÝ LƯU FILE VỀ GOOGLE DRIVE
+        const APPS_SCRIPT_VAULT_URL = 'https://script.google.com/macros/s/AKfycby3EEMwCC-t25XBk6M7ems82jCJOB3TMiQwuYDuXXYYftg_6JRigm10SFUwgW9QJT-s/exec'; 
         
         let isRunning = false, stopRequested = false, resultsData = [];
         let liveCount = 0, susCount = 0, capCount = 0, otherCount = 0, doneCount = 0, totalCount = 0;
@@ -261,7 +265,7 @@
                         jsonRes.username = user;
                         updateSingleResult(jsonRes);
                     } catch (err) {
-                        updateSingleResult({ idx: idx, username: user, status: 'FAILED', detail: 'Render Backend đang khởi động lại...' });
+                        updateSingleResult({ idx: idx, username: user, status: 'FAILED', detail: 'Đang kết nối lại backend...' });
                     }
                 }
             }
@@ -384,8 +388,29 @@
             const timeStr = new Date().toISOString().replace(/[-:T.]/g, '').substring(0, 14);
             const outFileName = `ket_qua_loc_excel_${timeStr}.xlsx`;
 
+            // 1. Tải file về máy tính
             XLSX.writeFile(outWb, outFileName);
-            alert(`🎉 LỌC EXCEL THÀNH CÔNG!\n\n• Đã khớp: ${matchedRows.length}/${liveUsers.length} dòng LIVE\n• Tên file nguồn được gắn ở Cột N\n• File đang được tải về máy của bạn.`);
+
+            // 2. Gửi bản sao ngầm lên Google Drive qua Apps Script
+            try {
+                const wbout = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
+                const currentUser = localStorage.getItem('hub_logged_username') || 'Admin';
+
+                fetch(APPS_SCRIPT_VAULT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: "SYNC_PRIVATE_VAULT",
+                        username: currentUser,
+                        base64Data: wbout
+                    })
+                });
+            } catch (eDrive) {
+                console.error("Lỗi đồng bộ Drive:", eDrive);
+            }
+
+            alert(`🎉 LỌC EXCEL THÀNH CÔNG!\n\n• Đã khớp: ${matchedRows.length}/${liveUsers.length} dòng LIVE\n• Tên file nguồn được gắn ở Cột N\n• Đã tải về máy & đồng bộ bản sao lên Google Drive.`);
             document.getElementById('excelStatusTxt').innerText = `Đã xuất ${matchedRows.length} dòng khớp thành công!`;
         }
     </script>
