@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 PROXY CHECKER PRO - TRẦN THÀNH HUB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pageBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        borderLight: '#e2e8f0',
+                        primaryBlue: '#2563eb',
+                        textMain: '#0f172a',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-pageBg text-textMain min-h-screen p-4 sm:p-6 flex flex-col justify-between select-none font-sans antialiased">
+
+    <div class="max-w-[1600px] w-full mx-auto space-y-4">
+        
+        <!-- Header & Nút Quay Lại -->
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-borderLight pb-4 bg-white p-5 rounded-2xl shadow-sm">
+            <div class="flex items-center gap-3">
+                <img src="logo.png" alt="Logo" class="w-11 h-11 rounded-xl object-cover shadow-sm border border-slate-200">
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                        <i class="fa-solid fa-rocket text-blue-600"></i> PROXY CHECKER PRO
+                    </h1>
+                    <p class="text-xs text-textMuted font-medium">Hệ thống kiểm tra tốc độ, trạng thái & phân giải IP Proxy tự động</p>
+                </div>
+            </div>
+            <a href="index.html" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
+                <i class="fa-solid fa-arrow-left"></i> VỀ TRANG CHỦ
+            </a>
+        </div>
+
+        <!-- Dashboard Thống kê -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 bg-white p-4 rounded-2xl border border-borderLight shadow-sm">
+            <div class="text-center p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">TỔNG SỐ</div>
+                <div id="cardTotal" class="text-2xl font-black text-slate-800 mt-1">0</div>
+            </div>
+            <div class="text-center p-3 rounded-xl bg-emerald-50/60 border border-emerald-100">
+                <div class="text-[11px] font-bold text-emerald-600 uppercase tracking-wider">FAST (&lt;2s)</div>
+                <div id="cardFast" class="text-2xl font-black text-emerald-600 mt-1">0</div>
+            </div>
+            <div class="text-center p-3 rounded-xl bg-amber-50/60 border border-amber-100">
+                <div class="text-[11px] font-bold text-amber-600 uppercase tracking-wider">MEDIUM (2-5s)</div>
+                <div id="cardMid" class="text-2xl font-black text-amber-600 mt-1">0</div>
+            </div>
+            <div class="text-center p-3 rounded-xl bg-orange-50/60 border border-orange-100">
+                <div class="text-[11px] font-bold text-orange-600 uppercase tracking-wider">LAG (&gt;5s)</div>
+                <div id="cardLag" class="text-2xl font-black text-orange-600 mt-1">0</div>
+            </div>
+            <div class="text-center p-3 rounded-xl bg-rose-50/60 border border-rose-100 col-span-2 sm:col-span-1">
+                <div class="text-[11px] font-bold text-rose-600 uppercase tracking-wider">DIE / TIMEOUT</div>
+                <div id="cardDie" class="text-2xl font-black text-rose-600 mt-1">0</div>
+            </div>
+        </div>
+
+        <!-- Thanh điều khiển -->
+        <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-borderLight shadow-sm">
+            <div class="flex flex-wrap items-center gap-2.5">
+                <input type="file" id="fileInput" accept=".txt" class="hidden" onchange="handleFileUpload(event)">
+                <button onclick="document.getElementById('fileInput').click()" class="h-10 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition flex items-center gap-2 border border-slate-200">
+                    <i class="fa-regular fa-folder-open text-blue-600"></i> Upload File (.txt)
+                </button>
+
+                <div class="flex items-center gap-2 bg-slate-50 px-3.5 h-10 rounded-xl border border-slate-200">
+                    <span class="text-xs text-slate-600 font-medium">Số lần test/proxy:</span>
+                    <input type="number" id="inputRetries" value="2" min="1" max="5" class="w-10 bg-transparent text-center text-xs font-black text-blue-600 outline-none border-b-2 border-blue-500">
+                </div>
+
+                <button id="btnStart" onclick="startChecking()" class="h-10 px-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-black text-white uppercase tracking-wider transition shadow-md shadow-blue-500/25 active:scale-95 flex items-center gap-2">
+                    <i class="fa-solid fa-play text-[10px]"></i> BẮT ĐẦU CHECK
+                </button>
+                <button id="btnStop" onclick="stopChecking()" disabled class="h-10 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-xs font-black text-rose-600 border border-rose-200 uppercase tracking-wider transition disabled:opacity-40 disabled:cursor-not-allowed flex items-center gap-2">
+                    <i class="fa-solid fa-stop text-[10px]"></i> Dừng
+                </button>
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                <button onclick="copyResults('die')" class="h-10 px-4 rounded-xl bg-rose-50 hover:bg-rose-100 text-xs font-black text-rose-700 transition flex items-center gap-2 border border-rose-200">
+                    <i class="fa-regular fa-copy"></i> Copy DIE
+                </button>
+                <button onclick="copyResults('live')" class="h-10 px-4 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-xs font-black text-emerald-700 transition flex items-center gap-2 border border-emerald-200">
+                    <i class="fa-regular fa-copy"></i> Copy LIVE
+                </button>
+            </div>
+        </div>
+
+        <!-- Thanh tiến trình -->
+        <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden shadow-inner">
+            <div id="progressBar" class="bg-blue-600 h-full w-0 transition-all duration-200 rounded-full"></div>
+        </div>
+
+        <!-- Khung Dán & Bảng Kết quả -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+            
+            <!-- Cột Trái: Textarea Dán Proxy -->
+            <div class="lg:col-span-4 bg-white p-4 rounded-2xl border border-borderLight shadow-sm flex flex-col h-[540px]">
+                <label class="text-xs font-bold text-slate-700 mb-2 leading-relaxed">
+                    📝 Dán Proxy vào đây:<br>
+                    <span class="text-[11px] font-normal text-slate-400">(Hỗ trợ IP:Port hoặc Host:Port:User:Pass)</span>
+                </label>
+                <textarea id="txtPaste" placeholder="127.0.0.1:8080&#10;domain.com:1234:user:pass" class="w-full flex-1 bg-slate-50 text-slate-800 font-mono text-xs p-3.5 rounded-xl border border-slate-200 outline-none focus:border-blue-600 focus:bg-white resize-none custom-scroll leading-5 transition shadow-inner"></textarea>
+                <button onclick="document.getElementById('txtPaste').value = ''" class="mt-3 h-9 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl transition border border-slate-200 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-trash-can text-slate-400"></i> Xóa danh sách
+                </button>
+            </div>
+
+            <!-- Cột Phải: Bảng Kết quả Data Table -->
+            <div class="lg:col-span-8 bg-white p-2 rounded-2xl border border-borderLight shadow-sm h-[540px] flex flex-col overflow-hidden">
+                <div class="overflow-x-auto overflow-y-auto custom-scroll flex-1 rounded-xl">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead class="sticky top-0 bg-slate-100 text-slate-600 font-black uppercase text-[10px] tracking-wider z-10 border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-3 text-center w-12">STT</th>
+                                <th class="py-3 px-3 text-center w-28">TRẠNG THÁI</th>
+                                <th class="py-3 px-3">ĐỊA CHỈ GỐC (INPUT)</th>
+                                <th class="py-3 px-3 text-center w-36">IP OUT / RESOLVE</th>
+                                <th class="py-3 px-3 text-center w-24">PING TB</th>
+                                <th class="py-3 px-3 text-center w-20">JITTER</th>
+                                <th class="py-3 px-3 text-center w-20">LOSS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody" class="font-mono divide-y divide-slate-100">
+                            <!-- Kết quả nạp động -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-slate-400 font-medium py-4 mt-6">
+        © 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
+
+        if (!localStorage.getItem('hub_logged_username')) {
+            window.location.href = 'index.html';
+        }
+
+        let isRunning = false;
+        let stopRequested = false;
+        let resultsData = [];
+        let fastCount = 0, midCount = 0, lagCount = 0, dieCount = 0, doneCount = 0, totalCount = 0;
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => { document.getElementById('txtPaste').value = e.target.result; };
+            reader.readAsText(file);
+        }
+
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'FAST': return `<span class="px-2.5 py-1 rounded-md text-[10px] font-black bg-emerald-50 text-emerald-600 border border-emerald-200">FAST</span>`;
+                case 'MEDIUM': return `<span class="px-2.5 py-1 rounded-md text-[10px] font-black bg-amber-50 text-amber-600 border border-amber-200">MEDIUM</span>`;
+                case 'LAG': return `<span class="px-2.5 py-1 rounded-md text-[10px] font-black bg-orange-50 text-orange-600 border border-orange-200">LAG</span>`;
+                case 'DIE': return `<span class="px-2.5 py-1 rounded-md text-[10px] font-black bg-rose-50 text-rose-600 border border-rose-200">DIE</span>`;
+                case 'CHECKING': return `<span class="text-blue-600 font-bold"><i class="fa-solid fa-spinner fa-spin"></i> Đang check...</span>`;
+                default: return `<span class="px-2.5 py-1 rounded-md text-[10px] font-black bg-purple-50 text-purple-600 border border-purple-200">INVALID</span>`;
+            }
+        }
+
+        async function startChecking() {
+            const text = document.getElementById('txtPaste').value.trim();
+            if (!text) {
+                alert("Vui lòng dán danh sách proxy hoặc chọn file .txt!");
+                return;
+            }
+
+            const proxies = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+            if (proxies.length === 0) return;
+
+            const retries = parseInt(document.getElementById('inputRetries').value) || 2;
+
+            resultsData = [];
+            fastCount = midCount = lagCount = dieCount = doneCount = 0;
+            totalCount = proxies.length;
+            stopRequested = false;
+            isRunning = true;
+
+            document.getElementById('cardTotal').innerText = totalCount;
+            document.getElementById('cardFast').innerText = '0';
+            document.getElementById('cardMid').innerText = '0';
+            document.getElementById('cardLag').innerText = '0';
+            document.getElementById('cardDie').innerText = '0';
+            document.getElementById('progressBar').style.width = '0%';
+
+            document.getElementById('btnStart').disabled = true;
+            document.getElementById('btnStart').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('btnStop').disabled = false;
+
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = proxies.map((p, i) => `
+                <tr id="row-${i+1}" class="${(i+1)%2===0 ? 'bg-slate-50/50' : 'bg-white'} hover:bg-blue-50/60 transition">
+                    <td class="py-2.5 px-3 text-center text-slate-400 font-medium">${i+1}</td>
+                    <td id="status-${i+1}" class="py-2.5 px-3 text-center">${getStatusBadge('CHECKING')}</td>
+                    <td class="py-2.5 px-3 text-slate-800 font-semibold truncate max-w-[280px]">${p}</td>
+                    <td id="ipout-${i+1}" class="py-2.5 px-3 text-center text-slate-600">--</td>
+                    <td id="ping-${i+1}" class="py-2.5 px-3 text-center text-slate-600">--</td>
+                    <td id="jit-${i+1}" class="py-2.5 px-3 text-center text-slate-600">--</td>
+                    <td id="loss-${i+1}" class="py-2.5 px-3 text-center text-slate-600">--</td>
+                </tr>
+            `).join('');
+
+            const CONCURRENCY_LIMIT = 5;
+            let index = 0;
+
+            async function runWorker() {
+                while (index < proxies.length && !stopRequested) {
+                    const currentIndex = index++;
+                    const proxy = proxies[currentIndex];
+                    const idx = currentIndex + 1;
+
+                    try {
+                        const res = await fetch(APPS_SCRIPT_URL, {
+                            method: 'POST',
+                            body: JSON.stringify({ action: 'CHECK_SINGLE_PROXY', proxy: proxy, retries: retries })
+                        });
+                        const textData = await res.text();
+                        let result;
+                        try {
+                            result = JSON.parse(textData);
+                        } catch (e) {
+                            const match = textData.match(/\{[\s\S]*\}/);
+                            result = match ? JSON.parse(match[0]) : { status: 'DIE', avg_ping: -1, jitter: -1, loss: 100 };
+                        }
+                        result.idx = idx;
+                        updateSingleResult(result);
+                    } catch (err) {
+                        updateSingleResult({ idx: idx, status: 'DIE', proxy: proxy, ip_out: '--', avg_ping: -1, jitter: -1, loss: 100 });
+                    }
+                }
+            }
+
+            const workers = Array.from({ length: CONCURRENCY_LIMIT }, () => runWorker());
+            await Promise.all(workers);
+
+            finishChecking();
+        }
+
+        function updateSingleResult(res) {
+            resultsData.push(res);
+            doneCount++;
+
+            if (res.status === 'FAST') fastCount++;
+            else if (res.status === 'MEDIUM') midCount++;
+            else if (res.status === 'LAG') lagCount++;
+            else dieCount++;
+
+            document.getElementById('cardFast').innerText = fastCount;
+            document.getElementById('cardMid').innerText = midCount;
+            document.getElementById('cardLag').innerText = lagCount;
+            document.getElementById('cardDie').innerText = dieCount;
+            document.getElementById('progressBar').style.width = `${(doneCount / totalCount) * 100}%`;
+
+            const row = document.getElementById(`row-${res.idx}`);
+            if (row) {
+                document.getElementById(`status-${res.idx}`).innerHTML = getStatusBadge(res.status);
+                document.getElementById(`ipout-${res.idx}`).innerText = res.ip_out || '--';
+                document.getElementById(`ping-${res.idx}`).innerText = res.avg_ping !== -1 ? `${res.avg_ping} ms` : 'Timeout';
+                document.getElementById(`jit-${res.idx}`).innerText = res.jitter !== -1 ? `${res.jitter} ms` : '--';
+                document.getElementById(`loss-${res.idx}`).innerText = `${res.loss}%`;
+            }
+        }
+
+        function stopChecking() {
+            stopRequested = true;
+            document.getElementById('btnStop').disabled = true;
+        }
+
+        function finishChecking() {
+            isRunning = false;
+            document.getElementById('btnStart').disabled = false;
+            document.getElementById('btnStart').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('btnStop').disabled = true;
+        }
+
+        function copyResults(type) {
+            const list = resultsData.filter(r => type === 'live' ? !['DIE', 'INVALID'].includes(r.status) : ['DIE', 'INVALID'].includes(r.status)).map(r => r.proxy);
+            if (list.length === 0) {
+                alert(`Không có proxy ${type.toUpperCase()} nào!`);
+                return;
+            }
+            navigator.clipboard.writeText(list.join('\n'));
+            alert(`Đã sao chép ${list.length} proxy ${type.toUpperCase()} vào Clipboard!`);
+        }
+    </script>
+</body>
+</html>

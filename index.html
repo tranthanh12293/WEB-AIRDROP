@@ -25,7 +25,7 @@
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none relative">
 
-    <!-- 1. LOCKSCREEN (MÀN HÌNH CHÍNH KHI CHƯA ĐĂNG NHẬP) -->
+    <!-- 1. LOCKSCREEN (MÀN HÌNH CHƯA ĐĂNG NHẬP) -->
     <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
         <div></div>
         <div class="max-w-lg mx-auto w-full text-center">
@@ -55,6 +55,7 @@
             <header class="border-b border-borderLight bg-white shadow-sm">
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative flex flex-col items-center">
                     
+                    <!-- Profile Avatar Mini -->
                     <div class="absolute right-4 sm:right-6 top-6 z-30">
                         <button onclick="toggleUserDropdown(event)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-blue-600 transition shadow-sm active:scale-95">
                             <i class="fa-solid fa-circle-user text-xl"></i>
@@ -76,12 +77,14 @@
                         </div>
                     </div>
 
+                    <!-- Logo + Tiêu đề -->
                     <div class="flex flex-col items-center text-center mb-5">
                         <img src="logo.png" alt="Logo" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-white ring-4 ring-blue-500/10 mb-2.5">
                         <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRẦN THÀNH HUB</h1>
                         <p class="text-xs sm:text-sm font-bold text-textMuted mt-0.5 tracking-wide">Airdrop, Scripts Auto & MMO Solution</p>
                     </div>
 
+                    <!-- Menu Tabs -->
                     <div class="w-full max-w-4xl overflow-x-auto pb-2 sm:pb-0 mb-4 flex justify-center">
                         <nav class="inline-flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner flex-nowrap whitespace-nowrap">
                             <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider shrink-0">
@@ -99,6 +102,7 @@
                         </nav>
                     </div>
 
+                    <!-- Search Input -->
                     <div id="searchContainer" class="relative w-full max-w-md">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
                         <input type="search" id="searchInput" name="app_search_keyword_no_autofill" autocomplete="new-password" placeholder="Tìm kiếm nhanh kèo, công cụ..." class="w-full bg-slate-50 border border-borderLight rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
@@ -106,6 +110,7 @@
                 </div>
             </header>
 
+            <!-- Cards / Grid Area -->
             <main id="section-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
                 <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-8" id="categoryTabs">
                     <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
@@ -121,14 +126,84 @@
                 </div>
             </main>
 
-            <main id="section-contact" class="max-w-3xl mx-auto px-4 sm:px-6 py-16 hidden">
-                <div class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-xl">
-                    <div id="contactIcon" class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
-                        <i class="fa-solid fa-network-wired"></i>
+            <!-- Proxy & Resource Section -->
+            <main id="section-contact" class="max-w-5xl mx-auto px-4 sm:px-6 py-12 hidden">
+                
+                <!-- GIAO DIỆN 2 CỘT TAB PROXY -->
+                <div id="proxyOptionGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Cột 1: Dịch Vụ Mua Proxy -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-sm hover:shadow-xl hover:border-blue-400 transition-all flex flex-col justify-between">
+                        <div>
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-2xl mb-5 shadow-inner">
+                                <i class="fa-solid fa-network-wired"></i>
+                            </div>
+                            <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed mb-6">
+                                Cung cấp Proxy Residential, Datacenter, IPv4/IPv6 sạch tốc độ cao, hỗ trợ nuôi tài khoản, auto script mượt mà không lo checkpoint.
+                            </p>
+                            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 mb-6">
+                                <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">KÊNH HỖ TRỢ TRỰC TIẾP</div>
+                                <div class="text-base font-black text-blue-600 flex items-center justify-center gap-1.5">
+                                    <i class="fa-brands fa-telegram text-sky-500 text-xl"></i> @tranthanh1202
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col sm:flex-row items-center gap-2.5">
+                            <a href="https://t.me/tranthanh1202" target="_blank" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md shadow-blue-500/20 active:scale-95">
+                                <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM
+                            </a>
+                            <button onclick="copyTelegram()" class="w-full sm:w-auto px-4 py-3 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider transition">
+                                <i class="fa-regular fa-copy"></i> COPY
+                            </button>
+                        </div>
                     </div>
-                    <h2 id="contactTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
-                    <p id="contactDesc" class="text-slate-600 text-sm sm:text-base max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp Proxy Residential, Datacenter, VPS và các giải pháp nuôi tài khoản tự động tốc độ cao.</p>
-                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-sm">
+
+                    <!-- Cột 2: Cổng Mở Check Proxy Pro -->
+                    <div class="bg-white border border-slate-200 rounded-3xl p-8 text-center shadow-sm hover:shadow-xl hover:border-blue-400 transition-all flex flex-col justify-between relative overflow-hidden">
+                        <div class="absolute top-4 right-4">
+                            <span class="px-2.5 py-1 rounded-md bg-blue-50 text-blue-600 border border-blue-200 text-[10px] font-black tracking-wider uppercase">TOOL PRO</span>
+                        </div>
+                        <div>
+                            <div class="w-16 h-16 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-2xl mb-5 shadow-inner">
+                                <i class="fa-solid fa-gauge-high"></i>
+                            </div>
+                            <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tight">CHECK PROXY PRO ENGINE</h3>
+                            <p class="text-slate-600 text-xs leading-relaxed mb-6">
+                                Công cụ kiểm tra hàng loạt Proxy Live/Die, phân giải IP Outbound, đo tốc độ Ping ms, Jitter và tỷ lệ Packet Loss trực tuyến.
+                            </p>
+                            <div class="grid grid-cols-3 gap-2 bg-slate-50 border border-slate-200 rounded-2xl p-3 mb-6">
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400">Tốc độ</div>
+                                    <div class="text-xs font-black text-emerald-600 mt-0.5">Realtime</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400">Định dạng</div>
+                                    <div class="text-xs font-black text-blue-600 mt-0.5">HTTP/Auth</div>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] font-bold text-slate-400">Phân giải</div>
+                                    <div class="text-xs font-black text-amber-600 mt-0.5">Domain IP</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="checkproxy.html" class="w-full py-3.5 rounded-xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md transition active:scale-95">
+                            <i class="fa-solid fa-play text-[11px]"></i> MỞ BẢNG CHECK PROXY
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- GIAO DIỆN TAB TÀI NGUYÊN -->
+                <div id="resourceSingleCard" class="hidden bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-sm max-w-3xl mx-auto">
+                    <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 text-3xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-box-archive"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG</h2>
+                    <p class="text-slate-600 text-sm max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.</p>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8">
                         <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
                         <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
                             <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
@@ -138,7 +213,7 @@
                         <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
                             <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
                         </a>
-                        <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition">
+                        <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider transition">
                             <i class="fa-regular fa-copy"></i> COPY USERNAME
                         </button>
                     </div>
@@ -200,7 +275,7 @@
         </div>
     </div>
 
-    <!-- 4. MODAL ĐĂNG KÝ (CÓ MÀN HÌNH CHỜ KÍCH HOẠT TRỰC TIẾP) -->
+    <!-- 4. MODAL ĐĂNG KÝ -->
     <div id="modalRegister" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modalRegister')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -214,7 +289,7 @@
                 <h3 class="text-xl font-black text-slate-900 uppercase">ĐĂNG KÝ TÀI KHOẢN</h3>
             </div>
 
-            <!-- Bước 1: Điền thông tin -->
+            <!-- Bước 1: Điền Form -->
             <div id="regStep1" class="space-y-3.5">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản đăng nhập *</label>
@@ -406,11 +481,10 @@
         </div>
     </div>
 
-    <!-- 7. MODAL XÁC NHẬN ĐĂNG XUẤT (LOGOUT CONFIRM MODAL) -->
+    <!-- 7. MODAL LOGOUT -->
     <div id="modalLogout" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative text-center">
             
-            <!-- Trạng thái 1: Hỏi xác nhận đăng xuất -->
             <div id="logoutConfirmStep" class="space-y-4">
                 <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center text-2xl mx-auto shadow-inner">
                     <i class="fa-solid fa-right-from-bracket"></i>
@@ -431,7 +505,6 @@
                 </div>
             </div>
 
-            <!-- Trạng thái 2: Hẹn gặp lại & Điều hướng -->
             <div id="logoutSuccessStep" class="space-y-5 hidden py-2">
                 <div class="w-16 h-16 rounded-3xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
                     <i class="fa-solid fa-hand-wave fa-bounce"></i>
@@ -558,7 +631,6 @@
             }
         }
 
-        // ================= XỬ LÝ LOGOUT CHUYÊN NGHIỆP =================
         function triggerLogoutModal() {
             document.getElementById('userDropdown').classList.add('hidden');
             document.getElementById('logoutConfirmStep').classList.remove('hidden');
@@ -567,15 +639,12 @@
         }
 
         function confirmLogoutAction() {
-            // Xóa toàn bộ session
             localStorage.removeItem('hub_logged_username');
             localStorage.removeItem('hub_logged_email');
             
-            // Ẩn ứng dụng chính, chuyển về màn hình lockscreen ở nền
             document.getElementById('mainApp').classList.add('hidden');
             document.getElementById('lockScreen').classList.remove('hidden');
 
-            // Chuyển nội dung modal sang màn hình "Hẹn gặp lại"
             document.getElementById('logoutConfirmStep').classList.add('hidden');
             document.getElementById('logoutSuccessStep').classList.remove('hidden');
         }
@@ -1192,20 +1261,14 @@
                 secContact.classList.remove('hidden');
                 searchContainer.classList.add('hidden');
 
-                const title = document.getElementById('contactTitle');
-                const desc = document.getElementById('contactDesc');
-                const icon = document.getElementById('contactIcon');
-
-                if (tab === 'resource') {
-                    navResource.className = activeClass;
-                    icon.innerHTML = '<i class="fa-solid fa-box-archive text-amber-500"></i>';
-                    title.innerText = "KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG";
-                    desc.innerText = "Cung cấp các tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.";
-                } else if (tab === 'proxy') {
+                if (tab === 'proxy') {
                     navProxy.className = activeClass;
-                    icon.innerHTML = '<i class="fa-solid fa-network-wired text-blue-600"></i>';
-                    title.innerText = "DỊCH VỤ PROXY CHẤT LƯỢNG CAO";
-                    desc.innerText = "Cung cấp Proxy Residential, Datacenter, IPv4/IPv6 sạch, tốc độ cao, hỗ trợ nuôi tài khoản không lo checkpoint.";
+                    document.getElementById('proxyOptionGrid').classList.remove('hidden');
+                    document.getElementById('resourceSingleCard').classList.add('hidden');
+                } else if (tab === 'resource') {
+                    navResource.className = activeClass;
+                    document.getElementById('proxyOptionGrid').classList.add('hidden');
+                    document.getElementById('resourceSingleCard').classList.remove('hidden');
                 }
             }
         }
