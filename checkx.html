@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ X (TWITTER) CHECKER & EXCEL MATCHER PRO</title>
+    <title>⚡ X CHECKER & EXCEL MATCHER PRO</title>
+    <link rel="icon" type="image/png" href="logo.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
@@ -46,7 +47,7 @@
 
     <div class="max-w-[1600px] w-full mx-auto space-y-4">
         
-        <!-- Header & Nút Quay Lại -->
+        <!-- Header -->
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-borderLight pb-4 bg-white p-5 rounded-2xl shadow-sm">
             <div class="flex items-center gap-3">
                 <img src="logo.png" alt="Logo" class="w-11 h-11 rounded-xl object-cover shadow-sm border border-slate-200">
@@ -57,8 +58,7 @@
                     <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X (Live/Die/Suspended) & Lọc dòng file Excel tự động</p>
                 </div>
             </div>
-            <!-- Quay lại đúng mục Tài Nguyên -->
-            <a href="index.html#resource" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
+            <a href="resources.html" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
                 <i class="fa-solid fa-arrow-left"></i> QUAY LẠI TÀI NGUYÊN
             </a>
         </div>
@@ -146,14 +146,12 @@
             </div>
         </div>
 
-        <!-- Progress Bar -->
         <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden shadow-inner flex items-center">
             <div id="progressBar" class="bg-blue-600 h-full w-0 transition-all duration-200 rounded-full"></div>
         </div>
 
-        <!-- Khung Dán & Bảng Kết quả -->
+        <!-- Textarea & Table -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-            
             <div class="lg:col-span-4 space-y-4">
                 <div class="bg-white p-4 rounded-2xl border border-borderLight shadow-sm flex flex-col h-[280px]">
                     <div class="flex items-center justify-between mb-2">
@@ -188,7 +186,6 @@
                     </table>
                 </div>
             </div>
-
         </div>
 
     </div>
@@ -201,9 +198,7 @@
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
         const SECRET_KEY = "TranThanhMMO_Secret_2026";
 
-        let isRunning = false;
-        let stopRequested = false;
-        let resultsData = [];
+        let isRunning = false, stopRequested = false, resultsData = [];
         let liveCount = 0, susCount = 0, capCount = 0, otherCount = 0, doneCount = 0, totalCount = 0;
 
         function encryptPayload(rawObject) {
