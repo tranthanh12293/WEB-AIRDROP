@@ -31,9 +31,23 @@
         }
     </script>
     <style>
-        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        /* THANH CUỘN TO 12PX CỰC KỲ DỄ KÉO */
+        .large-scroll::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        .large-scroll::-webkit-scrollbar-track {
+            background: #e2e8f0;
+            border-radius: 8px;
+        }
+        .large-scroll::-webkit-scrollbar-thumb {
+            background: #94a3b8;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+        .large-scroll::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+        }
     </style>
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex">
@@ -85,6 +99,9 @@
                 <i class="fa-solid fa-ellipsis-vertical text-slate-400 text-xs px-1"></i>
             </button>
             <div id="userMenuPopup" class="hidden absolute bottom-16 left-0 w-full bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50">
+                <button onclick="openChangePassModal()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                    <i class="fa-solid fa-key text-blue-600"></i> Đổi Mật Khẩu
+                </button>
                 <button onclick="logoutNow()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2">
                     <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
                 </button>
@@ -93,7 +110,7 @@
     </aside>
 
     <!-- NỘI DUNG LICENSE SCRIPT -->
-    <div class="flex-1 flex flex-col justify-between h-screen overflow-y-auto custom-scroll">
+    <div class="flex-1 flex flex-col justify-between h-screen overflow-y-auto large-scroll">
         <main class="max-w-[1700px] w-full mx-auto px-6 py-8 space-y-6">
 
             <!-- Header & Thao tác nhanh -->
@@ -102,7 +119,7 @@
                     <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                         <i class="fa-solid fa-key text-blue-600"></i> LICENSE SCRIPT & EXTENSION
                     </h2>
-                    <p class="text-xs text-textMuted font-medium mt-1">Danh sách Key bản quyền độc quyền được phân phối tự động theo tài khoản của bạn</p>
+                    <p class="text-xs text-textMuted font-medium mt-1">Danh sách Key bản quyền tự động phân phối theo số lượng tài khoản của bạn</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="downloadExcelLicense()" class="h-10 px-5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider transition flex items-center gap-2 shadow-sm active:scale-95">
@@ -144,8 +161,8 @@
                 </div>
             </div>
 
-            <!-- Bảng Dữ Liệu Key -->
-            <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm h-[600px] flex flex-col overflow-hidden">
+            <!-- Bảng Dữ Liệu Key với THANH CUỘN TO & TIÊU ĐỀ NỔI BẬT -->
+            <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm h-[620px] flex flex-col overflow-hidden">
                 <div id="loadingBox" class="flex-1 flex flex-col items-center justify-center gap-3">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-2"></i>
                     <p class="text-xs font-bold text-slate-500">Đang tải và đồng bộ Key bản quyền của bạn...</p>
@@ -156,16 +173,16 @@
                         <i class="fa-solid fa-triangle-exclamation"></i>
                     </div>
                     <h3 class="text-sm font-black text-slate-800 uppercase">CHƯA ĐƯỢC PHÂN PHỐI KEY</h3>
-                    <p id="emptyReason" class="text-xs text-slate-500 max-w-md mx-auto">Tài khoản của bạn hiện có NUMBER_KEY = 0 hoặc chưa được Admin cấp quyền.</p>
+                    <p id="emptyReason" class="text-xs text-slate-500 max-w-md mx-auto">Tài khoản của bạn hiện có NUMBER_KEY = 0 hoặc chưa được Admin kích hoạt.</p>
                     <a href="https://t.me/tranthanh1202" target="_blank" class="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-blue-50 text-blue-600 rounded-2xl text-xs font-black border border-blue-200 hover:bg-blue-100 transition shadow-sm">
                         <i class="fa-brands fa-telegram text-sm"></i> LIÊN HỆ ADMIN: @tranthanh1202
                     </a>
                 </div>
 
-                <div id="tableWrapper" class="overflow-x-auto overflow-y-auto custom-scroll flex-1 rounded-2xl hidden">
+                <div id="tableWrapper" class="overflow-x-auto overflow-y-auto large-scroll flex-1 rounded-2xl border border-slate-200 hidden">
                     <table class="w-full text-left border-collapse text-xs whitespace-nowrap">
-                        <thead id="licenseHead" class="sticky top-0 bg-slate-100 text-slate-700 font-black uppercase text-[11px] tracking-wider z-10 border-b border-slate-200"></thead>
-                        <tbody id="licenseBody" class="font-mono divide-y divide-slate-100 text-slate-800"></tbody>
+                        <thead id="licenseHead" class="sticky top-0 bg-slate-900 text-white font-black uppercase text-[12px] tracking-wider z-10 shadow-md"></thead>
+                        <tbody id="licenseBody" class="font-mono divide-y divide-slate-200 text-slate-800"></tbody>
                     </table>
                 </div>
             </div>
@@ -177,7 +194,81 @@
         </footer>
     </div>
 
-    <!-- Thông báo Copy Toast -->
+    <!-- MODAL ĐỔI MẬT KHẨU (CÓ XÁC THỰC OTP QUA GMAIL) -->
+    <div id="changePassModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative space-y-4">
+            <button onclick="closeChangePassModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            
+            <div class="text-center">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h3 class="text-lg font-black text-slate-900 uppercase">ĐỔI MẬT KHẨU TÀI KHOẢN</h3>
+            </div>
+
+            <!-- Bước 1: Nhập mật khẩu cũ & mới -->
+            <div id="cpStep1" class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại *</label>
+                    <div class="relative">
+                        <input type="password" id="cpOldPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                        <button type="button" onclick="togglePass('cpOldPass', 'eyeCp1')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i id="eyeCp1" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới *</label>
+                    <div class="relative">
+                        <input type="password" id="cpNewPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                        <button type="button" onclick="togglePass('cpNewPass', 'eyeCp2')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i id="eyeCp2" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới *</label>
+                    <div class="relative">
+                        <input type="password" id="cpNewPassConfirm" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                        <button type="button" onclick="togglePass('cpNewPassConfirm', 'eyeCp3')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i id="eyeCp3" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="cpMsg1" class="text-xs font-bold text-rose-500 text-center hidden"></div>
+
+                <button id="btnCpSendOtp" onclick="handleChangePassSendOtp()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> GỬI MÃ OTP VỀ GMAIL
+                </button>
+            </div>
+
+            <!-- Bước 2: Nhập OTP xác thực -->
+            <div id="cpStep2" class="space-y-4 hidden">
+                <div class="text-center p-3 bg-blue-50 rounded-xl border border-blue-100">
+                    <p class="text-xs text-blue-800">Mã xác thực đã gửi tới Gmail: <b id="cpTargetEmail"></b></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1 text-center">Nhập mã OTP 6 số</label>
+                    <input type="text" id="cpOtpInput" maxlength="6" placeholder="123456" class="w-full h-11 text-center text-lg font-mono font-black tracking-widest rounded-xl border border-slate-200 outline-none focus:border-blue-600 bg-slate-50 focus:bg-white">
+                </div>
+
+                <div id="cpMsg2" class="text-xs font-bold text-rose-500 text-center hidden"></div>
+
+                <button id="btnCpVerify" onclick="handleChangePassVerify()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md">
+                    XÁC THỰC & CẬP NHẬT MẬT KHẨU
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Thông báo Toast Copy -->
     <div id="copyToast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 hidden z-50 border border-slate-700">
         <i class="fa-solid fa-circle-check text-emerald-400"></i>
         <span>Đã sao chép Key vào Clipboard!</span>
@@ -195,9 +286,135 @@
             document.getElementById('userMenuPopup').classList.toggle('hidden'); 
         }
 
+        document.addEventListener('click', (e) => {
+            const popup = document.getElementById('userMenuPopup');
+            if (popup && !popup.contains(e.target) && !e.target.closest('button[onclick="toggleUserDropdown()"]')) {
+                popup.classList.add('hidden');
+            }
+        });
+
         function logoutNow() { 
             localStorage.clear(); 
             window.location.href = "index.html"; 
+        }
+
+        function togglePass(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.className = 'fa-regular fa-eye-slash';
+            } else {
+                input.type = 'password';
+                icon.className = 'fa-regular fa-eye';
+            }
+        }
+
+        function openChangePassModal() {
+            document.getElementById('changePassModal').classList.remove('hidden');
+            document.getElementById('cpStep1').classList.remove('hidden');
+            document.getElementById('cpStep2').classList.add('hidden');
+            document.getElementById('cpMsg1').classList.add('hidden');
+            document.getElementById('userMenuPopup').classList.add('hidden');
+        }
+
+        function closeChangePassModal() {
+            document.getElementById('changePassModal').classList.add('hidden');
+        }
+
+        async function handleChangePassSendOtp() {
+            const oldP = document.getElementById('cpOldPass').value.trim();
+            const newP = document.getElementById('cpNewPass').value.trim();
+            const newPC = document.getElementById('cpNewPassConfirm').value.trim();
+            const msg = document.getElementById('cpMsg1');
+            const btn = document.getElementById('btnCpSendOtp');
+
+            if (!oldP || !newP || !newPC) {
+                msg.innerText = "Vui lòng nhập đầy đủ mật khẩu!";
+                msg.classList.remove('hidden');
+                return;
+            }
+            if (newP !== newPC) {
+                msg.innerText = "Mật khẩu mới xác nhận không khớp!";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG GỬI OTP...';
+            msg.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'CHANGE_PASS_SEND_OTP',
+                        username: loggedUser,
+                        oldPassword: oldP,
+                        newPassword: newP
+                    })
+                });
+
+                const json = await res.json();
+                if (json.status === 'success') {
+                    document.getElementById('cpTargetEmail').innerText = json.email || '';
+                    document.getElementById('cpStep1').classList.add('hidden');
+                    document.getElementById('cpStep2').classList.remove('hidden');
+                } else {
+                    msg.innerText = json.message || "Gửi OTP thất bại!";
+                    msg.classList.remove('hidden');
+                }
+            } catch (err) {
+                msg.innerText = "Lỗi kết nối máy chủ!";
+                msg.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> GỬI MÃ OTP VỀ GMAIL';
+            }
+        }
+
+        async function handleChangePassVerify() {
+            const otp = document.getElementById('cpOtpInput').value.trim();
+            const msg = document.getElementById('cpMsg2');
+            const btn = document.getElementById('btnCpVerify');
+
+            if (!otp || otp.length < 6) {
+                msg.innerText = "Vui lòng nhập đủ 6 số OTP!";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XÁC THỰC...';
+            msg.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'CHANGE_PASS_VERIFY',
+                        username: loggedUser,
+                        otp: otp
+                    })
+                });
+
+                const json = await res.json();
+                if (json.status === 'success') {
+                    alert("🎉 Đổi mật khẩu thành công!");
+                    closeChangePassModal();
+                } else {
+                    msg.innerText = json.message || "Mã OTP không hợp lệ!";
+                    msg.classList.remove('hidden');
+                }
+            } catch (err) {
+                msg.innerText = "Lỗi kết nối máy chủ!";
+                msg.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'XÁC THỰC & CẬP NHẬT MẬT KHẨU';
+            }
         }
 
         async function loadMyLicenses() {
@@ -252,22 +469,29 @@
 
             thead.innerHTML = `
                 <tr>
-                    <th class="py-3.5 px-4 text-center w-12 bg-slate-200">STT</th>
-                    ${headers.map((h, i) => `<th class="py-3.5 px-4 border-l border-slate-200">${h || `SCRIPT_${i+1}`}</th>`).join('')}
+                    <th class="py-4 px-4 text-center w-14 bg-slate-950 border-r border-slate-800">STT</th>
+                    ${headers.map((h, i) => `
+                        <th class="py-4 px-5 border-r border-slate-800 bg-slate-900">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-code text-blue-400 text-xs"></i>
+                                <span class="font-black text-amber-300 text-xs tracking-wide">${h || `SCRIPT_${i+1}`}</span>
+                            </div>
+                        </th>
+                    `).join('')}
                 </tr>
             `;
 
             tbody.innerHTML = rows.map((row, rIdx) => `
-                <tr class="${rIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'} hover:bg-blue-50/60 transition">
-                    <td class="py-3 px-4 text-center text-slate-400 font-bold">${rIdx + 1}</td>
+                <tr class="${rIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-blue-50/70 transition">
+                    <td class="py-3 px-4 text-center text-slate-500 font-bold border-r border-slate-200 bg-slate-100/50">${rIdx + 1}</td>
                     ${headers.map((_, cIdx) => {
                         const cellVal = (row[cIdx] !== undefined && row[cIdx] !== null) ? row[cIdx] : '';
                         return `
-                            <td class="py-3 px-4 border-l border-slate-100 group">
+                            <td class="py-3 px-5 border-r border-slate-200 group">
                                 <div class="flex items-center justify-between gap-3">
-                                    <span class="font-bold text-slate-800">${cellVal}</span>
+                                    <span class="font-bold text-slate-800 select-all">${cellVal}</span>
                                     ${cellVal ? `
-                                        <button onclick="copyToClip('${cellVal}')" title="Copy Key" class="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-blue-600 transition">
+                                        <button onclick="copyToClip('${cellVal}')" title="Sao chép Key" class="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-blue-600 transition rounded-lg hover:bg-blue-50">
                                             <i class="fa-regular fa-copy text-sm"></i>
                                         </button>
                                     ` : ''}
