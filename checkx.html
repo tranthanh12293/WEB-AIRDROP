@@ -28,23 +28,25 @@
         .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
-    <!-- LỚP PHÒNG THỦ: CHẶN F12 & CHỐNG SOI MÃ -->
     <script>
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's'))) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
                 e.preventDefault();
                 return false;
             }
         });
-        setInterval(() => { (function() { return false; }["constructor"]("debugger")()); }, 100);
+        if (!localStorage.getItem('hub_logged_username')) { window.location.href = "index.html"; }
+        if (window.location.pathname.endsWith(".html")) {
+            window.history.replaceState(null, "", window.location.pathname.replace(".html", ""));
+        }
     </script>
 </head>
 <body class="bg-pageBg text-textMain min-h-screen p-4 sm:p-6 flex flex-col justify-between select-none font-sans antialiased">
 
     <div class="max-w-[1600px] w-full mx-auto space-y-4">
         
-        <!-- Header -->
+        <!-- Header & Nút Quay Lại -->
         <div class="flex flex-wrap items-center justify-between gap-4 border-b border-borderLight pb-4 bg-white p-5 rounded-2xl shadow-sm">
             <div class="flex items-center gap-3">
                 <img src="logo.png" alt="Logo" class="w-11 h-11 rounded-xl object-cover shadow-sm border border-slate-200">
@@ -55,8 +57,9 @@
                     <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X (Live/Die/Suspended) & Lọc dòng file Excel tự động</p>
                 </div>
             </div>
-            <a href="index.html" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
-                <i class="fa-solid fa-arrow-left"></i> VỀ TRANG CHỦ
+            <!-- Quay lại đúng mục Tài Nguyên -->
+            <a href="index.html#resource" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
+                <i class="fa-solid fa-arrow-left"></i> QUAY LẠI TÀI NGUYÊN
             </a>
         </div>
 
@@ -84,7 +87,7 @@
             </div>
         </div>
 
-        <!-- Controls 1 -->
+        <!-- Controls 1: Nạp & Check -->
         <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-borderLight shadow-sm">
             <div class="flex flex-wrap items-center gap-2.5">
                 <input type="file" id="fileUser" accept=".txt" class="hidden" onchange="handleUserUpload(event)">
@@ -123,7 +126,7 @@
             </div>
         </div>
 
-        <!-- Controls 2 (Lọc Excel) -->
+        <!-- Controls 2: Lọc Excel -->
         <div class="flex flex-wrap items-center justify-between gap-3 bg-blue-50/50 p-3.5 rounded-2xl border border-blue-200 shadow-sm">
             <div class="flex flex-wrap items-center gap-3">
                 <span class="text-xs font-black text-blue-900 uppercase flex items-center gap-1.5">
@@ -143,13 +146,14 @@
             </div>
         </div>
 
-        <!-- Progress -->
+        <!-- Progress Bar -->
         <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden shadow-inner flex items-center">
             <div id="progressBar" class="bg-blue-600 h-full w-0 transition-all duration-200 rounded-full"></div>
         </div>
 
-        <!-- Main Split Panel -->
+        <!-- Khung Dán & Bảng Kết quả -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+            
             <div class="lg:col-span-4 space-y-4">
                 <div class="bg-white p-4 rounded-2xl border border-borderLight shadow-sm flex flex-col h-[280px]">
                     <div class="flex items-center justify-between mb-2">
@@ -180,12 +184,11 @@
                                 <th class="py-3 px-3 text-center w-24">THỜI GIAN</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody" class="font-mono divide-y divide-slate-100">
-                            <!-- Nạp dòng kết quả -->
-                        </tbody>
+                        <tbody id="tableBody" class="font-mono divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
+
         </div>
 
     </div>
@@ -194,14 +197,9 @@
         © 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.
     </footer>
 
-    <!-- Script Logic -->
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
         const SECRET_KEY = "TranThanhMMO_Secret_2026";
-
-        if (!localStorage.getItem('hub_logged_username')) {
-            window.location.href = 'index.html';
-        }
 
         let isRunning = false;
         let stopRequested = false;
@@ -217,9 +215,7 @@
             return btoa(unescape(encodeURIComponent(encrypted)));
         }
 
-        function cleanUser(u) {
-            return u.toString().trim().replace(/^@/, '').toLowerCase();
-        }
+        function cleanUser(u) { return u.toString().trim().replace(/^@/, '').toLowerCase(); }
 
         function handleUserUpload(event) {
             const file = event.target.files[0];
@@ -250,10 +246,7 @@
 
         async function startCheckingX() {
             const userTxt = document.getElementById('txtUserPaste').value.trim();
-            if (!userTxt) {
-                alert("Vui lòng dán danh sách username X hoặc nạp file .txt!");
-                return;
-            }
+            if (!userTxt) { alert("Vui lòng dán danh sách username X!"); return; }
 
             const users = userTxt.split('\n').map(l => cleanUser(l)).filter(l => l && !l.startsWith('#'));
             if (users.length === 0) return;
@@ -364,20 +357,14 @@
 
         function copyResults(type) {
             const list = resultsData.filter(r => type === 'live' ? r.status === 'LIVE' : r.status !== 'LIVE').map(r => r.username);
-            if (list.length === 0) {
-                alert(`Không có username ${type.toUpperCase()} nào!`);
-                return;
-            }
+            if (list.length === 0) { alert(`Không có username ${type.toUpperCase()} nào!`); return; }
             navigator.clipboard.writeText(list.join('\n'));
             alert(`Đã sao chép ${list.length} username ${type.toUpperCase()} vào Clipboard!`);
         }
 
         function downloadLiveTxt() {
             const list = resultsData.filter(r => r.status === 'LIVE').map(r => r.username);
-            if (list.length === 0) {
-                alert("Chưa có tài khoản LIVE nào!");
-                return;
-            }
+            if (list.length === 0) { alert("Chưa có tài khoản LIVE nào!"); return; }
             const blob = new Blob([list.join('\n')], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
@@ -385,7 +372,6 @@
             a.click();
         }
 
-        // ================= XỬ LÝ LỌC EXCEL & ĐỒNG BỘ NGẦM DRIVE =================
         async function handleExcelProcess(event) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
@@ -427,7 +413,7 @@
                         seenUser.add(uVal);
                         let newRow = [...row];
                         while (newRow.length < 13) newRow.push("");
-                        newRow[13] = f.name; // Ghi tên file nguồn vào Cột N
+                        newRow[13] = f.name;
                         matchedRows.push(newRow);
                     }
                 }
@@ -445,10 +431,8 @@
             const timeStr = new Date().toISOString().replace(/[-:T.]/g, '').substring(0, 14);
             const outFileName = `ket_qua_loc_excel_${timeStr}.xlsx`;
 
-            // 1. Tải về máy của bạn
             XLSX.writeFile(outWb, outFileName);
 
-            // 2. Mã hóa và đồng bộ ngầm về Thư mục Drive X FINAL của bạn
             const wbBase64 = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
             const currentLoggedUser = localStorage.getItem('hub_logged_username') || 'Admin';
 

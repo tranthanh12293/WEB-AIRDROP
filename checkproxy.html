@@ -27,6 +27,19 @@
         .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     </style>
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        if (!localStorage.getItem('hub_logged_username')) { window.location.href = "index.html"; }
+        if (window.location.pathname.endsWith(".html")) {
+            window.history.replaceState(null, "", window.location.pathname.replace(".html", ""));
+        }
+    </script>
 </head>
 <body class="bg-pageBg text-textMain min-h-screen p-4 sm:p-6 flex flex-col justify-between select-none font-sans antialiased">
 
@@ -38,13 +51,14 @@
                 <img src="logo.png" alt="Logo" class="w-11 h-11 rounded-xl object-cover shadow-sm border border-slate-200">
                 <div>
                     <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                        <i class="fa-solid fa-rocket text-blue-600"></i> PROXY CHECKER PRO
+                        <i class="fa-solid fa-gauge-high text-blue-600"></i> PROXY CHECKER PRO ENGINE
                     </h1>
                     <p class="text-xs text-textMuted font-medium">Hệ thống kiểm tra tốc độ, trạng thái & phân giải IP Proxy tự động</p>
                 </div>
             </div>
-            <a href="index.html" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
-                <i class="fa-solid fa-arrow-left"></i> VỀ TRANG CHỦ
+            <!-- Quay lại đúng mục Proxy -->
+            <a href="index.html#proxy" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
+                <i class="fa-solid fa-arrow-left"></i> QUAY LẠI PROXY
             </a>
         </div>
 
@@ -111,7 +125,6 @@
         <!-- Khung Dán & Bảng Kết quả -->
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
             
-            <!-- Cột Trái: Textarea Dán Proxy -->
             <div class="lg:col-span-4 bg-white p-4 rounded-2xl border border-borderLight shadow-sm flex flex-col h-[540px]">
                 <label class="text-xs font-bold text-slate-700 mb-2 leading-relaxed">
                     📝 Dán Proxy vào đây:<br>
@@ -123,7 +136,6 @@
                 </button>
             </div>
 
-            <!-- Cột Phải: Bảng Kết quả Data Table -->
             <div class="lg:col-span-8 bg-white p-2 rounded-2xl border border-borderLight shadow-sm h-[540px] flex flex-col overflow-hidden">
                 <div class="overflow-x-auto overflow-y-auto custom-scroll flex-1 rounded-xl">
                     <table class="w-full text-left border-collapse text-xs">
@@ -138,9 +150,7 @@
                                 <th class="py-3 px-3 text-center w-20">LOSS</th>
                             </tr>
                         </thead>
-                        <tbody id="tableBody" class="font-mono divide-y divide-slate-100">
-                            <!-- Kết quả nạp động -->
-                        </tbody>
+                        <tbody id="tableBody" class="font-mono divide-y divide-slate-100"></tbody>
                     </table>
                 </div>
             </div>
@@ -149,18 +159,12 @@
 
     </div>
 
-    <!-- Footer -->
     <footer class="text-center text-xs text-slate-400 font-medium py-4 mt-6">
         © 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.
     </footer>
 
-    <!-- Script Logic -->
     <script>
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
-
-        if (!localStorage.getItem('hub_logged_username')) {
-            window.location.href = 'index.html';
-        }
 
         let isRunning = false;
         let stopRequested = false;
@@ -188,10 +192,7 @@
 
         async function startChecking() {
             const text = document.getElementById('txtPaste').value.trim();
-            if (!text) {
-                alert("Vui lòng dán danh sách proxy hoặc chọn file .txt!");
-                return;
-            }
+            if (!text) { alert("Vui lòng dán danh sách proxy!"); return; }
 
             const proxies = text.split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
             if (proxies.length === 0) return;
@@ -212,12 +213,11 @@
             document.getElementById('progressBar').style.width = '0%';
 
             document.getElementById('btnStart').disabled = true;
-            document.getElementById('btnStart').classList.add('opacity-50', 'cursor-not-allowed');
             document.getElementById('btnStop').disabled = false;
 
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = proxies.map((p, i) => `
-                <tr id="row-${i+1}" class="${(i+1)%2===0 ? 'bg-slate-50/50' : 'bg-white'} hover:bg-blue-50/60 transition">
+                <tr id="row-${i+1}" class="${(i+1)%2===0 ? 'bg-slate-50/50' : 'bg-white'}">
                     <td class="py-2.5 px-3 text-center text-slate-400 font-medium">${i+1}</td>
                     <td id="status-${i+1}" class="py-2.5 px-3 text-center">${getStatusBadge('CHECKING')}</td>
                     <td class="py-2.5 px-3 text-slate-800 font-semibold truncate max-w-[280px]">${p}</td>
@@ -228,9 +228,7 @@
                 </tr>
             `).join('');
 
-            const CONCURRENCY_LIMIT = 5;
             let index = 0;
-
             async function runWorker() {
                 while (index < proxies.length && !stopRequested) {
                     const currentIndex = index++;
@@ -244,9 +242,7 @@
                         });
                         const textData = await res.text();
                         let result;
-                        try {
-                            result = JSON.parse(textData);
-                        } catch (e) {
+                        try { result = JSON.parse(textData); } catch (e) {
                             const match = textData.match(/\{[\s\S]*\}/);
                             result = match ? JSON.parse(match[0]) : { status: 'DIE', avg_ping: -1, jitter: -1, loss: 100 };
                         }
@@ -258,7 +254,7 @@
                 }
             }
 
-            const workers = Array.from({ length: CONCURRENCY_LIMIT }, () => runWorker());
+            const workers = Array.from({ length: 5 }, () => runWorker());
             await Promise.all(workers);
 
             finishChecking();
@@ -297,16 +293,12 @@
         function finishChecking() {
             isRunning = false;
             document.getElementById('btnStart').disabled = false;
-            document.getElementById('btnStart').classList.remove('opacity-50', 'cursor-not-allowed');
             document.getElementById('btnStop').disabled = true;
         }
 
         function copyResults(type) {
             const list = resultsData.filter(r => type === 'live' ? !['DIE', 'INVALID'].includes(r.status) : ['DIE', 'INVALID'].includes(r.status)).map(r => r.proxy);
-            if (list.length === 0) {
-                alert(`Không có proxy ${type.toUpperCase()} nào!`);
-                return;
-            }
+            if (list.length === 0) { alert(`Không có proxy ${type.toUpperCase()} nào!`); return; }
             navigator.clipboard.writeText(list.join('\n'));
             alert(`Đã sao chép ${list.length} proxy ${type.toUpperCase()} vào Clipboard!`);
         }

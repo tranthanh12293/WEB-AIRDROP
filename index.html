@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +12,8 @@
                 extend: {
                     colors: {
                         pageBg: '#f8fafc',
+                        cardBg: '#ffffff',
+                        borderLight: '#e2e8f0',
                         primaryBlue: '#2563eb',
                         textMain: '#0f172a',
                         textMuted: '#64748b'
@@ -23,55 +25,190 @@
     <script>
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || (e.ctrlKey && (e.key === 'U' || e.key === 'u'))) {
+            if (
+                e.key === 'F12' || 
+                (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+                (e.ctrlKey && (e.key === 'U' || e.key === 'u'))
+            ) {
                 e.preventDefault();
                 return false;
             }
         });
-        // Tự động xóa đuôi index.html nếu có
         if (window.location.pathname.endsWith("index.html")) {
             window.history.replaceState(null, "", window.location.pathname.replace("index.html", ""));
         }
     </script>
 </head>
-<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex flex-col justify-between p-6">
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none relative">
 
-    <!-- CỔNG CHÀO & XÁC THỰC -->
-    <div class="max-w-lg mx-auto w-full text-center my-auto">
-        <div class="relative w-28 h-28 mx-auto mb-6">
-            <img src="logo.png" alt="Logo" class="w-28 h-28 rounded-3xl object-cover shadow-2xl border-2 border-white ring-8 ring-blue-500/10">
-        </div>
-        <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">TRẦN THÀNH HUB</h1>
-        <p class="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-10">Airdrop, Scripts Auto & MMO Solution</p>
-        
-        <div id="authActions" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
-            <button onclick="openModal('modalLogin')" class="py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-blue-500/25 transition active:scale-95 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-right-to-bracket text-base"></i> ĐĂNG NHẬP
-            </button>
-            <button onclick="openRegisterModal()" class="py-4 px-6 rounded-2xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-sm uppercase tracking-wider shadow-lg shadow-slate-900/20 transition active:scale-95 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-user-plus text-base"></i> ĐĂNG KÝ
-            </button>
-        </div>
-
-        <div id="loggedActions" class="hidden space-y-4 max-w-md mx-auto">
-            <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl">
-                <p class="text-xs text-slate-600">Xin chào, <strong id="userDisplayWelcome" class="text-emerald-700"></strong></p>
-                <p class="text-xs text-slate-500 mt-0.5">Phiên đăng nhập của bạn vẫn đang hoạt động</p>
+    <!-- 1. LOCKSCREEN (MÀN HÌNH CHƯA ĐĂNG NHẬP) -->
+    <div id="lockScreen" class="min-h-screen flex flex-col justify-between p-6">
+        <div></div>
+        <div class="max-w-lg mx-auto w-full text-center">
+            <div class="relative w-28 h-28 mx-auto mb-6">
+                <img src="logo.png" alt="Logo" class="w-28 h-28 rounded-3xl object-cover shadow-2xl border-2 border-white ring-8 ring-blue-500/10">
             </div>
-            <a href="airdrop" class="w-full py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-blue-500/25 transition active:scale-95 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-rocket"></i> VÀO TRANG HỆ THỐNG
-            </a>
-            <button onclick="logoutNow()" class="text-xs font-bold text-rose-500 hover:underline block mx-auto">Đăng xuất tài khoản</button>
+            <h1 class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight mb-2">TRẦN THÀNH HUB</h1>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-widest mb-10">Airdrop, Scripts Auto & MMO Solution</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+                <button onclick="openModal('modalLogin')" class="py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-sm uppercase tracking-wider shadow-lg shadow-blue-500/25 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-right-to-bracket text-base"></i> ĐĂNG NHẬP
+                </button>
+                <button onclick="openRegisterModal()" class="py-4 px-6 rounded-2xl bg-slate-900 hover:bg-black text-emerald-400 font-black text-sm uppercase tracking-wider shadow-lg shadow-slate-900/20 transition active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-user-plus text-base"></i> ĐĂNG KÝ
+                </button>
+            </div>
+            <div class="mt-6">
+                <button onclick="openModal('modalForgot')" class="text-xs font-bold text-slate-500 hover:text-blue-600 transition">Quên mật khẩu?</button>
+            </div>
         </div>
-
-        <div id="forgotWrap" class="mt-6">
-            <button onclick="openModal('modalForgot')" class="text-xs font-bold text-slate-500 hover:text-blue-600 transition">Quên mật khẩu?</button>
-        </div>
+        <footer class="text-center text-xs text-slate-400 font-medium py-4">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
     </div>
 
-    <footer class="text-center text-xs text-slate-400 font-medium py-4">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
+    <!-- 2. MAIN APPLICATION -->
+    <div id="mainApp" class="hidden min-h-screen flex flex-col justify-between">
+        <div>
+            <!-- Header -->
+            <header class="border-b border-borderLight bg-white shadow-sm">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative flex flex-col items-center">
+                    
+                    <div class="absolute right-4 sm:right-6 top-6 z-30">
+                        <button onclick="toggleUserDropdown(event)" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-blue-600 transition shadow-sm active:scale-95">
+                            <i class="fa-solid fa-circle-user text-xl"></i>
+                        </button>
 
-    <!-- MODAL ĐĂNG NHẬP -->
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-2xl py-2 z-50">
+                            <div class="px-4 py-3 border-b border-slate-100 bg-slate-50 rounded-t-2xl">
+                                <p class="text-[11px] font-bold text-slate-400 uppercase">Tài khoản</p>
+                                <p id="dropdownUsername" class="text-sm font-black text-slate-900 truncate"></p>
+                            </div>
+                            <div class="py-1">
+                                <button onclick="openProfileModal()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition flex items-center gap-2.5">
+                                    <i class="fa-solid fa-user-gear text-slate-400"></i> Đổi thông tin & Mật khẩu
+                                </button>
+                                <button onclick="triggerLogoutModal()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 transition flex items-center gap-2.5">
+                                    <i class="fa-solid fa-right-from-bracket text-rose-500"></i> Đăng xuất
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col items-center text-center mb-5">
+                        <img src="logo.png" alt="Logo" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-white ring-4 ring-blue-500/10 mb-2.5">
+                        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRẦN THÀNH HUB</h1>
+                        <p class="text-xs sm:text-sm font-bold text-textMuted mt-0.5 tracking-wide">Airdrop, Scripts Auto & MMO Solution</p>
+                    </div>
+
+                    <!-- Menu Tabs Ngang -->
+                    <div class="w-full max-w-4xl overflow-x-auto pb-2 sm:pb-0 mb-4 flex justify-center">
+                        <nav class="inline-flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner flex-nowrap whitespace-nowrap">
+                            <button id="nav-airdrop" onclick="switchMainTab('airdrop')" class="nav-tab px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider shrink-0">
+                                <i class="fa-solid fa-parachute-box"></i> AIRDROP
+                            </button>
+                            <button id="nav-tools" onclick="switchMainTab('tools')" class="nav-tab px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider shrink-0">
+                                <i class="fa-solid fa-puzzle-piece"></i> APP + EXTENSION + SCR HỖ TRỢ
+                            </button>
+                            <button id="nav-resource" onclick="switchMainTab('resource')" class="nav-tab px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider shrink-0">
+                                <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
+                            </button>
+                            <button id="nav-proxy" onclick="switchMainTab('proxy')" class="nav-tab px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider shrink-0">
+                                <i class="fa-solid fa-network-wired"></i> PROXY
+                            </button>
+                        </nav>
+                    </div>
+
+                    <!-- Search Input -->
+                    <div id="searchContainer" class="relative w-full max-w-md">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                        <input type="search" id="searchInput" name="app_search_keyword_no_autofill" autocomplete="new-password" placeholder="Tìm kiếm nhanh kèo, công cụ..." class="w-full bg-slate-50 border border-borderLight rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-primaryBlue focus:bg-white transition shadow-inner">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Cards / Grid Area cho Airdrop & App Tools -->
+            <main id="section-content" class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-8" id="categoryTabs">
+                    <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
+                </div>
+                <div id="loader" class="text-center py-20">
+                    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
+                    <p class="text-textMuted text-sm font-medium">Đang đồng bộ dữ liệu từ máy chủ...</p>
+                </div>
+                <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+                <div id="noData" class="text-center py-16 hidden">
+                    <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
+                    <p class="text-textMuted text-sm">Không tìm thấy mục nào phù hợp.</p>
+                </div>
+            </main>
+
+            <!-- ======================================================== -->
+            <!-- SECTION TÀI NGUYÊN & PROXY (CHỈ CÓ 2 Ô HÀNG NGANG) -->
+            <!-- ======================================================== -->
+            <main id="section-service-hub" class="max-w-4xl mx-auto px-4 sm:px-6 py-8 hidden">
+                
+                <!-- Thanh 2 nút hàng ngang -->
+                <div class="flex flex-wrap items-center justify-center sm:justify-start gap-3 mb-8" id="serviceTwoButtonsBar">
+                    <!-- Nạp 2 nút đúng theo mục qua JS -->
+                </div>
+
+                <!-- KHUNG NỘI DUNG MUA TÀI NGUYÊN -->
+                <div id="view-resource-card" class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-sm">
+                    <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 text-3xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-box-archive"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG</h2>
+                    <p class="text-slate-600 text-sm max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp các tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.</p>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-inner">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
+                        <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
+                            <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
+                        </a>
+                        <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition">
+                            <i class="fa-regular fa-copy"></i> COPY USERNAME
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KHUNG NỘI DUNG MUA PROXY -->
+                <div id="view-proxy-card" class="hidden bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-sm">
+                    <div class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
+                        <i class="fa-solid fa-network-wired"></i>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
+                    <p class="text-slate-600 text-sm max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp Proxy Residential, Datacenter, IPv4/IPv6 sạch tốc độ cao, hỗ trợ nuôi tài khoản không lo checkpoint.</p>
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-inner">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
+                        <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
+                            <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
+                        </a>
+                        <button onclick="copyTelegram()" class="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition">
+                            <i class="fa-regular fa-copy"></i> COPY USERNAME
+                        </button>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <footer class="border-t border-borderLight mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
+    </div>
+
+    <!-- Nút Về Đầu Trang -->
+    <button id="btnBackToTop" onclick="scrollToTop()" class="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-xl shadow-blue-500/30 transition-all duration-300 opacity-0 pointer-events-none translate-y-4 active:scale-90" title="Về đầu trang">
+        <i class="fa-solid fa-arrow-up text-base"></i>
+    </button>
+
+    <!-- 3. MODAL ĐĂNG NHẬP -->
     <div id="modalLogin" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
             <button onclick="closeModal('modalLogin')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -86,11 +223,16 @@
             <div id="loginStep1" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản hoặc Gmail</label>
-                    <input type="text" id="loginUser" autocomplete="username" placeholder="Nhập username hoặc Gmail" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                    <input type="text" id="loginUser" autocomplete="username" placeholder="Nhập username hoặc Gmail" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu</label>
-                    <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                    <div class="relative">
+                        <input type="password" id="loginPass" autocomplete="current-password" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                        <button type="button" onclick="togglePassVisibility('loginPass', 'eyeLoginPass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                            <i id="eyeLoginPass" class="fa-solid fa-eye text-sm"></i>
+                        </button>
+                    </div>
                 </div>
                 <button onclick="submitLoginStep1()" id="btnLoginNext" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">TIẾP TỤC (LẤY OTP)</button>
             </div>
@@ -101,15 +243,18 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã xác thực OTP (6 số)</label>
-                    <input type="text" id="loginOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-blue-600 focus:bg-white transition">
+                    <input type="text" id="loginOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-blue-600 focus:bg-white transition">
                 </div>
                 <button onclick="submitLoginStep2()" id="btnLoginVerify" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">XÁC NHẬN VÀO TRANG CHỦ</button>
+                <div class="text-center">
+                    <button onclick="backLoginStep1()" class="text-xs font-bold text-blue-600 hover:underline">← Quay lại đăng nhập</button>
+                </div>
             </div>
             <div id="loginMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
         </div>
     </div>
 
-    <!-- MODAL ĐĂNG KÝ -->
+    <!-- 4. MODAL ĐĂNG KÝ -->
     <div id="modalRegister" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 sm:p-8 relative max-h-[90vh] overflow-y-auto">
             <button onclick="closeModal('modalRegister')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
@@ -124,36 +269,36 @@
             <div id="regStep1" class="space-y-3.5">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Tài khoản đăng nhập *</label>
-                    <input type="text" id="regUser" placeholder="Tên tài khoản (viết liền)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    <input type="text" id="regUser" placeholder="Tên tài khoản (viết liền)" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu *</label>
-                        <input type="password" id="regPass" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <input type="password" id="regPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu *</label>
-                        <input type="password" id="regPassConfirm" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <input type="password" id="regPassConfirm" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Gmail cá nhân *</label>
-                        <input type="email" id="regEmail" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <input type="email" id="regEmail" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận lại Gmail *</label>
-                        <input type="email" id="regEmailConfirm" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <input type="email" id="regEmailConfirm" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Số điện thoại *</label>
-                        <input type="text" id="regPhone" placeholder="0987654321" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <input type="text" id="regPhone" placeholder="0987654321" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username Telegram *</label>
-                        <input type="text" id="regTele" placeholder="@username" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                        <input type="text" id="regTele" placeholder="@username" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
                     </div>
                 </div>
                 <div class="flex items-center gap-2 pt-2">
@@ -169,7 +314,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã xác thực OTP (6 số)</label>
-                    <input type="text" id="regOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-emerald-600 focus:bg-white transition">
+                    <input type="text" id="regOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-emerald-600 focus:bg-white transition">
                 </div>
                 <button onclick="submitRegisterStep2()" id="btnRegVerify" class="w-full py-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">HOÀN TẤT ĐĂNG KÝ</button>
             </div>
@@ -178,39 +323,53 @@
                     <i class="fa-solid fa-hourglass-half fa-bounce"></i>
                 </div>
                 <h4 class="text-lg font-black text-slate-900 uppercase">ĐĂNG KÝ THÀNH CÔNG!</h4>
-                <p class="text-xs text-slate-600 mt-2 leading-relaxed max-w-sm mx-auto">Tài khoản đang trong trạng thái <span class="text-amber-600 font-bold uppercase">Chờ Admin kích hoạt</span>.</p>
+                <p class="text-xs text-slate-600 mt-2 leading-relaxed max-w-sm mx-auto">
+                    Tài khoản của bạn đã được ghi nhận vào hệ thống và đang trong trạng thái 
+                    <span class="text-amber-600 font-bold uppercase">Chờ Admin kích hoạt</span>.
+                </p>
                 <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-center">
-                    <p class="text-[11px] font-bold text-slate-500 uppercase">LIÊN HỆ DUYỆT NHANH QUA TELEGRAM</p>
-                    <a href="https://t.me/tranthanh1202" target="_blank" class="inline-flex items-center gap-2 text-sm font-black text-sky-600 hover:text-sky-700 mt-1.5 transition"><i class="fa-brands fa-telegram text-lg"></i> @tranthanh1202</a>
+                    <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">LIÊN HỆ DUYỆT NHANH QUA TELEGRAM</p>
+                    <a href="https://t.me/tranthanh1202" target="_blank" class="inline-flex items-center gap-2 text-sm font-black text-sky-600 hover:text-sky-700 mt-1.5 transition">
+                        <i class="fa-brands fa-telegram text-lg"></i> @tranthanh1202
+                    </a>
+                </div>
+                <div class="pt-2">
+                    <button onclick="switchToLoginFromPending()" class="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg shadow-blue-500/25 transition active:scale-95">
+                        <i class="fa-solid fa-right-to-bracket"></i> ĐĂNG NHẬP NGAY (LẤY OTP)
+                    </button>
                 </div>
             </div>
             <div id="regMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
         </div>
     </div>
 
-    <!-- MODAL QUÊN MẬT KHẨU -->
+    <!-- 5. MODAL QUÊN MẬT KHẨU -->
     <div id="modalForgot" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
         <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
-            <button onclick="closeModal('modalForgot')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition"><i class="fa-solid fa-xmark text-sm"></i></button>
+            <button onclick="closeModal('modalForgot')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
             <div class="text-center mb-6">
-                <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center text-xl mx-auto mb-2"><i class="fa-solid fa-key"></i></div>
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200 text-amber-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-key"></i>
+                </div>
                 <h3 class="text-xl font-black text-slate-900 uppercase">KHÔI PHỤC MẬT KHẨU</h3>
             </div>
             <div id="forgotStep1" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Gmail đăng ký của bạn</label>
-                    <input type="email" id="forgotEmail" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
+                    <input type="email" id="forgotEmail" placeholder="vidu@gmail.com" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition">
                 </div>
                 <button onclick="submitForgotStep1()" id="btnForgotNext" class="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-600 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">GỬI MÃ KHÔI PHỤC</button>
             </div>
             <div id="forgotStep2" class="space-y-4 hidden">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã OTP (6 số)</label>
-                    <input type="text" id="forgotOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-blue-600 focus:bg-white transition">
+                    <input type="text" id="forgotOtp" maxlength="6" placeholder="123456" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2.5 text-center text-lg font-black tracking-widest outline-none focus:border-blue-600 focus:bg-white transition">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới</label>
-                    <input type="password" id="forgotNewPass" placeholder="••••••••" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                    <input type="password" id="forgotNewPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
                 </div>
                 <button onclick="submitForgotStep2()" id="btnForgotReset" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">CẬP NHẬT MẬT KHẨU MỚI</button>
             </div>
@@ -218,10 +377,190 @@
         </div>
     </div>
 
+    <!-- 6. MODAL PROFILE -->
+    <div id="modalProfile" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative">
+            <button onclick="closeModal('modalProfile')" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center text-xl mx-auto mb-2">
+                    <i class="fa-solid fa-user-pen"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 uppercase">QUẢN LÝ TÀI KHOẢN</h3>
+            </div>
+            <div class="space-y-3.5">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại * (Bắt buộc)</label>
+                    <input type="password" id="profOldPass" placeholder="Nhập mật khẩu hiện tại" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2.5 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới (Bỏ trống nếu không đổi)</label>
+                    <input type="password" id="profNewPass" placeholder="••••••••" class="w-full bg-slate-50 border border-borderLight rounded-xl pl-4 pr-10 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Số điện thoại</label>
+                    <input type="text" id="profPhone" placeholder="0987654321" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Username Telegram</label>
+                    <input type="text" id="profTele" placeholder="@username" class="w-full bg-slate-50 border border-borderLight rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition">
+                </div>
+                <button onclick="submitUpdateProfile()" id="btnProfSubmit" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition">
+                    LƯU THAY ĐỔI
+                </button>
+            </div>
+            <div id="profMsg" class="mt-4 text-xs font-bold text-center hidden"></div>
+        </div>
+    </div>
+
+    <!-- 7. MODAL LOGOUT -->
+    <div id="modalLogout" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative text-center">
+            <div id="logoutConfirmStep" class="space-y-4">
+                <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center text-2xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-slate-900 uppercase">ĐĂNG XUẤT HỆ THỐNG</h3>
+                    <p class="text-xs text-slate-600 mt-2 leading-relaxed">Bạn có chắc chắn muốn thoát khỏi phiên đăng nhập hiện tại không?</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <button onclick="closeModal('modalLogout')" class="py-3 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-black uppercase tracking-wider transition">HỦY BỎ</button>
+                    <button onclick="confirmLogoutAction()" class="py-3 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-rose-500/25 transition">ĐĂNG XUẤT</button>
+                </div>
+            </div>
+            <div id="logoutSuccessStep" class="space-y-5 hidden py-2">
+                <div class="w-16 h-16 rounded-3xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center text-3xl mx-auto shadow-inner">
+                    <i class="fa-solid fa-hand-wave fa-bounce"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-black text-slate-900 uppercase">HẸN GẶP LẠI BẠN!</h3>
+                    <p class="text-xs text-slate-600 mt-2 leading-relaxed">Bạn đã đăng xuất an toàn khỏi <strong>TRẦN THÀNH HUB</strong>.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                    <button onclick="redirectToAuth('login')" class="py-3.5 px-4 rounded-xl bg-blue-600 text-white text-xs font-black uppercase tracking-wider shadow-md">ĐĂNG NHẬP</button>
+                    <button onclick="redirectToAuth('register')" class="py-3.5 px-4 rounded-xl bg-slate-900 text-emerald-400 text-xs font-black uppercase tracking-wider shadow-md">ĐĂNG KÝ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8. MODAL HƯỚNG DẪN -->
+    <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden transform transition-all">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <div class="flex items-center gap-2.5">
+                    <div id="modalIconBox" class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center font-bold">
+                        <i id="modalHeaderIcon" class="fa-solid fa-book-open"></i>
+                    </div>
+                    <h3 id="modalProjectTitle" class="text-base sm:text-lg font-black text-slate-900 uppercase">CHI TIẾT HƯỚNG DẪN</h3>
+                </div>
+                <button onclick="closeModal('guideModal')" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center transition">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <div id="modalGuideBody" class="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-200/80 font-mono"></div>
+            </div>
+            <div class="px-6 py-3 border-t border-slate-100 bg-slate-50 flex justify-end">
+                <button onclick="closeModal('guideModal')" class="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 text-xs font-black uppercase tracking-wider transition">ĐÓNG LẠI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
+        const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
 
-        let tempLoginEmail = '', tempRegData = null, tempRegOtp = '', tempForgotEmail = '';
+        let allProjects = [];
+        let currentTab = 'airdrop';
+        let activeCategory = 'all';
+
+        let tempLoginEmail = '';
+        let tempRegData = null;
+        let tempRegOtp = '';
+        let tempForgotEmail = '';
+
+        const TOOL_CATEGORIES = ['APP', 'EXTENSION', 'SCR', 'TOOL', 'SCR HỖ TRỢ', 'EXTENSION HỖ TRỢ'];
+        function isToolCategory(cat) { return TOOL_CATEGORIES.some(t => cat.toUpperCase().includes(t)); }
+        function checkPasswordStrength(p) { return p.length >= 8 && /[A-Z]/.test(p) && /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(p); }
+        function checkPhoneFormat(p) { return /^0[0-9]{9}$/.test(p); }
+
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('btnBackToTop');
+            if (window.scrollY > 300) {
+                btn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                btn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            } else {
+                btn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+                btn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+            }
+        });
+
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        function togglePassVisibility(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.type === 'password') { input.type = 'text'; icon.className = 'fa-solid fa-eye-slash text-blue-600 text-xs'; }
+            else { input.type = 'password'; icon.className = 'fa-solid fa-eye text-slate-400 text-xs'; }
+        }
+
+        function toggleUserDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('hidden');
+        }
+
+        document.addEventListener('click', () => {
+            const dd = document.getElementById('userDropdown');
+            if (dd && !dd.classList.contains('hidden')) dd.classList.add('hidden');
+        });
+
+        function initAppSession() {
+            const loggedUser = localStorage.getItem('hub_logged_username');
+            if (loggedUser) {
+                document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('dropdownUsername').innerText = loggedUser;
+                const sInput = document.getElementById('searchInput');
+                if (sInput) sInput.value = '';
+                
+                // Đọc hash từ URL để vào đúng tab khi bấm nút quay lại từ trang check
+                const hash = window.location.hash.replace('#', '');
+                if (hash === 'resource' || hash === 'proxy' || hash === 'tools') {
+                    switchMainTab(hash);
+                } else {
+                    switchMainTab('airdrop');
+                }
+                loadJSONP();
+            } else {
+                document.getElementById('lockScreen').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('hidden');
+            }
+        }
+
+        function triggerLogoutModal() {
+            document.getElementById('userDropdown').classList.add('hidden');
+            document.getElementById('logoutConfirmStep').classList.remove('hidden');
+            document.getElementById('logoutSuccessStep').classList.add('hidden');
+            openModal('modalLogout');
+        }
+
+        function confirmLogoutAction() {
+            localStorage.removeItem('hub_logged_username');
+            localStorage.removeItem('hub_logged_email');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('lockScreen').classList.remove('hidden');
+            document.getElementById('logoutConfirmStep').classList.add('hidden');
+            document.getElementById('logoutSuccessStep').classList.remove('hidden');
+        }
+
+        function redirectToAuth(target) {
+            closeModal('modalLogout');
+            if (target === 'login') openModal('modalLogin');
+            else if (target === 'register') openRegisterModal();
+        }
 
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
@@ -235,6 +574,20 @@
             openModal('modalRegister');
         }
 
+        function switchToLoginFromPending() {
+            closeModal('modalRegister');
+            openModal('modalLogin');
+        }
+
+        function openProfileModal() {
+            openModal('modalProfile');
+            document.getElementById('profMsg').classList.add('hidden');
+            document.getElementById('profOldPass').value = '';
+            document.getElementById('profNewPass').value = '';
+            document.getElementById('profPhone').value = '';
+            document.getElementById('profTele').value = '';
+        }
+
         async function callGAS(payload) {
             const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
             const text = await res.text();
@@ -242,6 +595,31 @@
                 const match = text.match(/\{[\s\S]*\}/);
                 return match ? JSON.parse(match[0]) : { status: 'error', message: text };
             }
+        }
+
+        // ================= AUTH HANDLERS =================
+        async function submitUpdateProfile() {
+            const currentUsername = localStorage.getItem('hub_logged_username');
+            const oldPass = document.getElementById('profOldPass').value.trim();
+            const newPass = document.getElementById('profNewPass').value.trim();
+            const phone = document.getElementById('profPhone').value.trim();
+            const tele = document.getElementById('profTele').value.trim();
+            const msgEl = document.getElementById('profMsg');
+            const btn = document.getElementById('btnProfSubmit');
+
+            if (!oldPass) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Vui lòng nhập mật khẩu hiện tại!"; return; }
+            if (newPass && !checkPasswordStrength(newPass)) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Mật khẩu mới không đủ mạnh!"; return; }
+            if (phone && !checkPhoneFormat(phone)) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Số điện thoại không hợp lệ!"; return; }
+
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang cập nhật...';
+            msgEl.classList.add('hidden');
+
+            try {
+                const data = await callGAS({ action: 'UPDATE_PROFILE', username: currentUsername, oldPassword: oldPass, newPassword: newPass, phone: phone, telegram: tele });
+                if (data.status === 'success') { alert("Cập nhật thành công!"); closeModal('modalProfile'); }
+                else { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = data.message; }
+            } catch (err) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi kết nối!"; }
+            finally { btn.disabled = false; btn.innerHTML = 'LƯU THAY ĐỔI'; }
         }
 
         async function submitLoginStep1() {
@@ -256,6 +634,11 @@
 
             try {
                 const data = await callGAS({ action: 'LOGIN_REQUEST_OTP', userOrMail: userOrMail, password: pass });
+                if (data.status === 'pending_approval') {
+                    msgEl.className = "mt-4 p-3 bg-amber-50 text-amber-900 rounded-xl text-xs font-bold block";
+                    msgEl.innerHTML = `${data.message} <br><b>Telegram: @tranthanh1202</b>`;
+                    return;
+                }
                 if (data.status === 'success') {
                     tempLoginEmail = data.fullEmail;
                     document.getElementById('loginMaskedEmail').innerText = data.maskedEmail;
@@ -265,11 +648,14 @@
                     msgEl.className = "mt-4 text-xs font-bold text-rose-500 block";
                     msgEl.innerText = data.message;
                 }
-            } catch (err) {
-                msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi kết nối máy chủ!";
-            } finally {
-                btn.disabled = false; btn.innerHTML = 'TIẾP TỤC (LẤY OTP)';
-            }
+            } catch (err) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi kết nối!"; }
+            finally { btn.disabled = false; btn.innerHTML = 'TIẾP TỤC (LẤY OTP)'; }
+        }
+
+        function backLoginStep1() {
+            document.getElementById('loginStep1').classList.remove('hidden');
+            document.getElementById('loginStep2').classList.add('hidden');
+            document.getElementById('loginMsg').classList.add('hidden');
         }
 
         async function submitLoginStep2() {
@@ -285,15 +671,14 @@
                 if (data.status === 'success') {
                     localStorage.setItem('hub_logged_username', data.username);
                     localStorage.setItem('hub_logged_email', data.email);
-                    window.location.href = "airdrop";
+                    closeModal('modalLogin');
+                    initAppSession();
                 } else {
-                    msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = data.message;
+                    msgEl.className = "mt-4 text-xs font-bold text-rose-500 block";
+                    msgEl.innerText = data.message;
                 }
-            } catch (err) {
-                msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi xác thực!";
-            } finally {
-                btn.disabled = false; btn.innerHTML = 'XÁC NHẬN VÀO TRANG CHỦ';
-            }
+            } catch (err) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi xác thực!"; }
+            finally { btn.disabled = false; btn.innerHTML = 'XÁC NHẬN VÀO TRANG CHỦ'; }
         }
 
         async function submitRegisterStep1() {
@@ -326,11 +711,8 @@
                 } else {
                     msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = data.message;
                 }
-            } catch (err) {
-                msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi kết nối máy chủ!";
-            } finally {
-                btn.disabled = false; btn.innerHTML = 'ĐĂNG KÝ VÀ NHẬN OTP';
-            }
+            } catch (err) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi kết nối!"; }
+            finally { btn.disabled = false; btn.innerHTML = 'ĐĂNG KÝ VÀ NHẬN OTP'; }
         }
 
         async function submitRegisterStep2() {
@@ -350,28 +732,277 @@
                 } else {
                     msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = data.message;
                 }
+            } catch (err) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi lưu tài khoản!"; }
+            finally { btn.disabled = false; btn.innerHTML = 'HOÀN TẤT ĐĂNG KÝ'; }
+        }
+
+        async function submitForgotStep1() {
+            const mail = document.getElementById('forgotEmail').value.trim().toLowerCase();
+            const msgEl = document.getElementById('forgotMsg');
+            const btn = document.getElementById('btnForgotNext');
+            if (!mail) return;
+
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang kiểm tra...';
+            try {
+                const data = await callGAS({ action: 'FORGOT_SEND_OTP', email: mail });
+                if (data.status === 'success') {
+                    tempForgotEmail = mail;
+                    document.getElementById('forgotStep1').classList.add('hidden');
+                    document.getElementById('forgotStep2').classList.remove('hidden');
+                } else {
+                    msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = data.message;
+                }
+            } catch (err) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi kết nối!"; }
+            finally { btn.disabled = false; btn.innerHTML = 'GỬI MÃ KHÔI PHỤC'; }
+        }
+
+        async function submitForgotStep2() {
+            const otp = document.getElementById('forgotOtp').value.trim();
+            const pass = document.getElementById('forgotNewPass').value.trim();
+            const msgEl = document.getElementById('forgotMsg');
+            const btn = document.getElementById('btnForgotReset');
+
+            btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Đang cập nhật...';
+            try {
+                const data = await callGAS({ action: 'FORGOT_RESET_PASSWORD', email: tempForgotEmail, otp: otp, newPassword: pass });
+                if (data.status === 'success') { alert("Cập nhật thành công!"); closeModal('modalForgot'); openModal('modalLogin'); }
+                else { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = data.message; }
+            } catch (err) { msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi!"; }
+            finally { btn.disabled = false; btn.innerHTML = 'CẬP NHẬT MẬT KHẨU MỚI'; }
+        }
+
+        // ================= XỬ LÝ THANH ĐIỀU HƯỚNG TABS & 2 Ô HÀNG NGANG =================
+        function switchMainTab(tab) {
+            currentTab = tab;
+            activeCategory = 'all';
+
+            const secContent = document.getElementById('section-content');
+            const secService = document.getElementById('section-service-hub');
+            const searchContainer = document.getElementById('searchContainer');
+
+            const navAirdrop = document.getElementById('nav-airdrop');
+            const navTools = document.getElementById('nav-tools');
+            const navResource = document.getElementById('nav-resource');
+            const navProxy = document.getElementById('nav-proxy');
+
+            [navAirdrop, navTools, navResource, navProxy].forEach(btn => {
+                btn.className = "nav-tab px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider shrink-0";
+            });
+
+            const activeClass = "nav-tab px-5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider shrink-0";
+
+            if (tab === 'airdrop' || tab === 'tools') {
+                secContent.classList.remove('hidden');
+                secService.classList.add('hidden');
+                searchContainer.classList.remove('hidden');
+
+                if (tab === 'airdrop') navAirdrop.className = activeClass;
+                if (tab === 'tools') navTools.className = activeClass;
+
+                buildCategoryTabs();
+                renderProjects();
+            } else {
+                secContent.classList.add('hidden');
+                secService.classList.remove('hidden');
+                searchContainer.classList.add('hidden');
+
+                const bar = document.getElementById('serviceTwoButtonsBar');
+                const viewResource = document.getElementById('view-resource-card');
+                const viewProxy = document.getElementById('view-proxy-card');
+
+                if (tab === 'resource') {
+                    navResource.className = activeClass;
+                    viewResource.classList.remove('hidden');
+                    viewProxy.classList.add('hidden');
+
+                    // CHỈ CÓ ĐÚNG 2 Ô HÀNG NGANG: MUA TÀI NGUYÊN & CHECK X PRO
+                    bar.innerHTML = `
+                        <button class="px-5 py-2.5 rounded-xl text-xs font-black uppercase bg-primaryBlue text-white shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-box-archive"></i> MUA TÀI NGUYÊN & TOOL
+                        </button>
+                        <a href="checkx.html" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 transition shadow-sm flex items-center gap-2">
+                            <i class="fa-brands fa-x-twitter text-slate-900"></i> CHECK X (TWITTER) PRO ↗
+                        </a>
+                    `;
+                } else if (tab === 'proxy') {
+                    navProxy.className = activeClass;
+                    viewResource.classList.add('hidden');
+                    viewProxy.classList.remove('hidden');
+
+                    // CHỈ CÓ ĐÚNG 2 Ô HÀNG NGANG: MUA PROXY & CHECK PROXY PRO
+                    bar.innerHTML = `
+                        <button class="px-5 py-2.5 rounded-xl text-xs font-black uppercase bg-primaryBlue text-white shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-network-wired"></i> MUA PROXY CHẤT LƯỢNG
+                        </button>
+                        <a href="checkproxy.html" class="px-5 py-2.5 rounded-xl text-xs font-black uppercase bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 transition shadow-sm flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-high text-sky-500"></i> CHECK PROXY PRO ENGINE ↗
+                        </a>
+                    `;
+                }
+            }
+        }
+
+        // ================= NẠP DỮ LIỆU GOOGLE SHEET =================
+        function handleGoogleData(response) {
+            try {
+                if (response.status === 'error') throw new Error(response.errors[0].message);
+
+                const rows = response.table.rows;
+                allProjects = rows.map(r => {
+                    const c = r.c;
+                    return {
+                        id: c[0] ? (c[0].v ?? '') : '',
+                        title: c[1] ? (c[1].v ?? '') : '',
+                        category: c[2] ? (c[2].v ?? 'General') : 'General',
+                        status: c[3] ? (c[3].v ?? 'NEW') : 'NEW',
+                        description: c[4] ? (c[4].v ?? '') : '',
+                        script_link: c[6] ? (c[6].v ?? '') : '',
+                        guide_project: c[7] ? (c[7].v ?? '') : '',
+                        guide_script: c[8] ? (c[8].v ?? '') : ''
+                    };
+                }).filter(p => p.title && p.title.toString().toLowerCase() !== 'title');
+
+                document.getElementById('loader').classList.add('hidden');
+                document.getElementById('projectGrid').classList.remove('hidden');
+
+                buildCategoryTabs();
+                renderProjects();
             } catch (err) {
-                msgEl.className = "mt-4 text-xs font-bold text-rose-500 block"; msgEl.innerText = "Lỗi lưu tài khoản!";
-            } finally {
-                btn.disabled = false; btn.innerHTML = 'HOÀN TẤT ĐĂNG KÝ';
+                document.getElementById('loader').innerHTML = `<div class="text-red-500 font-bold">Lỗi đồng bộ dữ liệu từ máy chủ!</div>`;
             }
         }
 
-        function logoutNow() {
-            localStorage.removeItem('hub_logged_username');
-            localStorage.removeItem('hub_logged_email');
-            window.location.reload();
+        function loadJSONP() {
+            const script = document.createElement('script');
+            script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
+            document.body.appendChild(script);
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            const logged = localStorage.getItem('hub_logged_username');
-            if (logged) {
-                document.getElementById('authActions').classList.add('hidden');
-                document.getElementById('forgotWrap').classList.add('hidden');
-                document.getElementById('loggedActions').classList.remove('hidden');
-                document.getElementById('userDisplayWelcome').innerText = logged;
+        function getCurrentList() {
+            if (currentTab === 'tools') return allProjects.filter(p => isToolCategory(p.category));
+            return allProjects.filter(p => !isToolCategory(p.category));
+        }
+
+        function buildCategoryTabs() {
+            const currentList = getCurrentList();
+            const categories = ['all', ...new Set(currentList.map(p => p.category).filter(Boolean))];
+            const container = document.getElementById('categoryTabs');
+            
+            container.innerHTML = categories.map(cat => `
+                <button class="filter-btn px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider border transition shadow-sm ${cat === activeCategory ? 'bg-primaryBlue text-white border-primaryBlue shadow-blue-500/20' : 'bg-white text-slate-600 border-borderLight hover:bg-slate-50 hover:text-slate-900'}" data-cat="${cat}">
+                    ${cat === 'all' ? 'TẤT CẢ' : cat}
+                </button>
+            `).join('');
+
+            container.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    activeCategory = e.target.getAttribute('data-cat');
+                    buildCategoryTabs();
+                    renderProjects();
+                });
+            });
+        }
+
+        function renderProjects() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const grid = document.getElementById('projectGrid');
+            const noData = document.getElementById('noData');
+            const currentList = getCurrentList();
+
+            const filtered = currentList.filter(p => {
+                const matchCat = activeCategory === 'all' || p.category === activeCategory;
+                const matchSearch = p.title.toString().toLowerCase().includes(query) || 
+                                    p.description.toString().toLowerCase().includes(query) ||
+                                    p.category.toString().toLowerCase().includes(query);
+                return matchCat && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noData.classList.remove('hidden');
+                return;
             }
-        });
+
+            noData.classList.add('hidden');
+            grid.innerHTML = filtered.map((p) => {
+                const originalIndex = allProjects.indexOf(p);
+                const isHot = p.status.toString().toUpperCase() === 'HOT';
+                const statusBadge = isHot ? 'bg-rose-50 text-rose-600 border-rose-200' : 'bg-emerald-50 text-emerald-600 border-emerald-200';
+                const descText = p.description || 'Chưa có mô tả chi tiết.';
+
+                let buttonsHTML = '';
+                if (currentTab === 'tools') {
+                    buttonsHTML = `
+                    <div class="grid grid-cols-2 gap-2.5 pt-4 border-t border-slate-100">
+                        ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="py-3 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md active:scale-95"><i class="fa-solid fa-download"></i> TẢI VỀ</a>` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ LINK</div>'}
+                        ${(p.guide_project || p.guide_script) ? `<button onclick="openGuideModal(${originalIndex}, 'tool_guide')" class="py-3 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300/80 text-amber-900 text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition active:scale-95"><i class="fa-solid fa-book-open text-sm text-amber-600"></i> HƯỚNG DẪN</button>` : '<div class="text-center py-3 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+                    </div>`;
+                } else {
+                    buttonsHTML = `
+                    <div class="flex flex-col gap-2.5 pt-4 border-t border-slate-100">
+                        ${p.script_link ? `
+                            <a href="${p.script_link}" target="_blank" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-md active:scale-95">
+                                <i class="fa-solid fa-download"></i> TẢI SCRIPT
+                            </a>
+                        ` : '<div class="w-full text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ TOOL</div>'}
+
+                        <div class="grid grid-cols-2 gap-2.5">
+                            ${p.guide_project ? `
+                                <button onclick="openGuideModal(${originalIndex}, 'project')" class="py-2.5 px-3 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 text-xs font-black uppercase flex items-center justify-center gap-2 transition active:scale-95">
+                                    <i class="fa-solid fa-book-open text-amber-600"></i> HD DỰ ÁN
+                                </button>
+                            ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+
+                            ${p.guide_script ? `
+                                <button onclick="openGuideModal(${originalIndex}, 'script')" class="py-2.5 px-3 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-300 text-purple-900 text-xs font-black uppercase flex items-center justify-center gap-2 transition active:scale-95">
+                                    <i class="fa-solid fa-book text-purple-600"></i> HD CHẠY TOOL
+                                </button>
+                            ` : '<div class="text-center py-2.5 text-xs text-slate-400 bg-slate-50 border border-slate-100 rounded-xl font-bold uppercase tracking-wider">CHƯA CÓ HD</div>'}
+                        </div>
+                    </div>`;
+                }
+
+                return `
+                <div class="bg-white border border-slate-200/90 rounded-2xl p-5 hover:border-blue-400 hover:shadow-xl transition flex flex-col justify-between shadow-sm">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold uppercase">${p.category}</span>
+                            <span class="text-[11px] px-2.5 py-1 rounded-md font-black border uppercase ${statusBadge}">${p.status}</span>
+                        </div>
+                        <h3 class="text-lg font-black text-slate-900 mt-2.5 tracking-tight">${p.title}</h3>
+                        <p class="text-slate-600 text-xs leading-relaxed my-3">${descText}</p>
+                    </div>
+                    ${buttonsHTML}
+                </div>`;
+            }).join('');
+        }
+
+        function openGuideModal(index, type) {
+            const project = allProjects[index];
+            if (!project) return;
+            const title = document.getElementById('modalProjectTitle');
+            const body = document.getElementById('modalGuideBody');
+
+            if (type === 'project') {
+                title.innerText = `HƯỚNG DẪN DỰ ÁN: ${project.title}`;
+                body.innerText = project.guide_project;
+            } else if (type === 'script') {
+                title.innerText = `HƯỚNG DẪN CHẠY TOOL: ${project.title}`;
+                body.innerText = project.guide_script;
+            } else {
+                title.innerText = `HƯỚNG DẪN: ${project.title}`;
+                body.innerText = project.guide_project || project.guide_script;
+            }
+            openModal('guideModal');
+        }
+
+        function copyTelegram() {
+            navigator.clipboard.writeText("@tranthanh1202");
+            alert("Đã sao chép Telegram: @tranthanh1202");
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderProjects);
+        window.addEventListener('DOMContentLoaded', initAppSession);
     </script>
 </body>
 </html>
