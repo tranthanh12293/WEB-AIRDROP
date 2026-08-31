@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROXY SERVICE & CHECKER - TRẦN THÀNH HUB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pageBg: '#f8fafc',
+                        primaryBlue: '#2563eb',
+                        textMain: '#0f172a',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        if (!localStorage.getItem('hub_logged_username')) { window.location.href = "/"; }
+        if (window.location.pathname.endsWith(".html")) {
+            window.history.replaceState(null, "", window.location.pathname.replace(".html", ""));
+        }
+    </script>
+</head>
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex flex-col justify-between">
+
+    <div>
+        <header class="border-b border-slate-200 bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative flex flex-col items-center">
+                
+                <div class="absolute right-4 sm:right-6 top-6">
+                    <button onclick="document.getElementById('userDropdown').classList.toggle('hidden')" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-blue-600 transition shadow-sm">
+                        <i class="fa-solid fa-circle-user text-xl"></i>
+                    </button>
+                    <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50">
+                        <div class="px-4 py-2 border-b border-slate-100 text-xs font-black text-slate-800" id="usernameNav"></div>
+                        <button onclick="localStorage.clear(); window.location.href='/';" class="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center text-center mb-5">
+                    <img src="logo.png" alt="Logo" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-white ring-4 ring-blue-500/10 mb-2.5">
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRẦN THÀNH HUB</h1>
+                    <p class="text-xs sm:text-sm font-bold text-textMuted mt-0.5 tracking-wide">Airdrop, Scripts Auto & MMO Solution</p>
+                </div>
+
+                <!-- MENU TABS CHUYỂN TRANG -->
+                <div class="w-full max-w-4xl overflow-x-auto pb-2 sm:pb-0 mb-4 flex justify-center">
+                    <nav class="inline-flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner flex-nowrap whitespace-nowrap">
+                        <a href="airdrop" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-parachute-box"></i> AIRDROP
+                        </a>
+                        <a href="tools" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-puzzle-piece"></i> APP + EXTENSION + SCR HỖ TRỢ
+                        </a>
+                        <a href="resources" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
+                        </a>
+                        <a href="proxy" class="px-5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
+                            <i class="fa-solid fa-network-wired"></i> PROXY
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- SIDEBAR & CONTENT PROXY -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- SIDEBAR DỌC -->
+                <div class="lg:col-span-3 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <div>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 block mb-2">DANH MỤC PROXY</span>
+                        <div class="space-y-1.5">
+                            <button id="sideBtn-prx-buy" onclick="togglePrxView('buy')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2.5 bg-blue-50 text-blue-600 border border-blue-200">
+                                <i class="fa-solid fa-network-wired text-blue-600 w-4"></i> Mua Proxy Chất Lượng
+                            </button>
+                            <button id="sideBtn-prx-check" onclick="togglePrxView('check')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2.5 text-slate-600 hover:bg-slate-50 border border-transparent">
+                                <i class="fa-solid fa-gauge-high text-sky-500 w-4"></i> Check Proxy Pro Engine
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-center">
+                        <p class="text-[11px] font-bold text-slate-500 uppercase">HỖ TRỢ TRỰC TIẾP</p>
+                        <a href="https://t.me/tranthanh1202" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-black text-blue-600 hover:text-blue-700 mt-1">
+                            <i class="fa-brands fa-telegram text-sky-500"></i> @tranthanh1202
+                        </a>
+                    </div>
+                </div>
+
+                <!-- VIEW CHÍNH -->
+                <div class="lg:col-span-9 space-y-4">
+                    
+                    <!-- TAB 1: MUA PROXY -->
+                    <div id="view-prx-buy" class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-sm">
+                        <div class="w-20 h-20 mx-auto rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 text-3xl mb-6 shadow-inner">
+                            <i class="fa-solid fa-network-wired"></i>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">DỊCH VỤ PROXY CHẤT LƯỢNG CAO</h2>
+                        <p class="text-slate-600 text-sm max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp Proxy Residential, Datacenter, IPv4/IPv6 sạch tốc độ cao, hỗ trợ nuôi tài khoản không lo checkpoint.</p>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-inner">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
+                            <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
+                                <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: CHECK PROXY PRO -->
+                    <div id="view-prx-check" class="hidden space-y-4">
+                        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <h3 class="text-base font-black text-slate-900 uppercase flex items-center gap-2">
+                                <i class="fa-solid fa-gauge-high text-blue-600"></i> PROXY CHECKER PRO ENGINE
+                            </h3>
+                            <button onclick="togglePrxView('buy')" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại Mua Proxy
+                            </button>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="text-center p-2.5 rounded-xl bg-slate-50"><div class="text-[10px] font-bold text-slate-400">TỔNG</div><div id="prxTotal" class="text-xl font-black text-slate-800">0</div></div>
+                            <div class="text-center p-2.5 rounded-xl bg-emerald-50"><div class="text-[10px] font-bold text-emerald-600">FAST (&lt;2s)</div><div id="prxFast" class="text-xl font-black text-emerald-600">0</div></div>
+                            <div class="text-center p-2.5 rounded-xl bg-amber-50"><div class="text-[10px] font-bold text-amber-600">MEDIUM</div><div id="prxMid" class="text-xl font-black text-amber-600">0</div></div>
+                            <div class="text-center p-2.5 rounded-xl bg-orange-50"><div class="text-[10px] font-bold text-orange-600">LAG</div><div id="prxLag" class="text-xl font-black text-orange-600">0</div></div>
+                            <div class="text-center p-2.5 rounded-xl bg-rose-50 col-span-2 sm:col-span-1"><div class="text-[10px] font-bold text-rose-600">DIE/TIMEOUT</div><div id="prxDie" class="text-xl font-black text-rose-600">0</div></div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button id="btnPrxStart" onclick="startCheckingProxy()" class="h-9 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-black text-white uppercase tracking-wider shadow-md">Bắt đầu check</button>
+                                <button id="btnPrxStop" onclick="prxStop=true" disabled class="h-9 px-3.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200 text-xs font-black disabled:opacity-40">Dừng</button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="copyPrx('die')" class="h-9 px-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-black">Copy DIE</button>
+                                <button onclick="copyPrx('live')" class="h-9 px-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black">Copy LIVE</button>
+                            </div>
+                        </div>
+
+                        <!-- Textarea & Table -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                            <div class="lg:col-span-4 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[420px]">
+                                <label class="text-xs font-bold text-slate-700 mb-1">Dán Proxy (IP:Port):</label>
+                                <textarea id="txtProxies" placeholder="127.0.0.1:8080&#10;domain.com:1234:user:pass" class="w-full flex-1 bg-slate-50 text-slate-800 font-mono text-xs p-3 rounded-xl border border-slate-200 outline-none focus:border-blue-600 resize-none"></textarea>
+                            </div>
+                            <div class="lg:col-span-8 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm h-[420px] flex flex-col overflow-hidden">
+                                <div class="overflow-y-auto flex-1 rounded-xl">
+                                    <table class="w-full text-left border-collapse text-xs">
+                                        <thead class="sticky top-0 bg-slate-100 text-slate-600 font-black uppercase text-[10px] tracking-wider z-10 border-b border-slate-200">
+                                            <tr>
+                                                <th class="py-2.5 px-2.5 text-center w-10">STT</th>
+                                                <th class="py-2.5 px-2.5 text-center w-24">TRẠNG THÁI</th>
+                                                <th class="py-2.5 px-2.5">ĐỊA CHỈ PROXY</th>
+                                                <th class="py-2.5 px-2.5 text-center w-28">IP OUT</th>
+                                                <th class="py-2.5 px-2.5 text-center w-20">PING</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="prxTableBody" class="font-mono divide-y divide-slate-100"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-t border-slate-200 mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
+
+    <script>
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
+        document.getElementById('usernameNav').innerText = localStorage.getItem('hub_logged_username');
+
+        let prxResults = [], prxStop = false;
+
+        function togglePrxView(v) {
+            document.getElementById('view-prx-buy').classList.toggle('hidden', v !== 'buy');
+            document.getElementById('view-prx-check').classList.toggle('hidden', v !== 'check');
+            document.getElementById('sideBtn-prx-buy').className = v === 'buy' ? "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2.5 bg-blue-50 text-blue-600 border border-blue-200" : "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2.5 text-slate-600 hover:bg-slate-50 border border-transparent";
+            document.getElementById('sideBtn-prx-check').className = v === 'check' ? "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2.5 bg-blue-50 text-blue-600 border border-blue-200" : "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2.5 text-slate-600 hover:bg-slate-50 border border-transparent";
+        }
+
+        async function startCheckingProxy() {
+            const proxies = document.getElementById('txtProxies').value.split('\n').map(p => p.trim()).filter(Boolean);
+            if (!proxies.length) return alert("Nhập proxy!");
+
+            prxResults = []; prxStop = false;
+            document.getElementById('prxTotal').innerText = proxies.length;
+            document.getElementById('prxFast').innerText = '0';
+            document.getElementById('prxMid').innerText = '0';
+            document.getElementById('prxLag').innerText = '0';
+            document.getElementById('prxDie').innerText = '0';
+            document.getElementById('btnPrxStart').disabled = true;
+            document.getElementById('btnPrxStop').disabled = false;
+
+            const tbody = document.getElementById('prxTableBody');
+            tbody.innerHTML = proxies.map((p, i) => `<tr id="pr-${i+1}"><td class="py-2 text-center text-slate-400">${i+1}</td><td id="ps-${i+1}" class="text-center font-bold text-blue-600">Checking...</td><td class="truncate max-w-[200px] font-semibold">${p}</td><td id="pip-${i+1}" class="text-center text-slate-500">--</td><td id="pp-${i+1}" class="text-center text-slate-500">--</td></tr>`).join('');
+
+            let index = 0;
+            async function worker() {
+                while (index < proxies.length && !prxStop) {
+                    const cur = index++;
+                    const prx = proxies[cur];
+                    const idx = cur + 1;
+                    try {
+                        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'CHECK_SINGLE_PROXY', proxy: prx, retries: 2 }) });
+                        const data = await res.json();
+                        data.idx = idx; data.proxy = prx;
+                        prxResults.push(data);
+                        updatePrxSingle(data);
+                    } catch (e) {
+                        updatePrxSingle({ idx: idx, proxy: prx, status: 'DIE', avg_ping: -1 });
+                    }
+                }
+            }
+            await Promise.all([worker(), worker(), worker(), worker(), worker()]);
+            document.getElementById('btnPrxStart').disabled = false;
+            document.getElementById('btnPrxStop').disabled = true;
+        }
+
+        function updatePrxSingle(res) {
+            const badge = res.status === 'FAST' ? '<span class="text-emerald-600 font-black">FAST</span>' : (res.status === 'MEDIUM' ? '<span class="text-amber-600 font-black">MEDIUM</span>' : (res.status === 'LAG' ? '<span class="text-orange-600 font-black">LAG</span>' : '<span class="text-rose-600 font-black">DIE</span>'));
+            const row = document.getElementById(`pr-${res.idx}`);
+            if (row) {
+                document.getElementById(`ps-${res.idx}`).innerHTML = badge;
+                document.getElementById(`pip-${res.idx}`).innerText = res.ip_out || '--';
+                document.getElementById(`pp-${res.idx}`).innerText = res.avg_ping !== -1 ? `${res.avg_ping}ms` : 'Timeout';
+            }
+            document.getElementById('prxFast').innerText = prxResults.filter(r => r.status === 'FAST').length;
+            document.getElementById('prxMid').innerText = prxResults.filter(r => r.status === 'MEDIUM').length;
+            document.getElementById('prxLag').innerText = prxResults.filter(r => r.status === 'LAG').length;
+            document.getElementById('prxDie').innerText = prxResults.filter(r => r.status === 'DIE').length;
+        }
+
+        function copyPrx(type) {
+            const list = prxResults.filter(r => type === 'live' ? !['DIE', 'INVALID'].includes(r.status) : ['DIE', 'INVALID'].includes(r.status)).map(r => r.proxy);
+            if (!list.length) return alert("Không có!");
+            navigator.clipboard.writeText(list.join('\n'));
+            alert(`Đã copy ${list.length} proxy!`);
+        }
+    </script>
+</body>
+</html>

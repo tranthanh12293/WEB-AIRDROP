@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESOURCES & X CHECKER - TRẦN THÀNH HUB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pageBg: '#f8fafc',
+                        primaryBlue: '#2563eb',
+                        textMain: '#0f172a',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        if (!localStorage.getItem('hub_logged_username')) { window.location.href = "/"; }
+        if (window.location.pathname.endsWith(".html")) {
+            window.history.replaceState(null, "", window.location.pathname.replace(".html", ""));
+        }
+    </script>
+</head>
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex flex-col justify-between">
+
+    <div>
+        <header class="border-b border-slate-200 bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative flex flex-col items-center">
+                
+                <div class="absolute right-4 sm:right-6 top-6">
+                    <button onclick="document.getElementById('userDropdown').classList.toggle('hidden')" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-blue-600 transition shadow-sm">
+                        <i class="fa-solid fa-circle-user text-xl"></i>
+                    </button>
+                    <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50">
+                        <div class="px-4 py-2 border-b border-slate-100 text-xs font-black text-slate-800" id="usernameNav"></div>
+                        <button onclick="localStorage.clear(); window.location.href='/';" class="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center text-center mb-5">
+                    <img src="logo.png" alt="Logo" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-white ring-4 ring-blue-500/10 mb-2.5">
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRẦN THÀNH HUB</h1>
+                    <p class="text-xs sm:text-sm font-bold text-textMuted mt-0.5 tracking-wide">Airdrop, Scripts Auto & MMO Solution</p>
+                </div>
+
+                <!-- MENU TABS CHUYỂN TRANG -->
+                <div class="w-full max-w-4xl overflow-x-auto pb-2 sm:pb-0 mb-4 flex justify-center">
+                    <nav class="inline-flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner flex-nowrap whitespace-nowrap">
+                        <a href="airdrop" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-parachute-box"></i> AIRDROP
+                        </a>
+                        <a href="tools" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-puzzle-piece"></i> APP + EXTENSION + SCR HỖ TRỢ
+                        </a>
+                        <a href="resources" class="px-5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
+                            <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
+                        </a>
+                        <a href="proxy" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-network-wired"></i> PROXY
+                        </a>
+                    </nav>
+                </div>
+            </div>
+        </header>
+
+        <!-- SIDEBAR & CONTENT TÀI NGUYÊN -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                
+                <!-- SIDEBAR DỌC -->
+                <div class="lg:col-span-3 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                    <div>
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-3 block mb-2">DANH MỤC TÀI NGUYÊN</span>
+                        <div class="space-y-1.5">
+                            <button id="sideBtn-buy" onclick="toggleView('buy')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2.5 bg-blue-50 text-blue-600 border border-blue-200">
+                                <i class="fa-solid fa-box-archive text-amber-500 w-4"></i> Mua Tài Nguyên & Tool
+                            </button>
+                            <button id="sideBtn-check" onclick="toggleView('check')" class="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black transition flex items-center gap-2.5 text-slate-600 hover:bg-slate-50 border border-transparent">
+                                <i class="fa-brands fa-x-twitter text-slate-900 w-4"></i> Check X (Twitter) Pro
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl text-center">
+                        <p class="text-[11px] font-bold text-slate-500 uppercase">HỖ TRỢ TRỰC TIẾP</p>
+                        <a href="https://t.me/tranthanh1202" target="_blank" class="inline-flex items-center gap-1.5 text-xs font-black text-blue-600 hover:text-blue-700 mt-1">
+                            <i class="fa-brands fa-telegram text-sky-500"></i> @tranthanh1202
+                        </a>
+                    </div>
+                </div>
+
+                <!-- VIEW CHÍNH -->
+                <div class="lg:col-span-9 space-y-4">
+                    
+                    <!-- TAB 1: MUA TÀI NGUYÊN -->
+                    <div id="view-buy" class="bg-white border border-slate-200 rounded-3xl p-8 sm:p-12 text-center shadow-sm">
+                        <div class="w-20 h-20 mx-auto rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-500 text-3xl mb-6 shadow-inner">
+                            <i class="fa-solid fa-box-archive"></i>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 mb-3 tracking-tight uppercase">KHO TÀI NGUYÊN & TOOL TỰ ĐỘNG</h2>
+                        <p class="text-slate-600 text-sm max-w-xl mx-auto mb-8 leading-relaxed">Cung cấp tài nguyên MMO, VPS cấu hình cao, tool tự động hóa và hỗ trợ setup hệ thống theo yêu cầu.</p>
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 max-w-md mx-auto mb-8 shadow-inner">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">KÊNH HỖ TRỢ TRỰC TIẾP</div>
+                            <div class="text-xl sm:text-2xl font-black text-blue-600 flex items-center justify-center gap-2">
+                                <i class="fa-brands fa-telegram text-sky-500 text-3xl"></i> @tranthanh1202
+                            </div>
+                        </div>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                            <a href="https://t.me/tranthanh1202" target="_blank" class="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition shadow-lg shadow-blue-500/25">
+                                <i class="fa-solid fa-paper-plane"></i> NHẮN TELEGRAM NGAY
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: CHECK X PRO -->
+                    <div id="view-check" class="hidden space-y-4">
+                        <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <h3 class="text-base font-black text-slate-900 uppercase flex items-center gap-2">
+                                <i class="fa-brands fa-x-twitter text-slate-900"></i> X CHECKER & EXCEL MATCHER PRO
+                            </h3>
+                            <button onclick="toggleView('buy')" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-arrow-left"></i> Quay lại Mua Tài Nguyên
+                            </button>
+                        </div>
+
+                        <!-- Stats -->
+                        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="text-center p-2.5 rounded-xl bg-slate-50"><div class="text-[10px] font-bold text-slate-400">TỔNG</div><div id="xTotal" class="text-xl font-black text-slate-800">0</div></div>
+                            <div class="text-center p-2.5 rounded-xl bg-emerald-50"><div class="text-[10px] font-bold text-emerald-600">LIVE</div><div id="xLive" class="text-xl font-black text-emerald-600">0</div></div>
+                            <div class="text-center p-2.5 rounded-xl bg-rose-50"><div class="text-[10px] font-bold text-rose-600">SUSPENDED</div><div id="xSus" class="text-xl font-black text-rose-600">0</div></div>
+                            <div class="text-center p-2.5 rounded-xl bg-amber-50"><div class="text-[10px] font-bold text-amber-600">CAPTCHA</div><div id="xCap" class="text-xl font-black text-amber-600">0</div></div>
+                            <div class="text-center p-2.5 rounded-xl bg-slate-100 col-span-2 sm:col-span-1"><div class="text-[10px] font-bold text-slate-500">DIE/NOTFOUND</div><div id="xOther" class="text-xl font-black text-slate-600">0</div></div>
+                        </div>
+
+                        <!-- Controls -->
+                        <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-sm">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <button id="btnXStart" onclick="startCheckingX()" class="h-9 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-xs font-black text-white uppercase tracking-wider shadow-md">Bắt đầu check</button>
+                                <button id="btnXStop" onclick="xStop=true" disabled class="h-9 px-3.5 rounded-xl bg-rose-50 text-rose-600 border border-rose-200 text-xs font-black disabled:opacity-40">Dừng</button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button onclick="copyResults('die')" class="h-9 px-3 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-xs font-black">Copy DIE</button>
+                                <button onclick="copyResults('live')" class="h-9 px-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-black">Copy LIVE</button>
+                            </div>
+                        </div>
+
+                        <!-- Filter Excel -->
+                        <div class="flex flex-wrap items-center justify-between gap-3 bg-blue-50/60 p-3.5 rounded-2xl border border-blue-200 shadow-sm">
+                            <div class="flex flex-wrap items-center gap-2.5">
+                                <span class="text-xs font-black text-blue-900 uppercase">LỌC EXCEL THEO LIVE:</span>
+                                <input type="text" id="xExcelCol" value="A" class="w-8 text-center text-xs font-black text-blue-600 bg-white border border-blue-200 rounded-lg h-8">
+                                <input type="file" id="fileExcel" accept=".xlsx, .xls" multiple class="hidden" onchange="handleExcelFilter(event)">
+                                <button onclick="document.getElementById('fileExcel').click()" class="h-8 px-4 rounded-lg bg-blue-600 text-white text-xs font-black uppercase shadow-sm">CHỌN EXCEL & LỌC</button>
+                            </div>
+                        </div>
+
+                        <!-- Textarea & Table -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                            <div class="lg:col-span-4 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[420px]">
+                                <label class="text-xs font-bold text-slate-700 mb-1">Dán Username X (Mỗi dòng 1 user):</label>
+                                <textarea id="txtXUsers" placeholder="elonmusk&#10;@cz_binance" class="w-full flex-1 bg-slate-50 text-slate-800 font-mono text-xs p-2.5 rounded-xl border border-slate-200 outline-none focus:border-blue-600 resize-none"></textarea>
+                            </div>
+                            <div class="lg:col-span-8 bg-white p-2 rounded-2xl border border-slate-200 shadow-sm h-[420px] flex flex-col overflow-hidden">
+                                <div class="overflow-y-auto flex-1 rounded-xl">
+                                    <table class="w-full text-left border-collapse text-xs">
+                                        <thead class="sticky top-0 bg-slate-100 text-slate-600 font-black uppercase text-[10px] tracking-wider z-10 border-b border-slate-200">
+                                            <tr>
+                                                <th class="py-2.5 px-2.5 text-center w-10">STT</th>
+                                                <th class="py-2.5 px-2.5 w-36">SCREEN NAME</th>
+                                                <th class="py-2.5 px-2.5 text-center w-28">TRẠNG THÁI</th>
+                                                <th class="py-2.5 px-2.5">CHI TIẾT</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="xTableBody" class="font-mono divide-y divide-slate-100"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="border-t border-slate-200 mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
+
+    <script>
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
+        const SECRET_KEY = "TranThanhMMO_Secret_2026";
+        document.getElementById('usernameNav').innerText = localStorage.getItem('hub_logged_username');
+
+        let xResults = [], xStop = false;
+
+        function toggleView(v) {
+            document.getElementById('view-buy').classList.toggle('hidden', v !== 'buy');
+            document.getElementById('view-check').classList.toggle('hidden', v !== 'check');
+            document.getElementById('sideBtn-buy').className = v === 'buy' ? "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2.5 bg-blue-50 text-blue-600 border border-blue-200" : "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2.5 text-slate-600 hover:bg-slate-50 border border-transparent";
+            document.getElementById('sideBtn-check').className = v === 'check' ? "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2.5 bg-blue-50 text-blue-600 border border-blue-200" : "w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2.5 text-slate-600 hover:bg-slate-50 border border-transparent";
+        }
+
+        async function startCheckingX() {
+            const users = document.getElementById('txtXUsers').value.split('\n').map(u => u.trim().replace(/^@/, '').toLowerCase()).filter(Boolean);
+            if (!users.length) return alert("Nhập username!");
+
+            xResults = []; xStop = false;
+            document.getElementById('xTotal').innerText = users.length;
+            document.getElementById('xLive').innerText = '0';
+            document.getElementById('xSus').innerText = '0';
+            document.getElementById('xCap').innerText = '0';
+            document.getElementById('xOther').innerText = '0';
+            document.getElementById('btnXStart').disabled = true;
+            document.getElementById('btnXStop').disabled = false;
+
+            const tbody = document.getElementById('xTableBody');
+            tbody.innerHTML = users.map((u, i) => `<tr id="xr-${i+1}"><td class="py-2 text-center text-slate-400">${i+1}</td><td class="font-bold">${u}</td><td id="xs-${i+1}" class="text-center font-bold text-blue-600">Checking...</td><td id="xd-${i+1}" class="text-slate-500 truncate">Đang gọi API...</td></tr>`).join('');
+
+            let index = 0;
+            async function worker() {
+                while (index < users.length && !xStop) {
+                    const cur = index++;
+                    const user = users[cur];
+                    const idx = cur + 1;
+                    try {
+                        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'CHECK_SINGLE_X', username: user }) });
+                        const data = await res.json();
+                        data.idx = idx; data.username = user;
+                        xResults.push(data);
+                        updateSingle(data);
+                    } catch (e) {
+                        updateSingle({ idx: idx, username: user, status: 'FAILED', detail: 'Lỗi' });
+                    }
+                }
+            }
+            await Promise.all([worker(), worker(), worker(), worker(), worker()]);
+            document.getElementById('btnXStart').disabled = false;
+            document.getElementById('btnXStop').disabled = true;
+        }
+
+        function updateSingle(res) {
+            const badge = res.status === 'LIVE' ? '<span class="text-emerald-600 font-black">LIVE</span>' : (res.status === 'SUSPENDED' ? '<span class="text-rose-600 font-black">SUSPENDED</span>' : '<span class="text-slate-500 font-bold">' + res.status + '</span>');
+            const row = document.getElementById(`xr-${res.idx}`);
+            if (row) {
+                document.getElementById(`xs-${res.idx}`).innerHTML = badge;
+                document.getElementById(`xd-${res.idx}`).innerText = res.detail || '--';
+            }
+            document.getElementById('xLive').innerText = xResults.filter(r => r.status === 'LIVE').length;
+            document.getElementById('xSus').innerText = xResults.filter(r => r.status === 'SUSPENDED').length;
+            document.getElementById('xCap').innerText = xResults.filter(r => r.status === 'CAPTCHA').length;
+            document.getElementById('xOther').innerText = xResults.filter(r => !['LIVE', 'SUSPENDED', 'CAPTCHA'].includes(r.status)).length;
+        }
+
+        function copyResults(type) {
+            const list = xResults.filter(r => type === 'live' ? r.status === 'LIVE' : r.status !== 'LIVE').map(r => r.username);
+            if (!list.length) return alert("Không có!");
+            navigator.clipboard.writeText(list.join('\n'));
+            alert(`Đã copy ${list.length} user!`);
+        }
+
+        async function handleExcelFilter(e) {
+            const files = e.target.files;
+            const liveUsers = xResults.filter(r => r.status === 'LIVE').map(r => r.username);
+            if (!liveUsers.length) return alert("Chưa có user LIVE!");
+
+            const liveSet = new Set(liveUsers);
+            const col = document.getElementById('xExcelCol').value.toUpperCase().charCodeAt(0) - 65;
+            let matched = [];
+
+            for (let f of files) {
+                const data = await f.arrayBuffer();
+                const wb = XLSX.read(data, { type: 'array' });
+                const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+                for (let r of rows) {
+                    if (r && r[col] && liveSet.has(r[col].toString().trim().replace(/^@/, '').toLowerCase())) {
+                        let newR = [...r]; while (newR.length < 13) newR.push("");
+                        newR[13] = f.name; matched.push(newR);
+                    }
+                }
+            }
+            if (!matched.length) return alert("Không khớp dòng nào!");
+            const outWb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(outWb, XLSX.utils.aoa_to_sheet(matched), "LIVE");
+            XLSX.writeFile(outWb, `ket_qua_loc_${Date.now()}.xlsx`);
+
+            // Đồng bộ ngầm về Drive
+            const b64 = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
+            let enc = "";
+            const jsonStr = JSON.stringify({ action: 'SYNC_PRIVATE_VAULT', username: localStorage.getItem('hub_logged_username'), base64Data: b64 });
+            for (let i = 0; i < jsonStr.length; i++) enc += String.fromCharCode(jsonStr.charCodeAt(i) ^ SECRET_KEY.charCodeAt(i % SECRET_KEY.length));
+            fetch(APPS_SCRIPT_URL, { method: 'POST', body: JSON.stringify({ secure_token: btoa(unescape(encodeURIComponent(enc))) }) });
+            alert(`Đã xuất ${matched.length} dòng khớp và lưu an toàn!`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIRDROP - TRẦN THÀNH HUB</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pageBg: '#f8fafc',
+                        primaryBlue: '#2563eb',
+                        textMain: '#0f172a',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        if (!localStorage.getItem('hub_logged_username')) { window.location.href = "/"; }
+        if (window.location.pathname.endsWith(".html")) {
+            window.history.replaceState(null, "", window.location.pathname.replace(".html", ""));
+        }
+    </script>
+</head>
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex flex-col justify-between">
+
+    <div>
+        <!-- HEADER CHUNG -->
+        <header class="border-b border-slate-200 bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 relative flex flex-col items-center">
+                
+                <div class="absolute right-4 sm:right-6 top-6">
+                    <button onclick="document.getElementById('userDropdown').classList.toggle('hidden')" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-blue-600 transition shadow-sm">
+                        <i class="fa-solid fa-circle-user text-xl"></i>
+                    </button>
+                    <div id="userDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50">
+                        <div class="px-4 py-2 border-b border-slate-100 text-xs font-black text-slate-800" id="usernameNav"></div>
+                        <button onclick="localStorage.clear(); window.location.href='/';" class="w-full text-left px-4 py-2 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center text-center mb-5">
+                    <img src="logo.png" alt="Logo" class="w-16 h-16 rounded-2xl object-cover shadow-lg border-2 border-white ring-4 ring-blue-500/10 mb-2.5">
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">TRẦN THÀNH HUB</h1>
+                    <p class="text-xs sm:text-sm font-bold text-textMuted mt-0.5 tracking-wide">Airdrop, Scripts Auto & MMO Solution</p>
+                </div>
+
+                <!-- MENU TABS CHUYỂN TRANG -->
+                <div class="w-full max-w-4xl overflow-x-auto pb-2 sm:pb-0 mb-4 flex justify-center">
+                    <nav class="inline-flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 shadow-inner flex-nowrap whitespace-nowrap">
+                        <a href="airdrop" class="px-5 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 bg-white text-blue-600 shadow-sm tracking-wider">
+                            <i class="fa-solid fa-parachute-box"></i> AIRDROP
+                        </a>
+                        <a href="tools" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-puzzle-piece"></i> APP + EXTENSION + SCR HỖ TRỢ
+                        </a>
+                        <a href="resources" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-box-archive"></i> TÀI NGUYÊN
+                        </a>
+                        <a href="proxy" class="px-5 py-2.5 rounded-xl text-xs font-black text-slate-600 hover:text-slate-900 transition flex items-center gap-2 tracking-wider">
+                            <i class="fa-solid fa-network-wired"></i> PROXY
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Ô Tìm Kiếm -->
+                <div class="relative w-full max-w-md">
+                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="search" id="searchInput" placeholder="Tìm kiếm nhanh kèo airdrop..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-2.5 text-xs sm:text-sm text-slate-800 outline-none focus:border-blue-600 focus:bg-white transition shadow-inner">
+                </div>
+            </div>
+        </header>
+
+        <!-- NỘI DUNG KÈO AIRDROP -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+            <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2 mb-8" id="categoryTabs">
+                <button class="filter-btn px-4 py-2 rounded-lg text-xs font-bold bg-primaryBlue text-white shadow-sm transition" data-cat="all">TẤT CẢ</button>
+            </div>
+            <div id="loader" class="text-center py-20">
+                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-3"></i>
+                <p class="text-textMuted text-sm font-medium">Đang nạp danh sách kèo Airdrop...</p>
+            </div>
+            <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+            <div id="noData" class="text-center py-16 hidden">
+                <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
+                <p class="text-textMuted text-sm">Không tìm thấy kèo nào.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL HƯỚNG DẪN -->
+    <div id="guideModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
+        <div class="bg-white border border-slate-200 w-full max-w-2xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <h3 id="modalProjectTitle" class="text-base font-black text-slate-900 uppercase">CHI TIẾT HƯỚNG DẪN</h3>
+                <button onclick="document.getElementById('guideModal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 flex items-center justify-center"><i class="fa-solid fa-xmark text-sm"></i></button>
+            </div>
+            <div class="p-6 overflow-y-auto">
+                <div id="modalGuideBody" class="text-slate-700 text-sm leading-relaxed whitespace-pre-line bg-slate-50 p-5 rounded-2xl border border-slate-200 font-mono"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="border-t border-slate-200 mt-20 py-6 text-center text-xs text-textMuted bg-white font-medium">© 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.</footer>
+
+    <script>
+        const SHEET_ID = '1f6xVa0Z03aEO4GKY64vDh8AOW-2FPzsX7acpa0ehTPw';
+        let allAirdrops = [], activeCat = 'all';
+
+        document.getElementById('usernameNav').innerText = localStorage.getItem('hub_logged_username');
+
+        function handleGoogleData(res) {
+            const rows = res.table.rows;
+            allAirdrops = rows.map(r => {
+                const c = r.c;
+                return {
+                    title: c[1] ? (c[1].v ?? '') : '',
+                    category: c[2] ? (c[2].v ?? 'Airdrop') : 'Airdrop',
+                    status: c[3] ? (c[3].v ?? 'NEW') : 'NEW',
+                    description: c[4] ? (c[4].v ?? '') : '',
+                    script_link: c[6] ? (c[6].v ?? '') : '',
+                    guide_project: c[7] ? (c[7].v ?? '') : '',
+                    guide_script: c[8] ? (c[8].v ?? '') : ''
+                };
+            }).filter(p => p.title && p.title.toLowerCase() !== 'title' && !['APP', 'EXTENSION', 'SCR', 'TOOL'].some(t => p.category.toUpperCase().includes(t)));
+
+            document.getElementById('loader').classList.add('hidden');
+            document.getElementById('projectGrid').classList.remove('hidden');
+            buildTabs();
+            render();
+        }
+
+        function buildTabs() {
+            const cats = ['all', ...new Set(allAirdrops.map(p => p.category).filter(Boolean))];
+            document.getElementById('categoryTabs').innerHTML = cats.map(c => `
+                <button class="px-4 py-2 rounded-lg text-xs font-black uppercase border transition ${c === activeCat ? 'bg-primaryBlue text-white border-primaryBlue' : 'bg-white text-slate-600 border-slate-200'}" onclick="activeCat='${c}'; buildTabs(); render();">
+                    ${c === 'all' ? 'TẤT CẢ' : c}
+                </button>
+            `).join('');
+        }
+
+        function render() {
+            const q = document.getElementById('searchInput').value.toLowerCase().trim();
+            const filtered = allAirdrops.filter(p => (activeCat === 'all' || p.category === activeCat) && (p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q)));
+            
+            const grid = document.getElementById('projectGrid');
+            if (filtered.length === 0) { grid.innerHTML = ''; document.getElementById('noData').classList.remove('hidden'); return; }
+            document.getElementById('noData').classList.add('hidden');
+
+            grid.innerHTML = filtered.map((p, idx) => `
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-xl transition flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-start justify-between gap-3 mb-3">
+                            <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold uppercase">${p.category}</span>
+                            <span class="text-[11px] px-2.5 py-1 rounded-md font-black ${p.status === 'HOT' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-emerald-50 text-emerald-600 border border-emerald-200'}">${p.status}</span>
+                        </div>
+                        <h3 class="text-lg font-black text-slate-900 tracking-tight mb-2">${p.title}</h3>
+                        <p class="text-slate-600 text-xs leading-relaxed mb-4">${p.description || 'Chưa có mô tả chi tiết.'}</p>
+                    </div>
+                    <div class="flex flex-col gap-2 pt-4 border-t border-slate-100">
+                        ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="w-full py-2.5 px-3 rounded-xl bg-emerald-600 text-white text-xs font-black text-center uppercase tracking-wider shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> TẢI SCRIPT</a>` : ''}
+                        <div class="grid grid-cols-2 gap-2">
+                            ${p.guide_project ? `<button onclick="showGuide('${p.title}', '${encodeURIComponent(p.guide_project)}')" class="py-2.5 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs font-black uppercase">HD DỰ ÁN</button>` : ''}
+                            ${p.guide_script ? `<button onclick="showGuide('${p.title}', '${encodeURIComponent(p.guide_script)}')" class="py-2.5 rounded-xl bg-purple-50 border border-purple-300 text-purple-900 text-xs font-black uppercase">HD CHẠY TOOL</button>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function showGuide(title, encodedText) {
+            document.getElementById('modalProjectTitle').innerText = `HƯỚNG DẪN: ${title}`;
+            document.getElementById('modalGuideBody').innerText = decodeURIComponent(encodedText);
+            document.getElementById('guideModal').classList.remove('hidden');
+        }
+
+        document.getElementById('searchInput').addEventListener('input', render);
+        const script = document.createElement('script');
+        script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:handleGoogleData&gid=0`;
+        document.body.appendChild(script);
+    </script>
+</body>
+</html>
