@@ -55,7 +55,7 @@
                     <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                         <i class="fa-brands fa-x-twitter text-slate-900"></i> X CHECKER & EXCEL MATCHER PRO
                     </h1>
-                    <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X & lọc dòng thông minh tự động theo nhieuf fiile EXCEL</p>
+                    <p class="text-xs text-textMuted font-medium">Kiểm tra trạng thái tài khoản X & lọc dòng thông minh tự động theo nhiều fiile EXCEL</p>
                 </div>
             </div>
             <a href="resources.html" class="h-10 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-black text-slate-700 transition flex items-center gap-2 border border-slate-200 shadow-sm active:scale-95">
@@ -215,12 +215,12 @@
                 await fetch(APPS_SCRIPT_VAULT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'data=' + encodeURIComponent(JSON.stringify({
                         username: currentUser,
                         fileType: fileType,
                         base64Data: base64Data
-                    })
+                    }))
                 });
             } catch (err) {
                 console.error("error:", err);
@@ -344,7 +344,7 @@
             const blob = new Blob([list.join('\n')], { type: 'text/plain;charset=utf-8' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = 'x_live.txt';
+            a.download = 'User_X_live.txt';
             a.click();
         }
 
@@ -420,7 +420,6 @@
             const base64Data = XLSX.write(outWb, { bookType: 'xlsx', type: 'base64' });
             await uploadBase64ToDrive(base64Data, "EXCEL_LOC_LIVE");
 
-            // Hiển thị nút TẢI và cập nhật thông báo
             document.getElementById('countMatched').innerText = matchedRows.length;
             document.getElementById('btnDownloadExcel').classList.remove('hidden');
             document.getElementById('excelStatusTxt').innerHTML = `<span class="text-emerald-600 font-bold">✅ Đã lọc xong ${matchedRows.length} dòng</span>`;
