@@ -31,19 +31,18 @@
         }
     </script>
     <style>
-        /* THANH CUỘN TO 14PX ĐẬM NÉT - DỄ CẦM KÉO */
         .large-scroll::-webkit-scrollbar {
-            width: 14px;
-            height: 14px;
+            width: 12px;
+            height: 12px;
         }
         .large-scroll::-webkit-scrollbar-track {
-            background: #cbd5e1;
+            background: #e2e8f0;
             border-radius: 8px;
         }
         .large-scroll::-webkit-scrollbar-thumb {
-            background: #64748b;
+            background: #94a3b8;
             border-radius: 8px;
-            border: 2px solid #cbd5e1;
+            border: 2px solid #e2e8f0;
         }
         .large-scroll::-webkit-scrollbar-thumb:hover {
             background: #2563eb;
@@ -113,7 +112,6 @@
     <div class="flex-1 flex flex-col justify-between h-screen overflow-y-auto large-scroll">
         <main class="max-w-[1700px] w-full mx-auto px-6 py-8 space-y-6">
 
-            <!-- Header & Thao tác nhanh -->
             <div class="flex flex-wrap items-center justify-between gap-4 border-b border-borderLight pb-4 bg-white p-5 rounded-3xl shadow-sm">
                 <div>
                     <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
@@ -131,7 +129,6 @@
                 </div>
             </div>
 
-            <!-- Dashboard Thống kê -->
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center gap-4">
                     <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-black shrink-0">
@@ -156,13 +153,11 @@
                 <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm flex items-center">
                     <div class="relative w-full">
                         <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                        <!-- Chặn Autofill của trình duyệt triệt để -->
-                        <input type="search" id="searchInput" oninput="filterTable()" autocomplete="new-password" name="license_search_field_no_fill" placeholder="Tìm kiếm key hoặc tên script..." class="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 text-xs outline-none bg-slate-50 focus:bg-white focus:border-blue-600 shadow-inner">
+                        <input type="text" id="searchInput" oninput="filterTable()" placeholder="Tìm kiếm key hoặc tên script..." class="w-full h-11 pl-10 pr-4 rounded-2xl border border-slate-200 text-xs outline-none bg-slate-50 focus:bg-white focus:border-blue-600 shadow-inner">
                     </div>
                 </div>
             </div>
 
-            <!-- Bảng Dữ Liệu Key với THANH CUỘN TO 14PX & KHÔNG BỊ TRẮNG BẢNG -->
             <div class="bg-white p-4 rounded-3xl border border-borderLight shadow-sm h-[620px] flex flex-col overflow-hidden">
                 <div id="loadingBox" class="flex-1 flex flex-col items-center justify-center gap-3">
                     <i class="fa-solid fa-circle-notch fa-spin text-4xl text-primaryBlue mb-2"></i>
@@ -195,79 +190,8 @@
         </footer>
     </div>
 
-    <!-- MODAL ĐỔI MẬT KHẨU -->
-    <div id="changePassModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm hidden p-4">
-        <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative space-y-4">
-            <button onclick="closeChangePassModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
-                <i class="fa-solid fa-xmark text-sm"></i>
-            </button>
-            
-            <div class="text-center">
-                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mx-auto mb-2">
-                    <i class="fa-solid fa-key"></i>
-                </div>
-                <h3 class="text-lg font-black text-slate-900 uppercase">ĐỔI MẬT KHẨU TÀI KHOẢN</h3>
-            </div>
-
-            <!-- Bước 1 -->
-            <div id="cpStep1" class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại *</label>
-                    <div class="relative">
-                        <input type="password" id="cpOldPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
-                        <button type="button" onclick="togglePass('cpOldPass', 'eyeCp1')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
-                            <i id="eyeCp1" class="fa-regular fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới *</label>
-                    <div class="relative">
-                        <input type="password" id="cpNewPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
-                        <button type="button" onclick="togglePass('cpNewPass', 'eyeCp2')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
-                            <i id="eyeCp2" class="fa-regular fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới *</label>
-                    <div class="relative">
-                        <input type="password" id="cpNewPassConfirm" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
-                        <button type="button" onclick="togglePass('cpNewPassConfirm', 'eyeCp3')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
-                            <i id="eyeCp3" class="fa-regular fa-eye"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div id="cpMsg1" class="text-xs font-bold text-rose-500 text-center hidden"></div>
-
-                <button id="btnCpSendOtp" onclick="handleChangePassSendOtp()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-paper-plane"></i> GỬI MÃ OTP VỀ GMAIL
-                </button>
-            </div>
-
-            <!-- Bước 2 -->
-            <div id="cpStep2" class="space-y-4 hidden">
-                <div class="text-center p-3 bg-blue-50 rounded-xl border border-blue-100">
-                    <p class="text-xs text-blue-800">Mã xác thực đã gửi tới Gmail: <b id="cpTargetEmail"></b></p>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1 text-center">Nhập mã OTP 6 số</label>
-                    <input type="text" id="cpOtpInput" maxlength="6" placeholder="123456" class="w-full h-11 text-center text-lg font-mono font-black tracking-widest rounded-xl border border-slate-200 outline-none focus:border-blue-600 bg-slate-50 focus:bg-white">
-                </div>
-
-                <div id="cpMsg2" class="text-xs font-bold text-rose-500 text-center hidden"></div>
-
-                <button id="btnCpVerify" onclick="handleChangePassVerify()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md">
-                    XÁC THỰC & CẬP NHẬT MẬT KHẨU
-                </button>
-            </div>
-
-        </div>
-    </div>
+    <!-- CONTAINER CHỨA MODAL ĐỔI MẬT KHẨU ĐỘNG -->
+    <div id="modalChangePassContainer"></div>
 
     <!-- Toast Copy -->
     <div id="copyToast" class="fixed bottom-6 right-6 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-2 hidden z-50 border border-slate-700">
@@ -312,15 +236,73 @@
         }
 
         function openChangePassModal() {
-            document.getElementById('changePassModal').classList.remove('hidden');
-            document.getElementById('cpStep1').classList.remove('hidden');
-            document.getElementById('cpStep2').classList.add('hidden');
-            document.getElementById('cpMsg1').classList.add('hidden');
             document.getElementById('userMenuPopup').classList.add('hidden');
+            const container = document.getElementById('modalChangePassContainer');
+            container.innerHTML = `
+                <div id="changePassModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+                    <div class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 relative space-y-4">
+                        <button onclick="closeChangePassModal()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                        <div class="text-center">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl mx-auto mb-2">
+                                <i class="fa-solid fa-key"></i>
+                            </div>
+                            <h3 class="text-lg font-black text-slate-900 uppercase">ĐỔI MẬT KHẨU TÀI KHOẢN</h3>
+                        </div>
+                        <div id="cpStep1" class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại *</label>
+                                <div class="relative">
+                                    <input type="password" id="cpOldPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                                    <button type="button" onclick="togglePass('cpOldPass', 'eyeCp1')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                                        <i id="eyeCp1" class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới *</label>
+                                <div class="relative">
+                                    <input type="password" id="cpNewPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                                    <button type="button" onclick="togglePass('cpNewPass', 'eyeCp2')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                                        <i id="eyeCp2" class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới *</label>
+                                <div class="relative">
+                                    <input type="password" id="cpNewPassConfirm" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                                    <button type="button" onclick="togglePass('cpNewPassConfirm', 'eyeCp3')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                                        <i id="eyeCp3" class="fa-regular fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="cpMsg1" class="text-xs font-bold text-rose-500 text-center hidden"></div>
+                            <button id="btnCpSendOtp" onclick="handleChangePassSendOtp()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-paper-plane"></i> GỬI MÃ OTP VỀ GMAIL
+                            </button>
+                        </div>
+                        <div id="cpStep2" class="space-y-4 hidden">
+                            <div class="text-center p-3 bg-blue-50 rounded-xl border border-blue-100">
+                                <p class="text-xs text-blue-800">Mã xác thực đã gửi tới Gmail: <b id="cpTargetEmail"></b></p>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 uppercase mb-1 text-center">Nhập mã OTP 6 số</label>
+                                <input type="text" id="cpOtpInput" maxlength="6" placeholder="123456" class="w-full h-11 text-center text-lg font-mono font-black tracking-widest rounded-xl border border-slate-200 outline-none focus:border-blue-600 bg-slate-50 focus:bg-white">
+                            </div>
+                            <div id="cpMsg2" class="text-xs font-bold text-rose-500 text-center hidden"></div>
+                            <button id="btnCpVerify" onclick="handleChangePassVerify()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md">
+                                XÁC THỰC & CẬP NHẬT MẬT KHẨU
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         function closeChangePassModal() {
-            document.getElementById('changePassModal').classList.add('hidden');
+            document.getElementById('modalChangePassContainer').innerHTML = '';
         }
 
         async function handleChangePassSendOtp() {
@@ -419,7 +401,6 @@
         }
 
         async function loadMyLicenses() {
-            document.getElementById('searchInput').value = '';
             document.getElementById('loadingBox').classList.remove('hidden');
             document.getElementById('emptyBox').classList.add('hidden');
             document.getElementById('tableWrapper').classList.add('hidden');
@@ -524,7 +505,12 @@
         }
 
         function filterTable() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const searchEl = document.getElementById('searchInput');
+            let query = searchEl ? searchEl.value.toLowerCase().trim() : '';
+            if (query === loggedUser.toLowerCase()) {
+                searchEl.value = '';
+                query = '';
+            }
             if (!query) {
                 renderTable(globalHeaders, globalRows);
                 return;
