@@ -41,7 +41,10 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu</label>
+                <div class="flex items-center justify-between mb-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Mật khẩu</label>
+                    <button type="button" onclick="openForgotModal()" class="text-xs font-bold text-blue-600 hover:underline">Quên mật khẩu?</button>
+                </div>
                 <div class="relative">
                     <input type="password" id="loginPass" placeholder="••••••••" class="w-full h-11 px-4 pr-11 rounded-xl border border-slate-200 text-sm focus:border-blue-600 outline-none transition bg-slate-50 focus:bg-white">
                     <button type="button" onclick="togglePass('loginPass', 'eyeLogin')" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600">
@@ -138,7 +141,7 @@
                 </button>
             </div>
 
-            <!-- Bước nhập OTP -->
+            <!-- Bước nhập OTP Đăng ký -->
             <div id="regFormStep2" class="space-y-4 hidden">
                 <div class="text-center p-3 bg-emerald-50 rounded-2xl border border-emerald-100">
                     <p class="text-xs text-emerald-800">Mã OTP đã gửi đến: <b id="otpTargetEmail"></b></p>
@@ -153,6 +156,74 @@
 
                 <button id="btnVerifyOtp" onclick="handleVerifyOtp()" class="w-full h-11 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider transition shadow-lg shadow-emerald-500/30">
                     XÁC THỰC & HOÀN TẤT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Quên Mật Khẩu -->
+    <div id="forgotModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-2xl relative space-y-4">
+            <button onclick="closeForgotModal()" class="absolute right-5 top-5 w-8 h-8 rounded-full bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center">
+                <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto text-2xl mb-2 shadow-inner">
+                    <i class="fa-solid fa-key"></i>
+                </div>
+                <h2 class="text-xl font-black text-slate-900 uppercase">QUÊN MẬT KHẨU</h2>
+            </div>
+
+            <!-- Bước 1: Nhập Gmail -->
+            <div id="forgotStep1" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Gmail đăng ký tài khoản</label>
+                    <input type="email" id="forgotEmail" placeholder="example@gmail.com" class="w-full h-11 px-4 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                </div>
+
+                <div id="forgotMsg1" class="text-xs font-bold text-rose-500 text-center hidden"></div>
+
+                <button id="btnForgotOtp" onclick="handleForgotSendOtp()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> GỬI MÃ XÁC THỰC
+                </button>
+            </div>
+
+            <!-- Bước 2: Nhập OTP & Đặt mật khẩu mới -->
+            <div id="forgotStep2" class="space-y-3 hidden">
+                <div class="text-center p-2.5 bg-blue-50 rounded-xl border border-blue-100">
+                    <p class="text-xs text-blue-800">Mã xác thực đã gửi tới: <b id="forgotTargetEmail"></b></p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1 text-center">Mã OTP 6 số</label>
+                    <input type="text" id="forgotOtpInput" maxlength="6" placeholder="123456" class="w-full h-11 text-center text-lg font-mono font-black tracking-widest rounded-xl border border-slate-200 outline-none focus:border-blue-600 bg-slate-50 focus:bg-white">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới</label>
+                    <div class="relative">
+                        <input type="password" id="forgotNewPass" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                        <button type="button" onclick="togglePass('forgotNewPass', 'eyeForgot1')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i id="eyeForgot1" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới</label>
+                    <div class="relative">
+                        <input type="password" id="forgotNewPassConfirm" placeholder="••••••••" class="w-full h-10 px-3.5 pr-10 rounded-xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                        <button type="button" onclick="togglePass('forgotNewPassConfirm', 'eyeForgot2')" class="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600">
+                            <i id="eyeForgot2" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="forgotMsg2" class="text-xs font-bold text-rose-500 text-center hidden"></div>
+
+                <button id="btnResetPass" onclick="handleResetPass()" class="w-full h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-lg shadow-blue-500/30">
+                    ĐẶT LẠI MẬT KHẨU
                 </button>
             </div>
         </div>
@@ -182,6 +253,17 @@
 
         function closeRegisterModal() {
             document.getElementById('registerModal').classList.add('hidden');
+        }
+
+        function openForgotModal() {
+            document.getElementById('forgotModal').classList.remove('hidden');
+            document.getElementById('forgotStep1').classList.remove('hidden');
+            document.getElementById('forgotStep2').classList.add('hidden');
+            document.getElementById('forgotMsg1').classList.add('hidden');
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').classList.add('hidden');
         }
 
         async function postGas(payload) {
@@ -331,6 +413,92 @@
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'XÁC THỰC & HOÀN TẤT';
+            }
+        }
+
+        async function handleForgotSendOtp() {
+            const e = document.getElementById('forgotEmail').value.trim();
+            const msg = document.getElementById('forgotMsg1');
+            const btn = document.getElementById('btnForgotOtp');
+
+            if (!e) {
+                msg.innerText = "Vui lòng nhập Gmail đăng ký!";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG GỬI MÃ...';
+            msg.classList.add('hidden');
+
+            try {
+                const res = await postGas({
+                    action: 'FORGOT_PASSWORD_SEND_OTP',
+                    email: e
+                });
+
+                if (res.status === 'success') {
+                    document.getElementById('forgotTargetEmail').innerText = e;
+                    document.getElementById('forgotStep1').classList.add('hidden');
+                    document.getElementById('forgotStep2').classList.remove('hidden');
+                } else {
+                    msg.innerText = res.message || "Gửi OTP thất bại!";
+                    msg.classList.remove('hidden');
+                }
+            } catch (err) {
+                msg.innerText = "Lỗi kết nối máy chủ!";
+                msg.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> GỬI MÃ XÁC THỰC';
+            }
+        }
+
+        async function handleResetPass() {
+            const e = document.getElementById('forgotEmail').value.trim();
+            const otp = document.getElementById('forgotOtpInput').value.trim();
+            const p = document.getElementById('forgotNewPass').value.trim();
+            const pc = document.getElementById('forgotNewPassConfirm').value.trim();
+            const msg = document.getElementById('forgotMsg2');
+            const btn = document.getElementById('btnResetPass');
+
+            if (!otp || !p || !pc) {
+                msg.innerText = "Vui lòng điền đủ mã OTP và mật khẩu mới!";
+                msg.classList.remove('hidden');
+                return;
+            }
+            if (p !== pc) {
+                msg.innerText = "Mật khẩu xác nhận không khớp!";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG CẬP NHẬT...';
+            msg.classList.add('hidden');
+
+            try {
+                const res = await postGas({
+                    action: 'FORGOT_PASSWORD_RESET',
+                    email: e,
+                    otp: otp,
+                    newPassword: p
+                });
+
+                if (res.status === 'success') {
+                    alert("🎉 Đặt lại mật khẩu thành công! Hãy đăng nhập bằng mật khẩu mới.");
+                    closeForgotModal();
+                    document.getElementById('loginPass').value = p;
+                } else {
+                    msg.innerText = res.message || "Cập nhật mật khẩu thất bại!";
+                    msg.classList.remove('hidden');
+                }
+            } catch (err) {
+                msg.innerText = "Lỗi kết nối máy chủ!";
+                msg.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'ĐẶT LẠI MẬT KHẨU';
             }
         }
     </script>
