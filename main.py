@@ -22,6 +22,8 @@ class XRequest(BaseModel):
 class ProxyRequest(BaseModel):
     proxy: str
 
+BEARER_TOKEN = "Bearer AAAAAAAAAAAAAAAAAAAAANRILgAAAAAAnNwIzUejRCOuH5E6I8xnZz4puTs%3D1Zv7ttfk8LF81IUq16cHjhLTvJu4FA33AGWWjCpTnA"
+
 def parse_proxy_string(raw_proxy: str):
     if not raw_proxy:
         return None
@@ -53,7 +55,7 @@ def parse_proxy_string(raw_proxy: str):
 def root():
     return {"status": "online", "message": "Backend Trần Thành 1202 is running"}
 
-# 1. API CHECK X SIÊU TỐC QUA SYNDICATION ENGINE
+# 1. API CHECK X THEO CHUẨN PYTHON GRAPHQL
 @app.post("/check-x")
 def check_x(req: XRequest):
     username = req.username.strip().lstrip("@")
@@ -61,41 +63,88 @@ def check_x(req: XRequest):
         return {"status": "NOTFOUND", "username": username, "detail": "Username trống"}
 
     proxies = parse_proxy_string(req.proxy) if req.proxy else None
+    
+    session = requests.Session()
+    session.headers.update({
+        "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
+        "accept-language": "en-US,en;q=0.9"
+    })
+
+    guest_token = None
+
+    # Bước 1: Kích hoạt Guest Token chính thức
+    try:
+        act_headers = {
+            "authorization": BEARER_TOKEN,
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36"
+        }
+        r_act = session.post("https://api.twitter.com/1.1/guest/activate.json", headers=act_headers, proxies=proxies, timeout=7)
+        if r_act.status_code == 200:
+            guest_token = r_act.json().get("guest_token")
+    except Exception:
+        pass
+
+    # Bước 2: Dự phòng lấy từ HTML nếu activate API bị rate limit
+    if not guest_token:
+        try:
+            r_main = session.get("https://x.com/?lang=en", proxies=proxies, timeout=7)
+            guest_token = r_main.cookies.get("gt")
+            if not guest_token and 'document.cookie="gt=' in r_main.text:
+                guest_token = r_main.text.split('document.cookie="gt=')[1].split('";')[0]
+        except Exception:
+            pass
+
+    if not guest_token:
+        return {"status": "FAILED", "username": username, "detail": "Không thể lấy Guest Token"}
+
+    # Bước 3: Gọi GraphQL Endpoint
+    q_url = "https://x.com/i/api/graphql/k5X_OmflwGekW9W0hucqCA/UserByScreenName"
+    params = {
+        "variables": f'{{"screen_name":"{username}"}}',
+        "features": '{"hidden_profile_subscriptions_enabled":true,"profile_label_improvements_pcf_label_in_post_enabled":true,"rweb_tipjar_consumption_enabled":true,"responsive_web_graphql_exclude_directive_enabled":true,"verified_phone_label_enabled":false,"highlights_tweets_tab_ui_enabled":true,"responsive_web_twitter_article_notes_tab_enabled":true,"creator_subscriptions_tweet_preview_api_enabled":true,"responsive_web_graphql_skip_user_profile_image_extensions_enabled":false,"responsive_web_graphql_timeline_navigation_enabled":true}',
+        "fieldToggles": '{"withAuxiliaryUserLabels":false}'
+    }
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-        "Accept": "application/json, text/plain, */*"
+        "authorization": BEARER_TOKEN,
+        "x-guest-token": str(guest_token),
+        "cookie": f"gt={guest_token};",
+        "x-twitter-active-user": "yes"
     }
 
     try:
-        # Tầng 1: Check qua Syndication API (Cực nhanh, lấy Follower & Tên)
-        synd_url = f"https://cdn.syndication.twimg.com/widgets/followbutton/info.json?screen_names={username}"
-        r = requests.get(synd_url, headers=headers, proxies=proxies, timeout=8)
+        res = session.get(q_url, headers=headers, params=params, proxies=proxies, timeout=9)
         
-        if r.status_code == 200:
-            data = r.json()
-            if isinstance(data, list) and len(data) > 0:
-                user_info = data[0]
-                name = user_info.get("name", username)
-                followers = user_info.get("followers_count", 0)
-                return {
-                    "status": "LIVE",
-                    "username": username,
-                    "detail": f"Tên: {name} | Follow: {followers:,}"
-                }
-
-        # Tầng 2: Kiểm tra lý do DIE / SUSPENDED nếu không tìm thấy ở Tầng 1
-        prof_url = f"https://syndication.twitter.com/srv/timeline-profile/screen-name/{username}"
-        r2 = requests.get(prof_url, headers=headers, proxies=proxies, timeout=8)
-        
-        if r2.status_code == 404 or "User not found" in r2.text:
+        if res.status_code == 404:
             return {"status": "NOTFOUND", "username": username, "detail": "Tài khoản không tồn tại"}
-        if "account is suspended" in r2.text.lower() or "suspended" in r2.text.lower():
+        if res.status_code == 429:
+            return {"status": "FAILED", "username": username, "detail": "Rate Limit (Thử lại sau ít phút)"}
+        if res.status_code != 200:
+            return {"status": "FAILED", "username": username, "detail": f"HTTP {res.status_code}"}
+
+        json_data = res.json()
+        user_res = json_data.get("data", {}).get("user", {}).get("result", {})
+        
+        if not user_res:
+            return {"status": "NOTFOUND", "username": username, "detail": "Không tìm thấy dữ liệu user"}
+
+        # Phân loại trạng thái
+        if user_res.get("reason") == "Suspended" or user_res.get("__typename") == "UserUnavailable":
             return {"status": "SUSPENDED", "username": username, "detail": "Tài khoản bị đình chỉ (Suspended)"}
-            
-        return {"status": "NOTFOUND", "username": username, "detail": "Không tìm thấy user"}
+        
+        legacy = user_res.get("legacy", {})
+        if legacy.get("profile_interstitial_type") == "fake_account":
+            return {"status": "CAPTCHA", "username": username, "detail": "Tài khoản dính Captcha/Khóa tạm thời"}
+
+        name = legacy.get("name", "N/A")
+        followers = legacy.get("followers_count", 0)
+        return {
+            "status": "LIVE",
+            "username": username,
+            "detail": f"Tên: {name} | Follow: {followers:,}"
+        }
 
     except Exception as e:
-        return {"status": "FAILED", "username": username, "detail": f"Timeout/Lỗi mạng ({str(e)[:25]})"}
+        return {"status": "FAILED", "username": username, "detail": str(e)[:35]}
 
 # 2. API CHECK PROXY
 @app.post("/check-proxy")
