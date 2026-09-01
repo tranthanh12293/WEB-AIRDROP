@@ -470,15 +470,23 @@
                 <tr>
                     <th class="py-4 px-4 text-center w-14 bg-slate-950 border-r border-slate-800">STT</th>
                     ${headers.map((h, i) => `
-                        <th class="py-4 px-5 border-r border-slate-800 bg-slate-900">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-code text-blue-400 text-xs"></i>
-                                <span class="font-black text-amber-300 text-xs tracking-wide">${h || `SCRIPT_${i+1}`}</span>
-                            </div>
+                        <th class="py-4 px-5 border-r border-slate-800 bg-slate-900 text-center">
+                            <span class="font-black text-amber-300 text-xs tracking-wide">${h || `SCRIPT_${i+1}`}</span>
                         </th>
                     `).join('')}
                 </tr>
             `;
+
+            if (rows.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="${headers.length + 1}" class="py-12 text-center text-slate-400 font-bold">
+                            Không tìm thấy Key nào.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
 
             tbody.innerHTML = rows.map((row, rIdx) => `
                 <tr class="${rIdx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} hover:bg-blue-50/70 transition">
