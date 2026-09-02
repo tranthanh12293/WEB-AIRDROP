@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUẢN LÝ TÀI KHOẢN - TRẦN THÀNH HUB</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pageBg: '#f8fafc',
+                        primaryBlue: '#2563eb',
+                        sidebarBg: '#ffffff',
+                        borderLight: '#e2e8f0',
+                        textMain: '#0f172a',
+                        textMuted: '#64748b'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .large-scroll::-webkit-scrollbar { width: 12px; height: 12px; }
+        .large-scroll::-webkit-scrollbar-track { background: #e2e8f0; border-radius: 8px; }
+        .large-scroll::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 8px; border: 2px solid #e2e8f0; }
+        .large-scroll::-webkit-scrollbar-thumb:hover { background: #2563eb; }
+
+        .mask-pass {
+            -webkit-text-security: disc;
+            text-security: disc;
+        }
+    </style>
+</head>
+<body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex">
+
+    <!-- SIDEBAR DÙNG CHUNG -->
+    <div id="hubSidebarMount"></div>
+
+    <!-- NỘI DUNG PROFILE -->
+    <div class="flex-1 flex flex-col justify-between h-screen overflow-y-auto large-scroll">
+        <main class="max-w-4xl w-full mx-auto px-6 py-10 space-y-8">
+
+            <div>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+                    <i class="fa-solid fa-user-shield text-blue-600"></i> HỒ SƠ & BẢO MẬT TÀI KHOẢN
+                </h2>
+                <p class="text-xs text-textMuted font-medium mt-1">Quản lý thông tin tài khoản thành viên và thay đổi mật khẩu bảo vệ</p>
+            </div>
+
+            <!-- Card 1: Thông tin tài khoản -->
+            <div class="bg-white border border-borderLight rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+                <div class="w-20 h-20 rounded-3xl bg-blue-100 text-blue-600 flex items-center justify-center text-3xl font-black shrink-0 shadow-inner">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <div class="space-y-1 text-center sm:text-left flex-1">
+                    <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                        <h3 id="displayUsername" class="text-xl font-black text-slate-900">Member</h3>
+                        <span class="px-2.5 py-0.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200 text-[10px] font-black uppercase tracking-wider">
+                            Active Member
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 font-medium">Thành viên hệ sinh thái công cụ tự động TRẦN THÀNH MMO HUB</p>
+                </div>
+            </div>
+
+            <!-- Card 2: Đổi mật khẩu bảo mật (Xác thực OTP Gmail) -->
+            <div class="bg-white border border-borderLight rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <h3 class="text-base font-black text-slate-900 uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-key text-blue-600"></i> ĐỔI MẬT KHẨU TÀI KHOẢN
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Mã OTP xác thực sẽ được gửi trực tiếp về Gmail đăng ký của bạn</p>
+                </div>
+
+                <!-- BƯỚC 1 -->
+                <div id="cpStep1" class="space-y-4 max-w-lg">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu hiện tại *</label>
+                        <div class="relative">
+                            <input type="text" id="cpOldPass" placeholder="Nhập mật khẩu đang dùng" class="mask-pass w-full h-11 px-4 pr-11 rounded-2xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                            <button type="button" onclick="togglePassMask('cpOldPass', 'eyeCp1')" class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600">
+                                <i id="eyeCp1" class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mật khẩu mới *</label>
+                        <div class="relative">
+                            <input type="text" id="cpNewPass" placeholder="Nhập mật khẩu mới muốn đặt" class="mask-pass w-full h-11 px-4 pr-11 rounded-2xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                            <button type="button" onclick="togglePassMask('cpNewPass', 'eyeCp2')" class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600">
+                                <i id="eyeCp2" class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Xác nhận mật khẩu mới *</label>
+                        <div class="relative">
+                            <input type="text" id="cpNewPassConfirm" placeholder="Nhập lại mật khẩu mới" class="mask-pass w-full h-11 px-4 pr-11 rounded-2xl border border-slate-200 text-sm outline-none bg-slate-50 focus:bg-white focus:border-blue-600">
+                            <button type="button" onclick="togglePassMask('cpNewPassConfirm', 'eyeCp3')" class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600">
+                                <i id="eyeCp3" class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="cpMsg1" class="text-xs font-bold text-rose-500 hidden"></div>
+
+                    <button id="btnCpSendOtp" onclick="handleChangePassSendOtp()" class="h-11 px-8 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> GỬI MÃ OTP VỀ GMAIL
+                    </button>
+                </div>
+
+                <!-- BƯỚC 2: NHẬP MÃ OTP -->
+                <div id="cpStep2" class="space-y-4 max-w-lg hidden">
+                    <div class="p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3">
+                        <i class="fa-solid fa-envelope-circle-check text-blue-600 text-2xl"></i>
+                        <p class="text-xs text-blue-900 leading-relaxed">
+                            Mã xác thực 6 số đã gửi tới Gmail: <b id="cpTargetEmail"></b>. Vui lòng kiểm tra hộp thư.
+                        </p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Mã xác thực OTP</label>
+                        <input type="text" id="cpOtpInput" maxlength="6" placeholder="123456" class="w-full h-12 text-center text-xl font-mono font-black tracking-widest rounded-2xl border border-slate-200 outline-none focus:border-blue-600 bg-slate-50 focus:bg-white">
+                    </div>
+
+                    <div id="cpMsg2" class="text-xs font-bold text-rose-500 hidden"></div>
+
+                    <button id="btnCpVerify" onclick="handleChangePassVerify()" class="h-11 px-8 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black uppercase tracking-wider transition shadow-md flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle-check"></i> XÁC NHẬN CẬP NHẬT MẬT KHẨU
+                    </button>
+                </div>
+
+            </div>
+
+        </main>
+
+        <footer class="border-t border-borderLight py-6 text-center text-xs text-textMuted bg-white font-medium">
+            © 2026 TRẦN THÀNH MMO HUB. All Rights Reserved.
+        </footer>
+    </div>
+
+    <!-- GỌI SIDEBAR CHUNG -->
+    <script src="sidebar.js"></script>
+
+    <script>
+        const APPS_SCRIPT_URL_PROFILE = 'https://script.google.com/macros/s/AKfycbwnRpLqNiKsMJzMPTqsE6S637-G6J0hWne3Q3x-Vzt1OftH4Sa2WnvNqFqS8Vkmqv9zpw/exec';
+        
+        document.getElementById('displayUsername').innerText = loggedUser || 'Member';
+
+        function togglePassMask(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (input.classList.contains('mask-pass')) {
+                input.classList.remove('mask-pass');
+                icon.className = 'fa-regular fa-eye-slash';
+            } else {
+                input.classList.add('mask-pass');
+                icon.className = 'fa-regular fa-eye';
+            }
+        }
+
+        async function handleChangePassSendOtp() {
+            const oldP = document.getElementById('cpOldPass').value.trim();
+            const newP = document.getElementById('cpNewPass').value.trim();
+            const newPC = document.getElementById('cpNewPassConfirm').value.trim();
+            const msg = document.getElementById('cpMsg1');
+            const btn = document.getElementById('btnCpSendOtp');
+
+            if (!oldP || !newP || !newPC) {
+                msg.innerText = "Vui lòng nhập đầy đủ mật khẩu!";
+                msg.classList.remove('hidden');
+                return;
+            }
+            if (newP !== newPC) {
+                msg.innerText = "Mật khẩu mới xác nhận không khớp!";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG GỬI OTP...';
+            msg.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL_PROFILE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'CHANGE_PASS_SEND_OTP',
+                        username: loggedUser,
+                        oldPassword: oldP,
+                        newPassword: newP
+                    })
+                });
+
+                const json = await res.json();
+                if (json.status === 'success') {
+                    document.getElementById('cpTargetEmail').innerText = json.email || '';
+                    document.getElementById('cpStep1').classList.add('hidden');
+                    document.getElementById('cpStep2').classList.remove('hidden');
+                } else {
+                    msg.innerText = json.message || "Gửi OTP thất bại!";
+                    msg.classList.remove('hidden');
+                }
+            } catch (err) {
+                msg.innerText = "Lỗi kết nối máy chủ!";
+                msg.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> GỬI MÃ OTP VỀ GMAIL';
+            }
+        }
+
+        async function handleChangePassVerify() {
+            const otp = document.getElementById('cpOtpInput').value.trim();
+            const msg = document.getElementById('cpMsg2');
+            const btn = document.getElementById('btnCpVerify');
+
+            if (!otp || otp.length < 6) {
+                msg.innerText = "Vui lòng nhập đủ 6 số OTP!";
+                msg.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> ĐANG XÁC THỰC...';
+            msg.classList.add('hidden');
+
+            try {
+                const res = await fetch(APPS_SCRIPT_URL_PROFILE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'CHANGE_PASS_VERIFY',
+                        username: loggedUser,
+                        otp: otp
+                    })
+                });
+
+                const json = await res.json();
+                if (json.status === 'success') {
+                    alert("🎉 Đổi mật khẩu thành công!");
+                    window.location.reload();
+                } else {
+                    msg.innerText = json.message || "Mã OTP không hợp lệ!";
+                    msg.classList.remove('hidden');
+                }
+            } catch (err) {
+                msg.innerText = "Lỗi kết nối máy chủ!";
+                msg.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-circle-check"></i> XÁC NHẬN CẬP NHẬT MẬT KHẨU';
+            }
+        }
+    </script>
+</body>
+</html>
