@@ -1,45 +1,50 @@
 /**
- * TRẦN THÀNH MMO HUB - SIDEBAR COMPONENT (DÙNG CHUNG)
+ * TRẦN THÀNH MMO HUB - SIDEBAR COMPONENT (TỰ ẨN .HTML)
  */
 
-// 1. Kiểm tra đăng nhập
-const loggedUser = localStorage.getItem('hub_logged_username');
-if (!loggedUser && !window.location.pathname.endsWith("index.html") && window.location.pathname !== "/") {
-    window.location.href = "index.html";
+// 1. Tự động xóa đuôi .html trên thanh địa chỉ cho đẹp (Không bị lỗi điều hướng)
+if (window.location.pathname.endsWith(".html") && !window.location.pathname.endsWith("index.html")) {
+    window.history.replaceState(null, "", window.location.pathname.replace(".html", ""));
 }
 
-// 2. Danh sách Menu
+// 2. Kiểm tra đăng nhập
+const loggedUser = localStorage.getItem('hub_logged_username');
+if (!loggedUser && !window.location.pathname.endsWith("index.html") && window.location.pathname !== "/") {
+    window.location.href = "/index.html";
+}
+
+// 3. Danh sách Menu (Trỏ thẳng file gốc có dấu / ở đầu)
 const MENU_ITEMS = [
-    { name: "TRANG CHỦ", href: "home.html", key: "home", icon: "fa-solid fa-house" },
-    { name: "AIRDROP", href: "airdrop.html", key: "airdrop", icon: "fa-solid fa-parachute-box" },
-    { name: "APP & EXTENSION", href: "tools.html", key: "tools", icon: "fa-solid fa-puzzle-piece" },
-    { name: "TÀI NGUYÊN", href: "resources.html", key: "resources", icon: "fa-solid fa-box-archive" },
-    { name: "DỊCH VỤ PROXY", href: "proxy.html", key: "proxy", icon: "fa-solid fa-network-wired" },
-    { name: "LICENSE SCRIPT", href: "license.html", key: "license", icon: "fa-solid fa-key" }
+    { name: "TRANG CHỦ", href: "/home.html", key: "home", icon: "fa-solid fa-house" },
+    { name: "AIRDROP", href: "/airdrop.html", key: "airdrop", icon: "fa-solid fa-parachute-box" },
+    { name: "APP & EXTENSION", href: "/tools.html", key: "tools", icon: "fa-solid fa-puzzle-piece" },
+    { name: "TÀI NGUYÊN", href: "/resources.html", key: "resources", icon: "fa-solid fa-box-archive" },
+    { name: "DỊCH VỤ PROXY", href: "/proxy.html", key: "proxy", icon: "fa-solid fa-network-wired" },
+    { name: "LICENSE SCRIPT", href: "/license.html", key: "license", icon: "fa-solid fa-key" }
 ];
 
 function initHubSidebar() {
     const sidebarMount = document.getElementById('hubSidebarMount');
     if (!sidebarMount) return;
 
-    // Lấy tên trang hiện tại (chuẩn hóa nhận cả 'proxy' và 'proxy.html')
-    const rawPath = window.location.pathname.split("/").pop() || "home.html";
+    // Nhận diện trang hiện tại (dù có đuôi .html hay đã bị ẩn)
+    const rawPath = window.location.pathname.split("/").pop() || "home";
     const currentKey = rawPath.replace(".html", "") || "home";
     const isCollapsed = localStorage.getItem('hub_sidebar_collapsed') === 'true';
 
     sidebarMount.innerHTML = `
         <aside id="hubSidebar" class="${isCollapsed ? 'w-20' : 'w-64'} bg-white border-r border-slate-200 flex flex-col justify-between h-screen sticky top-0 shrink-0 p-3 transition-all duration-300 relative z-30">
             
-            <!-- Nút thu gọn / mở rộng -->
+            <!-- Nút mũi tên thu gọn / mở rộng -->
             <button onclick="toggleSidebarCollapse()" id="btnCollapse" title="Thu gọn / Mở rộng" 
                 class="absolute -right-3.5 top-6 w-7 h-7 bg-white border border-slate-200 text-blue-600 rounded-full shadow-md flex items-center justify-center text-xs hover:bg-blue-50 transition z-40">
                 <i id="collapseIcon" class="fa-solid ${isCollapsed ? 'fa-angles-right' : 'fa-angles-left'}"></i>
             </button>
 
-            <!-- Menu bên trên -->
+            <!-- Menu trên -->
             <div>
                 <div class="flex items-center gap-3 px-1.5 py-3 mb-5 border-b border-slate-100 overflow-hidden">
-                    <img src="logo.png" alt="Logo" class="w-10 h-10 rounded-2xl object-cover shadow-sm border border-slate-200 shrink-0">
+                    <img src="/logo.png" alt="Logo" class="w-10 h-10 rounded-2xl object-cover shadow-sm border border-slate-200 shrink-0">
                     <div class="sidebar-text truncate ${isCollapsed ? 'hidden' : ''}">
                         <h1 class="text-sm font-black text-slate-900 tracking-tight truncate">TRẦN THÀNH HUB</h1>
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">MMO & Crypto Hub</p>
@@ -60,7 +65,7 @@ function initHubSidebar() {
                 </nav>
             </div>
 
-            <!-- Avatar & Nút bấm chuyển sang trang Profile -->
+            <!-- Avatar & Quản lý tài khoản (Chuyển sang trang profile.html) -->
             <div class="pt-3 border-t border-slate-100 relative">
                 <button onclick="toggleUserDropdown()" class="w-full flex items-center justify-between p-1.5 rounded-2xl hover:bg-slate-50 transition overflow-hidden">
                     <div class="flex items-center gap-2.5 truncate">
@@ -75,9 +80,8 @@ function initHubSidebar() {
                     <i class="sidebar-text fa-solid fa-ellipsis-vertical text-slate-400 text-xs px-1 ${isCollapsed ? 'hidden' : ''}"></i>
                 </button>
 
-                <!-- Menu popup -->
                 <div id="userMenuPopup" class="hidden absolute bottom-16 left-0 w-48 bg-white border border-slate-200 rounded-2xl shadow-xl py-2 z-50">
-                    <a href="profile.html" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
+                    <a href="/profile.html" class="w-full text-left px-4 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 flex items-center gap-2">
                         <i class="fa-solid fa-user-gear text-blue-600"></i> Quản Lý Tài Khoản
                     </a>
                     <button onclick="logoutNow()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-rose-600 hover:bg-rose-50 flex items-center gap-2">
@@ -127,7 +131,7 @@ document.addEventListener('click', (e) => {
 
 function logoutNow() {
     localStorage.clear();
-    window.location.href = "index.html";
+    window.location.href = "/index.html";
 }
 
 document.addEventListener('DOMContentLoaded', initHubSidebar);
