@@ -10,19 +10,21 @@ if (!loggedUser && !window.location.pathname.endsWith("index.html") && window.lo
 
 // 2. Danh sách Menu
 const MENU_ITEMS = [
-    { name: "TRANG CHỦ", href: "home.html", icon: "fa-solid fa-house" },
-    { name: "AIRDROP", href: "airdrop.html", icon: "fa-solid fa-parachute-box" },
-    { name: "APP & EXTENSION", href: "tools.html", icon: "fa-solid fa-puzzle-piece" },
-    { name: "TÀI NGUYÊN", href: "resources.html", icon: "fa-solid fa-box-archive" },
-    { name: "DỊCH VỤ PROXY", href: "proxy.html", icon: "fa-solid fa-network-wired" },
-    { name: "LICENSE SCRIPT", href: "license.html", icon: "fa-solid fa-key" }
+    { name: "TRANG CHỦ", href: "home.html", key: "home", icon: "fa-solid fa-house" },
+    { name: "AIRDROP", href: "airdrop.html", key: "airdrop", icon: "fa-solid fa-parachute-box" },
+    { name: "APP & EXTENSION", href: "tools.html", key: "tools", icon: "fa-solid fa-puzzle-piece" },
+    { name: "TÀI NGUYÊN", href: "resources.html", key: "resources", icon: "fa-solid fa-box-archive" },
+    { name: "DỊCH VỤ PROXY", href: "proxy.html", key: "proxy", icon: "fa-solid fa-network-wired" },
+    { name: "LICENSE SCRIPT", href: "license.html", key: "license", icon: "fa-solid fa-key" }
 ];
 
 function initHubSidebar() {
     const sidebarMount = document.getElementById('hubSidebarMount');
     if (!sidebarMount) return;
 
-    const currentPath = window.location.pathname.split("/").pop() || "home.html";
+    // Lấy tên trang hiện tại (chuẩn hóa nhận cả 'proxy' và 'proxy.html')
+    const rawPath = window.location.pathname.split("/").pop() || "home.html";
+    const currentKey = rawPath.replace(".html", "") || "home";
     const isCollapsed = localStorage.getItem('hub_sidebar_collapsed') === 'true';
 
     sidebarMount.innerHTML = `
@@ -46,7 +48,7 @@ function initHubSidebar() {
 
                 <nav class="space-y-1.5 font-bold text-xs">
                     ${MENU_ITEMS.map(item => {
-                        const isActive = currentPath === item.href || (currentPath === '' && item.href === 'home.html');
+                        const isActive = currentKey === item.key;
                         return `
                             <a href="${item.href}" title="${item.name}" 
                                class="flex items-center gap-3.5 px-3 py-3 rounded-2xl transition overflow-hidden ${isActive ? 'bg-blue-50 text-blue-600 font-black shadow-sm' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}">
