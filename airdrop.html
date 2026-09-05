@@ -32,7 +32,7 @@
 </head>
 <body class="bg-pageBg text-textMain min-h-screen font-sans antialiased select-none flex">
 
-    <!-- GẮN SIDEBAR CHUNG CÓ MŨI TÊN KÉO RA/VÀO -->
+    <!-- GẮN SIDEBAR CHUNG -->
     <div id="hubSidebarMount"></div>
 
     <!-- NỘI DUNG AIRDROP -->
@@ -55,7 +55,7 @@
                 <p class="text-textMuted text-sm font-medium">Đang nạp danh sách kèo Airdrop...</p>
             </div>
 
-            <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden"></div>
+            <div id="projectGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 hidden items-start"></div>
             <div id="noData" class="text-center py-16 hidden">
                 <i class="fa-regular fa-folder-open text-4xl text-slate-400 mb-2"></i>
                 <p class="text-textMuted text-sm">Không tìm thấy kèo nào phù hợp.</p>
@@ -104,10 +104,10 @@
                 };
             }).filter(p => p.title && p.title.toLowerCase() !== 'title' && !['APP', 'EXTENSION', 'SCR', 'TOOL'].some(t => p.category.toUpperCase().includes(t)));
 
-            // 1. Đảo ngược mảng để các dòng nhập sau ở cuối Google Sheet lên đầu
+            // Đảo ngược mảng để các dòng nhập sau ở cuối sheet lên đầu
             list.reverse();
 
-            // 2. Ưu tiên đưa các kèo có status là 'NEW' lên trên cùng
+            // Ưu tiên đưa các kèo có status là 'NEW' lên trên cùng
             list.sort((a, b) => {
                 const isANew = a.status === 'NEW' ? 0 : 1;
                 const isBNew = b.status === 'NEW' ? 0 : 1;
@@ -131,6 +131,18 @@
             `).join('');
         }
 
+        function toggleDesc(idx) {
+            const textEl = document.getElementById(`descText_${idx}`);
+            const btnEl = document.getElementById(`descBtn_${idx}`);
+            if (textEl.classList.contains('line-clamp-2')) {
+                textEl.classList.remove('line-clamp-2');
+                btnEl.innerText = 'Thu gọn ▲';
+            } else {
+                textEl.classList.add('line-clamp-2');
+                btnEl.innerText = 'Xem thêm ▼';
+            }
+        }
+
         function render() {
             const searchEl = document.getElementById('searchInput');
             let q = searchEl ? searchEl.value.toLowerCase().trim() : '';
@@ -141,17 +153,27 @@
             if (filtered.length === 0) { grid.innerHTML = ''; document.getElementById('noData').classList.remove('hidden'); return; }
             document.getElementById('noData').classList.add('hidden');
 
-            grid.innerHTML = filtered.map(p => `
-                <div class="bg-white border border-borderLight rounded-3xl p-5 hover:shadow-xl hover:border-blue-400 transition flex flex-col justify-between">
+            grid.innerHTML = filtered.map((p, idx) => {
+                const desc = p.description || 'Chưa có mô tả chi tiết.';
+                const isLong = desc.length > 110;
+
+                return `
+                <div class="bg-white border border-borderLight rounded-3xl p-5 hover:shadow-xl hover:border-blue-400 transition flex flex-col justify-between h-full">
                     <div>
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <span class="text-[11px] px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 font-bold uppercase">${p.category}</span>
                             <span class="text-[11px] px-2.5 py-1 rounded-md font-black ${p.status === 'NEW' ? 'bg-emerald-50 text-emerald-600 border border-emerald-200' : (p.status === 'HOT' ? 'bg-rose-50 text-rose-600 border border-rose-200' : 'bg-slate-50 text-slate-600 border border-slate-200')}">${p.status}</span>
                         </div>
                         <h3 class="text-base font-black text-slate-900 tracking-tight mb-2">${p.title}</h3>
-                        <p class="text-slate-600 text-xs leading-relaxed mb-4">${p.description || 'Chưa có mô tả chi tiết.'}</p>
+                        
+                        <!-- Đoạn mô tả chuẩn 2 dòng -->
+                        <div class="mb-4">
+                            <p id="descText_${idx}" class="text-slate-600 text-xs leading-relaxed line-clamp-2 transition-all duration-200">${desc}</p>
+                            ${isLong ? `<button id="descBtn_${idx}" onclick="toggleDesc(${idx})" class="mt-1 text-[11px] font-bold text-blue-600 hover:text-blue-800 transition">Xem thêm ▼</button>` : ''}
+                        </div>
                     </div>
-                    <div class="flex flex-col gap-2 pt-4 border-t border-slate-100">
+
+                    <div class="flex flex-col gap-2 pt-4 border-t border-slate-100 mt-auto">
                         <div class="grid grid-cols-2 gap-2">
                             ${p.ref_link ? `<a href="${p.ref_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-black text-center uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 transition"><i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i> LINK DỰ ÁN</a>` : '<div class="py-2.5 text-center text-xs text-slate-400 bg-slate-50 rounded-xl font-bold">CHƯA CÓ LINK</div>'}
                             ${p.script_link ? `<a href="${p.script_link}" target="_blank" class="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black text-center uppercase tracking-wider shadow-sm flex items-center justify-center gap-1.5 transition"><i class="fa-solid fa-download text-[11px]"></i> TẢI SCRIPT</a>` : '<div class="py-2.5 text-center text-xs text-slate-400 bg-slate-50 rounded-xl font-bold">CHƯA CÓ TOOL</div>'}
@@ -162,7 +184,8 @@
                         </div>
                     </div>
                 </div>
-            `).join('');
+            `;
+            }).join('');
         }
 
         function showGuide(title, encodedText) {
